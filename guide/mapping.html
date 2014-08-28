@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Mapping 0.0.3.2</title>
+    <title>3 Mapping 0.0.3.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -86,7 +86,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval</p>
 
-                    <p><strong>Version:</strong> 0.0.3.2</p>
+                    <p><strong>Version:</strong> 0.0.3.3</p>
 
                     
                 </div>
@@ -318,8 +318,13 @@ class OtherDomain &#123;
             <span class="java&#45;quote">"field4"</span>:<span class="java&#45;quote">"val4"</span>
         &#125;
     &#125;
+&#125;</pre></div><p class="paragraph"/>If you'd rather that the reference object be mapped with type 'inner' rather than the default 'nested', set the 'component' key with a value of 'inner' rather than 'true':
+<div class="code"><pre>class MyDomain &#123;
+    // odom is an association with the OtherDomain class, set as a reference
+    OtherDomain odom<p class="paragraph"/>    <span class="java&#45;keyword">static</span> searchable = &#123;
+        odom component: '<span class="java&#45;keyword">inner</span>'
+    &#125;
 &#125;</pre></div>
-
 
 
                 <div style="clear:both;margin-top:15px;"></div>
