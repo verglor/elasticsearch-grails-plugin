@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2 Configuration 0.0.3.8</title>
+    <title>2 Configuration 0.0.4.0</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -84,9 +84,9 @@ function addJsClass() {
                 <div class="project">
                     <h1>2 Configuration - Reference Documentation</h1>
 
-                    <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval</p>
+                    <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
 
-                    <p><strong>Version:</strong> 0.0.3.8</p>
+                    <p><strong>Version:</strong> 0.0.4.0</p>
 
                     
                 </div>
@@ -104,7 +104,20 @@ The mode is defined with the following config key:<p class="paragraph"/><div cla
        &#91;host:'192.168.0.3', port:9300&#93;,
        &#91;host:'228.168.0.4', port:9300&#93;
 &#93;</pre></div>
-If no host is defined, <code>localhost:9300</code> will be used by the transport client.<p class="paragraph"/><h4>Others properties</h4>
+If no host is defined, <code>localhost:9300</code> will be used by the transport client.<p class="paragraph"/><h4>Mapping Migration properties</h4><p class="paragraph"/>Define the application's behaviour when a conflict is found while installing Elasticsearch mappings on startup. For a detailed explanation, see Mapping Migrations.
+<ul class="star">
+<li><code>elasticSearch.migration.strategy</code></li>
+</ul><p class="paragraph"/>Defines the behaviour to follow if an error occurs on startup when the application is installing new mappings on ElasticSearch due to conflicting mappings.
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Possible value</th><th>Description</th></tr><tr class="table-odd"><td><code>'none'</code></td><td>No changes on the indices or mappings will happen, the merge problem will be logged and a MappingException will be thrown.</td></tr><tr class="table-even"><td><code>'delete'</code></td><td>The conflicting mapping will be deleted (along with all indexed content of that type) and replaced with a new mapping. Deleted content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option</td></tr><tr class="table-odd"><td><code>'alias'</code></td><td>Applies <a href="http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/" target="blank">Elasticsearch recommended approach for migrating conflicting mappings</a>. A new numbered index will be created (<code>&#60;indexName&#62;_vX</code>) where new mappings will installed for all the types included on the original index. An Elasticsearch alias called <code>&#60;indexName&#62;</code> will point to the new index. As content won't be available on the new index, content can be automcatically reindexedon startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option. It is recommended to set <code>elasticSearch.aliasReplacesIndex</code> to deal with potential index/alias conflicts.</td></tr></table><p class="paragraph"/>The default is <code>'alias'</code>.
+<ul class="star">
+<li><code>elasticSearch.migration.aliasReplacesIndex</code></li>
+</ul><p class="paragraph"/>Deals with a special conflict case using the <code>'alias'</code> strategy. When the <code>'alias'</code> migration strategy is chosen and there's a mapping conflict on an index, defines whether to replace the index with a versioned index (<code>&#60;indexName&#62;_vX</code>) and an alias (<code>&#60;indexName&#62;</code>). This is required when applying the alias strategy on top of existing indices for the first time as indices cannot be renamed (from <code>&#60;indexName&#62;</code> to <code>&#60;indexName&#62;_vX</code>) and an alias cannot exist with the same name as an index.
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Possible value</th><th>Description</th></tr><tr class="table-odd"><td><code>true</code></td><td>The index and it's content will be deleted and a versioned index and an alias will be created. Deleted content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option</td></tr><tr class="table-even"><td><code>false</code></td><td>Falls back to the <code>'none'</code> strategy. Event will be logged and a MappingException will be thrown.</td></tr></table><p class="paragraph"/>The default is <code>true</code>.
+<ul class="star">
+<li><code>elasticSearch.migration.disableAliasChange</code></li>
+</ul><p class="paragraph"/>In some cases the developer may prefer not to upgrade the alias to the new version of the index until some other tasks are performed. This allows them to disable automatically pointing the alias to a new version of the index when this is created. Aliases can be changed later on manually or programatically using <code>elasticSearchAdminService</code>
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Possible value</th><th>Description</th></tr><tr class="table-odd"><td><code>false</code></td><td>Standard behaviour</td></tr><tr class="table-even"><td><code>true</code></td><td>Prevents the aliases to be changed to point to a new index</td></tr></table><p class="paragraph"/>The default is <code>false</code>.<p class="paragraph"/>
+<h4>Others properties</h4>
 <ul class="star">
 <li><code>elasticSearch.datastoreImpl</code></li>
 </ul><p class="paragraph"/>Only required when enabling the auto-index feature.
@@ -138,7 +151,9 @@ not be considered when using closure mapping.
 Default to <code>false</code>.
 <ul class="star">
 <li><code>elasticSearch.bulkIndexOnStartup</code></li>
-</ul><p class="paragraph"/>A boolean determining if the application should launch a bulk index operation upon startup. Default to <code>true</code>.
+</ul><p class="paragraph"/>Determines whether the application should launch a bulk index operation upon startup.
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Possible value</th><th>Description</th></tr><tr class="table-odd"><td><code>false</code></td><td>No indexing will happen on startup.</td></tr><tr class="table-even"><td><code>true</code></td><td>All content will be indexed on startup.</td></tr><tr class="table-odd"><td><code>'deleted'</code></td><td>This value is related to the mapping migration strategy choosen. If any migration is required and any content is deleted due to it, on startup only indices and mappings lost will be indexed. More on Mapping Migrations.</td></tr></table>
+Default to <code>true</code>.
 <ul class="star">
 <li><code>elasticSearch.index.name</code></li>
 </ul><p class="paragraph"/>A string indicating which ElasticSearch index should be used.  If not present, will default to the package name of the domain in question.

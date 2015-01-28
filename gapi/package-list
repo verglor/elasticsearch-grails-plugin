@@ -10,4 +10,5 @@ org.grails.plugins.elasticsearch.mapping
 org.grails.plugins.elasticsearch.unwrap
 org.grails.plugins.elasticsearch.util
 test
+test.mapping.migration
 test.upperCase
