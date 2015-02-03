@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>ElasticSearch Grails Plugin 0.0.4.0</title>
+        <title>ElasticSearch Grails Plugin 0.0.4.1</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -66,7 +66,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>ElasticSearch Grails Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
-                            <p><strong>Version:</strong> 0.0.4.0</p>
+                            <p><strong>Version:</strong> 0.0.4.1</p>
                             
                         </div>
 
@@ -170,6 +170,14 @@ reference for its syntax and behavior.<p class="paragraph"/>Note that the plugin
 <h2 id="history">1.2 History</h2>
 <h4>History</h4>
 <ul class="star">
+<li>February 03, 2015</li>
+<ul class="star">
+<li>0.0.4.1</li>
+<ul class="star">
+<li>Upgrade to Elasticsearch 1.4.2</li>
+<li>Enable configuration of the number of replicas created per shard</li>
+</ul>
+</ul>
 <li>January 28, 2015</li>
 <ul class="star">
 <li>0.0.4.0</li>
@@ -387,6 +395,9 @@ More details on this setting on the <a href="http://www.elasticsearch.org/guide/
 </ul><p class="paragraph"/>Determine how the indices will be stored.
 More details on the possible values on the <a href="http://www.elasticsearch.org/guide/reference/index-modules/store.html" target="blank">ElasticSearch Documentation</a>.
 <table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Possible value</th><th>Description</th></tr><tr class="table-odd"><td>memory</td><td>Stores the index in memory. Useful for testing.</td></tr><tr class="table-even"><td>mmapfs</td><td>Stores the shard index on the file system (maps to Lucene MMapDirectory) using mmap.</td></tr><tr class="table-odd"><td>niofs</td><td>Stores the shard index on the file system (maps to Lucene NIOFSDirectory) and allows for multiple threads to read from the same file concurrently.</td></tr><tr class="table-even"><td>simplefs</td><td>Stores using a plain forward implementation of file system storage (maps to Lucene SimpleFsDirectory) using random access file.</td></tr></table>
+<ul class="star">
+<li><code>elasticSearch.index.numberOfReplicas</code></li>
+</ul><p class="paragraph"/>Sets the number of replicas created for each shard of the index. If not present, will default to zero.
 <ul class="star">
 <li><code>elasticSearch.gateway.type</code></li>
 </ul><p class="paragraph"/>Determine the gateway type to be used.
