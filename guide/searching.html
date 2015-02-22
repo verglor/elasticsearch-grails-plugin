@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5 Searching 0.0.4.2</title>
+    <title>5 Searching 0.0.4.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -86,7 +86,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
 
-                    <p><strong>Version:</strong> 0.0.4.2</p>
+                    <p><strong>Version:</strong> 0.0.4.3</p>
 
                     
                 </div>
@@ -101,16 +101,22 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#queryClosure"><strong>5.2</strong><span>Query Closure</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#filterClosure"><strong>5.3</strong><span>Filter Closure</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#queryBuilder"><strong>5.3</strong><span>Query QueryBuilder</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#highlighting"><strong>5.4</strong><span>Highlighting</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#filterClosure"><strong>5.4</strong><span>Filter Closure</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#sorting"><strong>5.5</strong><span>Sorting</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#filterBuilder"><strong>5.5</strong><span>Filter FilterBuilder</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#geodistanceSorting"><strong>5.5.1</strong><span>geoDistanceSorting</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#highlighting"><strong>5.6</strong><span>Highlighting</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#sorting"><strong>5.7</strong><span>Sorting</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#geodistanceSorting"><strong>5.7.1</strong><span>geoDistanceSorting</span></a>
                     </div>
                     
                 </div>
@@ -180,7 +186,12 @@ and the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/java
 &#125;</pre></div>
 
 
-<h2 id="filterClosure">5.3 Filter Closure</h2>
+<h2 id="queryBuilder">5.3 Query QueryBuilder</h2>
+A <code>QueryBuilder</code> can be passed to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>QueryBuilder query = QueryBuilders.matchAllQuery()
+def result = elasticSearchService.search(query)</pre></div>
+
+
+<h2 id="filterClosure">5.4 Filter Closure</h2>
 A filter closure can be passed as a second argument after the search closure to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>def result = elasticSearchService.search(
     &#91;indices: Building, types: Building, sort: sortBuilder&#93;,
     <span class="java&#45;keyword">null</span> as Closure,
@@ -193,7 +204,16 @@ A filter closure can be passed as a second argument after the search closure to 
 
 
 
-<h2 id="highlighting">5.4 Highlighting</h2>
+<h2 id="filterBuilder">5.5 Filter FilterBuilder</h2>
+A <code>FilterBuilder</code> filter can be passed as a second argument after the search parameter to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>FilterBuilder filter = FilterBuilders.rangeFilter(<span class="java&#45;quote">"price"</span>).gte(1.99).lte(2.3)
+def result = elasticSearchService.search(
+    &#91;indices: Building, types: Building, sort: sortBuilder&#93;,
+    <span class="java&#45;keyword">null</span> as Closure,
+    filter)</pre></div>
+
+
+
+<h2 id="highlighting">5.6 Highlighting</h2>
 The search method support highlighting: automatic wrapping of the matching terms in the search results with
 HTML/XML/Whatever tags.
 You can activate this with a <code>Closure</code> containing the highlight settings in the search method <code>highlight</code> parameter.
@@ -234,14 +254,14 @@ You can customize the tags with the <code>preTags</code> and <code>postTags</cod
 &#125;</pre></div>
 
 
-<h2 id="sorting">5.5 Sorting</h2>
+<h2 id="sorting">5.7 Sorting</h2>
 To sort the search results, either a field name or a SortBuilder must be passed.<p class="paragraph"/><h4>Returned sort values</h4><p class="paragraph"/>The sort values are not part of the search results themselves but are part of <code>result.sort</code>.
 <code>sort</code> contains all search values calculated by the ElasticSearch server as a list mapped to the id of the respective domain objects<p class="paragraph"/><h4>Example</h4>
 <div class="code"><pre>assert &#91;1:&#91;23, 42&#93;, 2: &#91;24, 40&#93;&#93; == result.sort</pre></div>
 
 
 
-<h2 id="geodistanceSorting">5.5.1 geoDistanceSorting</h2>
+<h2 id="geodistanceSorting">5.7.1 geoDistanceSorting</h2>
 To sort for geo distances, a SortBuilder must be passed to search()<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>def sortBuilder = SortBuilders.geoDistanceSort(<span class="java&#45;quote">"location"</span>)
     .point(48.141, 11.57)
     .unit(DistanceUnit.KILOMETERS)

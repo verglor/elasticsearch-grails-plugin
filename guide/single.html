@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>ElasticSearch Grails Plugin 0.0.4.2</title>
+        <title>ElasticSearch Grails Plugin 0.0.4.3</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -66,7 +66,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>ElasticSearch Grails Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
-                            <p><strong>Version:</strong> 0.0.4.2</p>
+                            <p><strong>Version:</strong> 0.0.4.3</p>
                             
                         </div>
 
@@ -112,13 +112,17 @@ function addJsClass(el) {
                             
                             <div class="toc-item" style="margin-left:10px"><a href="#queryClosure"><strong>5.2</strong><span>Query Closure</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#filterClosure"><strong>5.3</strong><span>Filter Closure</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#queryBuilder"><strong>5.3</strong><span>Query QueryBuilder</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#highlighting"><strong>5.4</strong><span>Highlighting</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#filterClosure"><strong>5.4</strong><span>Filter Closure</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#sorting"><strong>5.5</strong><span>Sorting</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#filterBuilder"><strong>5.5</strong><span>Filter FilterBuilder</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:20px"><a href="#geodistanceSorting"><strong>5.5.1</strong><span>geoDistanceSorting</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#highlighting"><strong>5.6</strong><span>Highlighting</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#sorting"><strong>5.7</strong><span>Sorting</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:20px"><a href="#geodistanceSorting"><strong>5.7.1</strong><span>geoDistanceSorting</span></a></div>
                             
                             <div class="toc-item" style="margin-left:0px"><a href="#admin"><strong>6</strong><span>Admin</span></a></div>
                             
@@ -170,6 +174,15 @@ reference for its syntax and behavior.<p class="paragraph"/>Note that the plugin
 <h2 id="history">1.2 History</h2>
 <h4>History</h4>
 <ul class="star">
+<li>February 22, 2015</li>
+<ul class="star">
+<li>0.0.4.3</li>
+<ul class="star">
+<li>Add mapping configuration support for '_all'</li>
+<li>Fix issue with indexing nested GeoPoint</li>
+<li>Add support for transient properties</li>
+</ul>
+</ul>
 <li>February 10, 2015</li>
 <ul class="star">
 <li>0.0.4.2</li>
@@ -423,7 +436,11 @@ If this setting is not specified, 500 will be use by default.
 </ul><p class="paragraph"/>The location of plugin files such as native scripts. Each plugin will be contained in a subdirectory.
 <ul class="star">
 <li><code>elasticSearch.searchableProperty.name</code></li>
-</ul><p class="paragraph"/>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.<p class="paragraph"/><h4>Default configuration script</h4>
+</ul><p class="paragraph"/>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.
+<ul class="star">
+<li><code>elasticSearch.includeTransients</code></li>
+</ul><p class="paragraph"/>Whether to index and search all non excluded transient properties. All explicitly included transients in <code>only</code> will be indexed regardless.
+Default is <code>false</code>.<p class="paragraph"/><h4>Default configuration script</h4>
 Below is the default configuration loaded by the plugin (any of your settings in the Config.groovy script overwrite those).<p class="paragraph"/><div class="code"><pre>elasticSearch &#123;
   /&#42;&#42;
    &#42; Date formats used by the unmarshaller of the JSON responses
@@ -522,8 +539,52 @@ You may not define both except &#38; only settings at the same time.<p class="pa
     <span class="java&#45;object">String</span> userName
     <span class="java&#45;object">String</span> someUselessField
 &#125;</pre></div><p class="paragraph"/><blockquote class="note">The properties that are ignored will not be sent to ElasticSearch. It also means that when you will get back a domain
-from ElasticSearch, some fields that are not supposed to be null, may still be null.</blockquote>
-
+from ElasticSearch, some fields that are not supposed to be null, may still be null.</blockquote><p class="paragraph"/><h4>Including transients</h4><p class="paragraph"/>How the plugin manages transient properties is controlled by the <code>elasticSearch.includeTransients</code> configuration property. If this is set to <code>false</code> only transient properties explictly included in <code>only</code> will be mapped and searchable, if set to <code>true</code>, all domain class properties will be mapped, including <code>transients</code>.<p class="paragraph"/>The following are valid examples<p class="paragraph"/><div class="code"><pre>//assert grailsApplication.config.elasticSearch.includeTransients == <span class="java&#45;keyword">false</span>
+class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+    <span class="java&#45;object">String</span> lastName
+    <span class="java&#45;object">String</span> getFullName() &#123;
+        firstName + <span class="java&#45;quote">" "</span> + lastName
+    &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'fullName'&#93;
+    <span class="java&#45;keyword">static</span> searchable = &#123;
+        only = &#91;'fullName'&#93;
+    &#125;
+&#125;
+// <span class="java&#45;keyword">new</span> Person(firstNameme: <span class="java&#45;quote">"Nikola"</span>, lastName: <span class="java&#45;quote">"Tesla"</span>)
+// can be found using:
+// def tesla = Person.search(<span class="java&#45;quote">"Nikola Tesla"</span>).searchResults.first()</pre></div><p class="paragraph"/><div class="code"><pre>//assert grailsApplication.config.elasticSearch.includeTransients == <span class="java&#45;keyword">true</span>
+class Multiplication &#123;
+    <span class="java&#45;object">int</span> opA
+    <span class="java&#45;object">int</span> opB
+    <span class="java&#45;object">int</span> getResult() &#123;
+        opA &#42; opB
+    &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'result'&#93;
+    <span class="java&#45;keyword">static</span> searchable = <span class="java&#45;keyword">true</span>
+&#125;
+// <span class="java&#45;keyword">new</span> Multiplication(opA: 2, opB: 3)
+// can be found using:
+// def multiplication = Multiplication.search(<span class="java&#45;quote">"2"</span>).searchResults.first()
+// def multiplication = Multiplication.search(<span class="java&#45;quote">"3"</span>).searchResults.first()
+// def multiplication = Multiplication.search(<span class="java&#45;quote">"6"</span>).searchResults.first()</pre></div><p class="paragraph"/><blockquote class="note">
+From the examples above, once the domain object is found, its transient values will be calculated from the information stored on ElasticSearch: <code>multiplication.result == 6</code>, but <code>tesla.fullName == "null null"</code>, as firstName and lastName where not indexed. This behaviour can be prevented by creating convenient setters for the transient properties.
+</blockquote><p class="paragraph"/><h4>Transients and collections</h4><p class="paragraph"/>When transient properties are collections the only way the plugin can define the correct ElasticSearch mapping during boot is if the element types are explicitly defined on the grails domain object. For instances of <code>Collection</code> this can be achieved by defining its type on the <code>hasMany</code> property (otherwise the ElasticSearch type will be defined as <code>object</code>). This is not required for arrays.<p class="paragraph"/>Some valid examples:
+<div class="code"><pre>class Tweet &#123;
+    <span class="java&#45;object">String</span> message
+    List getHashtags() &#123; &#8230; &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'hashtags'&#93;
+    <span class="java&#45;keyword">static</span> hasMany = &#91;hashtags: <span class="java&#45;object">String</span>&#93;
+    <span class="java&#45;keyword">static</span> searchable = &#123;only = 'hashtags' &#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class FamilyGuy &#123;
+    <span class="java&#45;object">String</span> wife
+    <span class="java&#45;object">String</span> son
+    <span class="java&#45;object">String</span> daughter
+    <span class="java&#45;object">String</span> baby
+    <span class="java&#45;object">String</span>&#91;&#93; getRelatives() &#123; &#8230; &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'relatives'&#93;
+    <span class="java&#45;keyword">static</span> searchable = &#123; only = 'relatives' &#125;
+&#125;</pre></div>
 
 
 <h2 id="classMapping">3.2 Class Mapping</h2>
@@ -553,7 +614,12 @@ For example, considered the following domain:
         userPreferences component:<span class="java&#45;keyword">true</span>
     &#125;<p class="paragraph"/>    Preference userPreferences
 &#125;</pre></div>
-When searching, any matches in the <code>userPreferences</code> property will be considered as a <code>User</code> match.
+When searching, any matches in the <code>userPreferences</code> property will be considered as a <code>User</code> match.<p class="paragraph"/><h4>all</h4>
+Set default analyzer for all domain class fields.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">static</span> searchable = &#123;
+  all = &#91;analyzer: 'russian_morphology'&#93;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">static</span> searchable = &#123;
+  all = <span class="java&#45;keyword">false</span>
+&#125;</pre></div><p class="paragraph"/>When disabling the all field, it is a good practice to set index.query.default_field to a different value (for example, if you have a main 'message' field in your data, set it to message).
 
 
 
@@ -818,7 +884,12 @@ and the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/java
 &#125;</pre></div>
 
 
-<h2 id="filterClosure">5.3 Filter Closure</h2>
+<h2 id="queryBuilder">5.3 Query QueryBuilder</h2>
+A <code>QueryBuilder</code> can be passed to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>QueryBuilder query = QueryBuilders.matchAllQuery()
+def result = elasticSearchService.search(query)</pre></div>
+
+
+<h2 id="filterClosure">5.4 Filter Closure</h2>
 A filter closure can be passed as a second argument after the search closure to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>def result = elasticSearchService.search(
     &#91;indices: Building, types: Building, sort: sortBuilder&#93;,
     <span class="java&#45;keyword">null</span> as Closure,
@@ -831,7 +902,16 @@ A filter closure can be passed as a second argument after the search closure to 
 
 
 
-<h2 id="highlighting">5.4 Highlighting</h2>
+<h2 id="filterBuilder">5.5 Filter FilterBuilder</h2>
+A <code>FilterBuilder</code> filter can be passed as a second argument after the search parameter to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>FilterBuilder filter = FilterBuilders.rangeFilter(<span class="java&#45;quote">"price"</span>).gte(1.99).lte(2.3)
+def result = elasticSearchService.search(
+    &#91;indices: Building, types: Building, sort: sortBuilder&#93;,
+    <span class="java&#45;keyword">null</span> as Closure,
+    filter)</pre></div>
+
+
+
+<h2 id="highlighting">5.6 Highlighting</h2>
 The search method support highlighting: automatic wrapping of the matching terms in the search results with
 HTML/XML/Whatever tags.
 You can activate this with a <code>Closure</code> containing the highlight settings in the search method <code>highlight</code> parameter.
@@ -872,14 +952,14 @@ You can customize the tags with the <code>preTags</code> and <code>postTags</cod
 &#125;</pre></div>
 
 
-<h2 id="sorting">5.5 Sorting</h2>
+<h2 id="sorting">5.7 Sorting</h2>
 To sort the search results, either a field name or a SortBuilder must be passed.<p class="paragraph"/><h4>Returned sort values</h4><p class="paragraph"/>The sort values are not part of the search results themselves but are part of <code>result.sort</code>.
 <code>sort</code> contains all search values calculated by the ElasticSearch server as a list mapped to the id of the respective domain objects<p class="paragraph"/><h4>Example</h4>
 <div class="code"><pre>assert &#91;1:&#91;23, 42&#93;, 2: &#91;24, 40&#93;&#93; == result.sort</pre></div>
 
 
 
-<h2 id="geodistanceSorting">5.5.1 geoDistanceSorting</h2>
+<h2 id="geodistanceSorting">5.7.1 geoDistanceSorting</h2>
 To sort for geo distances, a SortBuilder must be passed to search()<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>def sortBuilder = SortBuilders.geoDistanceSort(<span class="java&#45;quote">"location"</span>)
     .point(48.141, 11.57)
     .unit(DistanceUnit.KILOMETERS)

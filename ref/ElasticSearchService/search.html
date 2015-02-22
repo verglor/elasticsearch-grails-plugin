@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>ElasticSearch Grails Plugin 0.0.4.2</title>
+    <title>ElasticSearch Grails Plugin 0.0.4.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -92,22 +92,23 @@ def res = elasticSearchService.search(from:0, size:30, indices:<span class="java
         &#125;)<p class="paragraph"/>def res = elasticSearchService.search(&#123;
     wildcard(<span class="java&#45;quote">"name"</span>: <span class="java&#45;quote">"&#42;st"</span>)
 &#125;, &#91;:&#93;)<p class="paragraph"/>def hasParentQuery = QueryBuilders.hasParentQuery(<span class="java&#45;quote">"store"</span>, QueryBuilders.matchQuery(<span class="java&#45;quote">"owner"</span>, <span class="java&#45;quote">"Horst"</span>))
-def result = elasticSearchService.search(hasParentQuery)</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/><code>search</code> signatures:<p class="paragraph"/><div class="code"><pre>def search(Map params, Closure query, Closure filter = <span class="java&#45;keyword">null</span>)
-def search(Map params, QueryBuilder query, Closure filter = <span class="java&#45;keyword">null</span>)
+def result = elasticSearchService.search(hasParentQuery)</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/><code>search</code> signatures:<p class="paragraph"/><div class="code"><pre>def search(Map params, Closure query, filter = <span class="java&#45;keyword">null</span>)
+def search(Map params, QueryBuilder query, filter = <span class="java&#45;keyword">null</span>)
 def search(<span class="java&#45;object">String</span> query, Map params = &#91;:&#93;)
 def search(Closure query, Map params)
-def search(Closure query, Closure filter = <span class="java&#45;keyword">null</span>, Map params = &#91;:&#93;)
-def search(QueryBuilder query, Closure filter = <span class="java&#45;keyword">null</span>, Map params = &#91;:&#93;)</pre></div><p class="paragraph"/><h2>Parameters</h2>
+def search(Closure query, filter = <span class="java&#45;keyword">null</span>, Map params = &#91;:&#93;)
+def search(QueryBuilder query, filter = <span class="java&#45;keyword">null</span>, Map params = &#91;:&#93;)</pre></div><p class="paragraph"/><h2>Parameters</h2>
 <ul class="star">
 <li><code>query</code> - The search query.</li>
 <ul class="star">
 <li>As a <code>String</code>, the query is parsed by the Lucene query parser for advanced searching.</li>
 <li>Can also be a <code>Closure</code>, using the Groovy Query DSL of the ElasticSearch groovy client.</li>
-<li>Can also be a <code>QueryBuilder</code></li>
+<li>Can also be a <code>QueryBuilder</code>.</li>
 </ul>
 <li><code>filter</code> - The search filter</li>
 <ul class="star">
 <li>A <code>Closure</code>, using the Groovy Query DSL of the ElasticSearch groovy client.</li>
+<li>can also be a <code>FilterBuilder</code>.</li>
 </ul>
 <li><code>params</code> - A list of additional parameters to customize the searching process</li>
 <ul class="star">

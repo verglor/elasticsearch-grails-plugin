@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.1 QuickStart 0.0.4.2</title>
+    <title>3.1 QuickStart 0.0.4.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -86,7 +86,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
 
-                    <p><strong>Version:</strong> 0.0.4.2</p>
+                    <p><strong>Version:</strong> 0.0.4.3</p>
 
                     
                 </div>
@@ -129,8 +129,52 @@ You may not define both except &#38; only settings at the same time.<p class="pa
     <span class="java&#45;object">String</span> userName
     <span class="java&#45;object">String</span> someUselessField
 &#125;</pre></div><p class="paragraph"/><blockquote class="note">The properties that are ignored will not be sent to ElasticSearch. It also means that when you will get back a domain
-from ElasticSearch, some fields that are not supposed to be null, may still be null.</blockquote>
-
+from ElasticSearch, some fields that are not supposed to be null, may still be null.</blockquote><p class="paragraph"/><h4>Including transients</h4><p class="paragraph"/>How the plugin manages transient properties is controlled by the <code>elasticSearch.includeTransients</code> configuration property. If this is set to <code>false</code> only transient properties explictly included in <code>only</code> will be mapped and searchable, if set to <code>true</code>, all domain class properties will be mapped, including <code>transients</code>.<p class="paragraph"/>The following are valid examples<p class="paragraph"/><div class="code"><pre>//assert grailsApplication.config.elasticSearch.includeTransients == <span class="java&#45;keyword">false</span>
+class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+    <span class="java&#45;object">String</span> lastName
+    <span class="java&#45;object">String</span> getFullName() &#123;
+        firstName + <span class="java&#45;quote">" "</span> + lastName
+    &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'fullName'&#93;
+    <span class="java&#45;keyword">static</span> searchable = &#123;
+        only = &#91;'fullName'&#93;
+    &#125;
+&#125;
+// <span class="java&#45;keyword">new</span> Person(firstNameme: <span class="java&#45;quote">"Nikola"</span>, lastName: <span class="java&#45;quote">"Tesla"</span>)
+// can be found using:
+// def tesla = Person.search(<span class="java&#45;quote">"Nikola Tesla"</span>).searchResults.first()</pre></div><p class="paragraph"/><div class="code"><pre>//assert grailsApplication.config.elasticSearch.includeTransients == <span class="java&#45;keyword">true</span>
+class Multiplication &#123;
+    <span class="java&#45;object">int</span> opA
+    <span class="java&#45;object">int</span> opB
+    <span class="java&#45;object">int</span> getResult() &#123;
+        opA &#42; opB
+    &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'result'&#93;
+    <span class="java&#45;keyword">static</span> searchable = <span class="java&#45;keyword">true</span>
+&#125;
+// <span class="java&#45;keyword">new</span> Multiplication(opA: 2, opB: 3)
+// can be found using:
+// def multiplication = Multiplication.search(<span class="java&#45;quote">"2"</span>).searchResults.first()
+// def multiplication = Multiplication.search(<span class="java&#45;quote">"3"</span>).searchResults.first()
+// def multiplication = Multiplication.search(<span class="java&#45;quote">"6"</span>).searchResults.first()</pre></div><p class="paragraph"/><blockquote class="note">
+From the examples above, once the domain object is found, its transient values will be calculated from the information stored on ElasticSearch: <code>multiplication.result == 6</code>, but <code>tesla.fullName == "null null"</code>, as firstName and lastName where not indexed. This behaviour can be prevented by creating convenient setters for the transient properties.
+</blockquote><p class="paragraph"/><h4>Transients and collections</h4><p class="paragraph"/>When transient properties are collections the only way the plugin can define the correct ElasticSearch mapping during boot is if the element types are explicitly defined on the grails domain object. For instances of <code>Collection</code> this can be achieved by defining its type on the <code>hasMany</code> property (otherwise the ElasticSearch type will be defined as <code>object</code>). This is not required for arrays.<p class="paragraph"/>Some valid examples:
+<div class="code"><pre>class Tweet &#123;
+    <span class="java&#45;object">String</span> message
+    List getHashtags() &#123; &#8230; &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'hashtags'&#93;
+    <span class="java&#45;keyword">static</span> hasMany = &#91;hashtags: <span class="java&#45;object">String</span>&#93;
+    <span class="java&#45;keyword">static</span> searchable = &#123;only = 'hashtags' &#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class FamilyGuy &#123;
+    <span class="java&#45;object">String</span> wife
+    <span class="java&#45;object">String</span> son
+    <span class="java&#45;object">String</span> daughter
+    <span class="java&#45;object">String</span> baby
+    <span class="java&#45;object">String</span>&#91;&#93; getRelatives() &#123; &#8230; &#125;
+    <span class="java&#45;keyword">static</span> transients = &#91;'relatives'&#93;
+    <span class="java&#45;keyword">static</span> searchable = &#123; only = 'relatives' &#125;
+&#125;</pre></div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>

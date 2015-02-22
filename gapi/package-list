@@ -10,5 +10,7 @@ org.grails.plugins.elasticsearch.mapping
 org.grails.plugins.elasticsearch.unwrap
 org.grails.plugins.elasticsearch.util
 test
+test.all
 test.mapping.migration
+test.transients
 test.upperCase

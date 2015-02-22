@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.5 Sorting 0.0.4.2</title>
+    <title>5.7 Sorting 0.0.4.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -82,11 +82,11 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>5.5 Sorting - Reference Documentation</h1>
+                    <h1>5.7 Sorting - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
 
-                    <p><strong>Version:</strong> 0.0.4.2</p>
+                    <p><strong>Version:</strong> 0.0.4.3</p>
 
                     
                 </div>
@@ -103,14 +103,14 @@ function addJsClass() {
 
                 
 
-<h2 id="sorting">5.5 Sorting</h2>
+<h2 id="sorting">5.7 Sorting</h2>
 To sort the search results, either a field name or a SortBuilder must be passed.<p class="paragraph"/><h4>Returned sort values</h4><p class="paragraph"/>The sort values are not part of the search results themselves but are part of <code>result.sort</code>.
 <code>sort</code> contains all search values calculated by the ElasticSearch server as a list mapped to the id of the respective domain objects<p class="paragraph"/><h4>Example</h4>
 <div class="code"><pre>assert &#91;1:&#91;23, 42&#93;, 2: &#91;24, 40&#93;&#93; == result.sort</pre></div>
 
 
 
-<h2 id="geodistanceSorting">5.5.1 geoDistanceSorting</h2>
+<h2 id="geodistanceSorting">5.7.1 geoDistanceSorting</h2>
 To sort for geo distances, a SortBuilder must be passed to search()<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>def sortBuilder = SortBuilders.geoDistanceSort(<span class="java&#45;quote">"location"</span>)
     .point(48.141, 11.57)
     .unit(DistanceUnit.KILOMETERS)

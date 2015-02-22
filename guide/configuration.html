@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2 Configuration 0.0.4.2</title>
+    <title>2 Configuration 0.0.4.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -86,7 +86,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
 
-                    <p><strong>Version:</strong> 0.0.4.2</p>
+                    <p><strong>Version:</strong> 0.0.4.3</p>
 
                     
                 </div>
@@ -188,7 +188,11 @@ If this setting is not specified, 500 will be use by default.
 </ul><p class="paragraph"/>The location of plugin files such as native scripts. Each plugin will be contained in a subdirectory.
 <ul class="star">
 <li><code>elasticSearch.searchableProperty.name</code></li>
-</ul><p class="paragraph"/>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.<p class="paragraph"/><h4>Default configuration script</h4>
+</ul><p class="paragraph"/>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.
+<ul class="star">
+<li><code>elasticSearch.includeTransients</code></li>
+</ul><p class="paragraph"/>Whether to index and search all non excluded transient properties. All explicitly included transients in <code>only</code> will be indexed regardless.
+Default is <code>false</code>.<p class="paragraph"/><h4>Default configuration script</h4>
 Below is the default configuration loaded by the plugin (any of your settings in the Config.groovy script overwrite those).<p class="paragraph"/><div class="code"><pre>elasticSearch &#123;
   /&#42;&#42;
    &#42; Date formats used by the unmarshaller of the JSON responses
