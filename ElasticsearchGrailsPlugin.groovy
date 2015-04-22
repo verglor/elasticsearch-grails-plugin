@@ -32,11 +32,11 @@ import org.grails.plugins.elasticsearch.util.DomainDynamicMethodsUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class ElasticsearchAttachmentGrailsPlugin {
+class ElasticsearchGrailsPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
-    def version = '0.0.4.2'
+    def version = '0.0.4.x-SNAPSHOT'
     def grailsVersion = '2.2.0 > *'
 
     def loadAfter = ['services', 'mongodb']
@@ -58,8 +58,7 @@ class ElasticsearchAttachmentGrailsPlugin {
 
     def developers = [
             [name: 'Noam Y. Tenne', email: 'noam@10ne.org'],
-            [name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com'],
-            [name: 'Nick Fisher', email: 'nick.fisher@clearframesoftware.com']
+            [name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com']
     ]
 
     def issueManagement = [system: 'github', url: 'https://github.com/noamt/elasticsearch-grails-plugin/issues']
@@ -69,7 +68,7 @@ class ElasticsearchAttachmentGrailsPlugin {
     def author = 'Noam Y. Tenne'
     def authorEmail = 'noam@10ne.org'
     def title = 'ElasticSearch Grails Plugin'
-    def description = """The revived Elasticsearch plugin for Grails (fork for attachment mapping)"""
+    def description = """The revived Elasticsearch plugin for Grails."""
     def documentation = 'http://noamt.github.io/elasticsearch-grails-plugin'
 
     def doWithSpring = {
