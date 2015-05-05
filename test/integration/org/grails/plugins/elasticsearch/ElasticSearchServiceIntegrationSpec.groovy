@@ -23,6 +23,7 @@ import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
 import test.*
+import test.custom.id.Toy
 
 class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
 
@@ -131,30 +132,30 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         List<Product> searchResults = result.searchResults
         searchResults[0].name == product.name
     }
-	
-	void 'should marshal the alias field and unmarshal correctly (ignore alias)'() {
-		given:
-		def location = new GeoPoint(
-			lat: 53.00,
-			lon: 10.00
-		).save(failOnError: true)
-		def building = new Building(
+
+    void 'should marshal the alias field and unmarshal correctly (ignore alias)'() {
+        given:
+        def location = new GeoPoint(
+                lat: 53.00,
+                lon: 10.00
+        ).save(failOnError: true)
+        def building = new Building(
                 name: 'WatchTower',
                 location: location
         ).save(failOnError: true)
-		building.save(failOnError: true)
+        building.save(failOnError: true)
 
-		elasticSearchService.index(building)
-		elasticSearchAdminService.refresh()
+        elasticSearchService.index(building)
+        elasticSearchAdminService.refresh()
 
-		when:
-		def result = elasticSearchService.search(building.name, [indices: Building, types: Building])
+        when:
+        def result = elasticSearchService.search(building.name, [indices: Building, types: Building])
 
-		then:
-		result.total == 1
-		List<Building> searchResults = result.searchResults
-		searchResults[0].name == building.name
-	}
+        then:
+        result.total == 1
+        List<Building> searchResults = result.searchResults
+        searchResults[0].name == building.name
+    }
 
     void 'a date value should be marshalled and de-marshalled correctly'() {
         Date date = new Date()
@@ -299,28 +300,28 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         List<Product> searchResults = result.searchResults
         searchResults[0].name == wurmProduct.name
     }
-	
-	void 'searching with a FilterBuilder filter and a Closure query'(){
+
+    void 'searching with a FilterBuilder filter and a Closure query'() {
         when: 'searching for a price'
-		FilterBuilder filter = FilterBuilders.rangeFilter("price").gte(1.99).lte(2.3)
+        FilterBuilder filter = FilterBuilders.rangeFilter("price").gte(1.99).lte(2.3)
         def result = elasticSearchService.search(null as Closure, filter)
 
         then: "the result should be product 'wurm'"
         result.total == 1
         List<Product> searchResults = result.searchResults
         searchResults[0].name == "wurm"
-	}
-	
-	void 'searching with a FilterBuilder filter and a QueryBuilder query'(){
-		when: 'searching for a price'
-		FilterBuilder filter = FilterBuilders.rangeFilter("price").gte(1.99).lte(2.3)
+    }
+
+    void 'searching with a FilterBuilder filter and a QueryBuilder query'() {
+        when: 'searching for a price'
+        FilterBuilder filter = FilterBuilders.rangeFilter("price").gte(1.99).lte(2.3)
         def result = elasticSearchService.search(null as QueryBuilder, filter)
 
         then: "the result should be product 'wurm'"
         result.total == 1
         List<Product> searchResults = result.searchResults
         searchResults[0].name == "wurm"
-	}
+    }
 
     void 'searching with wildcards in query at first position'() {
         when: 'search with asterisk at first position'
@@ -599,7 +600,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         given: 'A Spaceship with some cool canons'
         def spaceship = new Spaceship(name: 'Spaceball One', captain: new Person(firstName: 'Dark', lastName: 'Helmet').save())
         def data = [
-                engines: [
+                engines   : [
                         [name: "Primary", maxSpeed: 'Ludicrous Speed'],
                         [name: "Secondary", maxSpeed: 'Ridiculous Speed'],
                         [name: "Tertiary", maxSpeed: 'Light Speed'],
@@ -629,10 +630,28 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         shipData.facilities.size() == 3
     }
 
+    void 'Index a domain object with UUID-based id'() {
+        given:
+        def car = new Toy(name: 'Car', color: "Red")
+        car.save(failOnError: true)
+
+        def plane = new Toy(name: 'Plane', color: "Yellow")
+        plane.save(failOnError: true)
+        elasticSearchService.index([car, plane])
+        elasticSearchAdminService.refresh()
+
+        when:
+        def search = elasticSearchService.search('Yellow', [indices: Toy, types: Toy])
+
+        then:
+        search.total == 1
+        search.searchResults[0].id == plane.id
+    }
+
     void 'bulk test'() {
         given:
         (1..1858).each {
-            def person = new Person(firstName: 'Person', lastName: 'McNumbery'+it).save(flush: true)
+            def person = new Person(firstName: 'Person', lastName: 'McNumbery' + it).save(flush: true)
             def spaceShip = new Spaceship(name: 'Ship-' + it, captain: person).save(flush: true)
             println "Created ${it} domains"
         }
@@ -648,7 +667,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
 
     private def findFailures() {
         def domainClass = new DefaultGrailsDomainClass(Spaceship)
-        def failures=[]
+        def failures = []
         def allObjects = Spaceship.list()
         allObjects.each {
             elasticSearchHelper.withElasticSearch { client ->
