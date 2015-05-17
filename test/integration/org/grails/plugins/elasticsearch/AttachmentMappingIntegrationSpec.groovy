@@ -35,7 +35,7 @@ class AttachmentMappingIntegrationSpec extends IntegrationSpec {
         given:
         def contents = "It was the best of times, it was the worst of times"
         def file = new test.File(filename: 'myTestFile.txt', 
-                                 attachment:java.util.Base64.getEncoder().encodeToString(contents.getBytes("UTF-8")))
+                                 attachment:contents.bytes.encodeBase64().toString())
         file.save(failOnError: true)
 
         when:
