@@ -74,6 +74,9 @@ hibernateDatastore | The name of the Hibernate datastore bean.
 When using then plugin to construct a local node, the default Elasticsearch configuration is used by default.
 If you use a modified Elasticsearch configuration, you can use this property to specify the location of the file (as an application resource).
 
+* @elasticSearch.bootstrap.transportSettings.file@
+When choosing transport mode this configuration will be used to set up the TransportClient settings (used by some cloud providers).
+
 * @elasticSearch.client.transport.sniff@
 Only usable in with a transport client.
 Allows to sniff the rest of the cluster, and add those into its list of machines to use.
