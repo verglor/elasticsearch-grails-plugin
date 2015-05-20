@@ -7,6 +7,7 @@ class Person {
 
     String firstName
     String lastName
+    String password
 
     List<String> nickNames
 
