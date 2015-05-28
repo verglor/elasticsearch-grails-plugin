@@ -21,4 +21,8 @@ class Person {
     static searchable = {
         root false
     }
+
+    static constraints = {
+        password nullable: true
+    }
 }
