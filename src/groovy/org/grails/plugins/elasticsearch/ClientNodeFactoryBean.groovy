@@ -119,6 +119,13 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if(pluginsDirectory){
                     nb.settings().put('path.plugins', pluginsDirectory as String)
                 }
+
+                // Path to the config folder of ES
+                def confDirectory = elasticSearchContextHolder.config.path.conf
+                if(confDirectory){
+                    nb.settings().put('path.conf', confDirectory as String)
+                }
+
                 nb.local(true)
                 break
 
