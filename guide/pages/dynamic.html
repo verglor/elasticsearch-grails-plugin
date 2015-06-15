@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.3 Query QueryBuilder 0.0.4.5</title>
+    <title>3.3.4 Dynamic 0.0.4.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -71,18 +71,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/indexing.html">&lt;&lt; <strong>4</strong><span>Indexing</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/configuration.html">&lt;&lt; <strong>2</strong><span>Configuration</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/admin.html"><strong>6</strong><span>Admin</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/indexing.html"><strong>4</strong><span>Indexing</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>5.3 Query QueryBuilder - Reference Documentation</h1>
+                    <h1>3.3.4 Dynamic - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
 
@@ -95,16 +95,24 @@ function addJsClass() {
 
                 
 
-<h2 id="queryBuilder">5.3 Query QueryBuilder</h2>
-A <code>QueryBuilder</code> can be passed to the search method.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>QueryBuilder query = QueryBuilders.matchAllQuery()
-def result = elasticSearchService.search(query)</pre></div>
+<h2 id="dynamic">3.3.4 Dynamic</h2>
+Elasticsearch can map field contents as dynamic objects.
+This is especially useful if you store JSON Strings in your database and want to make those objects searchable in elasticsearch.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>class Session &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> jsonData<p class="paragraph"/>    <span class="java&#45;keyword">static</span> searchable = &#123;
+        dynamic: <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;<p class="paragraph"/>Session session = <span class="java&#45;keyword">new</span> Session()
+session.jsonData = (&#91;foo: 'bar'&#93; as JSON).toString()</pre></div><p class="paragraph"/>The default mapping would make the jsonData field an escaped String field and
+a search for jsonData.foo = bar would result in no result.
+With dynamic mapping enabled for this field, we enable JSON handling of this field and tell elasticsearch to map this field dynamicly.
+The result is that a search for jsonData.foo=bar would result in a search hit.
+Attention: This will only work on String fields and will result in an error if the String is no valid json
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/indexing.html">&lt;&lt; <strong>4</strong><span>Indexing</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/configuration.html">&lt;&lt; <strong>2</strong><span>Configuration</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/admin.html"><strong>6</strong><span>Admin</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/indexing.html"><strong>4</strong><span>Indexing</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>

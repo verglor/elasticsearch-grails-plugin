@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>ElasticSearch Grails Plugin 0.0.4.3</title>
+        <title>ElasticSearch Grails Plugin 0.0.4.5</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -66,7 +66,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>ElasticSearch Grails Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Noam Y. Tenne, Manuarii Stein, Stephane Maldini, Serge P. Nekoval, Marcos Carceles</p>
-                            <p><strong>Version:</strong> 0.0.4.3</p>
+                            <p><strong>Version:</strong> 0.0.4.5</p>
                             
                         </div>
 
@@ -95,6 +95,8 @@ function addJsClass(el) {
                             <div class="toc-item" style="margin-left:20px"><a href="#geoPoint"><strong>3.3.2</strong><span>GeoPoint</span></a></div>
                             
                             <div class="toc-item" style="margin-left:20px"><a href="#alias"><strong>3.3.3</strong><span>Alias</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:20px"><a href="#dynamic"><strong>3.3.4</strong><span>Dynamic</span></a></div>
                             
                             <div class="toc-item" style="margin-left:10px"><a href="#searchableComponentReference"><strong>3.4</strong><span>Searchable Component-Reference</span></a></div>
                             
@@ -174,6 +176,22 @@ reference for its syntax and behavior.<p class="paragraph"/>Note that the plugin
 <h2 id="history">1.2 History</h2>
 <h4>History</h4>
 <ul class="star">
+<li>June 15, 2015</li>
+<ul class="star">
+<li>0.0.4.5</li>
+<ul class="star">
+<li>Add the ability to define property names that are excluded by default</li>
+<li>Fix NPE</li>
+<li>Add the attachment type</li>
+</ul>
+</ul>
+<li>March 5, 2015</li>
+<ul class="star">
+<li>0.0.4.4</li>
+<ul class="star">
+<li>Upgrade to Elasticsearch-Groovy 1.4.4</li>
+</ul>
+</ul>
 <li>February 22, 2015</li>
 <ul class="star">
 <li>0.0.4.3</li>
@@ -377,6 +395,9 @@ The value should be the name of the datastore bean as it is configured in the Sp
 </ul><p class="paragraph"/>When using then plugin to construct a local node, the default Elasticsearch configuration is used by default.
 If you use a modified Elasticsearch configuration, you can use this property to specify the location of the file (as an application resource).
 <ul class="star">
+<li><code>elasticSearch.bootstrap.transportSettings.file</code></li>
+</ul><p class="paragraph"/>When choosing transport mode this configuration will be used to set up the TransportClient settings (used by some cloud providers).
+<ul class="star">
 <li><code>elasticSearch.client.transport.sniff</code></li>
 </ul><p class="paragraph"/>Only usable in with a transport client.
 Allows to sniff the rest of the cluster, and add those into its list of machines to use.
@@ -391,8 +412,8 @@ Note : future version of the plugin may change how formats are manipulated.
 <ul class="star">
 <li><code>elasticSearch.defaultExcludedProperties</code></li>
 </ul><p class="paragraph"/>List of domain class properties to automatically ignore (will not be indexed) if their name match one of those.
-This will only apply to default-mapped domain class, with the static <code>searchable</code> property set to "true", and will
-not be considered when using closure mapping.
+This will apply to both the default-mapped domain class, with the static <code>searchable</code> property set to "true", and when using closure mapping.
+To override this setting on a specific class, it can be added to the <code>only</code> property of the <code>searchable</code> closure.
 <ul class="star">
 <li><code>elasticSearch.disableAutoIndex</code></li>
 </ul><p class="paragraph"/>A boolean determining if the plugin should reflect any database save/update/delete automatically on the indices.
@@ -628,7 +649,7 @@ You can customize the mapping for each domain properties using the closure mappi
 The syntax is simple:
 <div class="code"><pre><span class="java&#45;keyword">static</span> searchable = &#123;
     propertyName option1:value, option2:value, &#8230;
-&#125;</pre></div><p class="paragraph"/><h4>Available options</h4><p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Option name</strong></th><th>Values</th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>boost</td><td>Number</td><td>A decimal boost value. With a positive value, promotes search results for hits in this property; with a negative value, demotes search results that hit this property.</td></tr><tr class="table-even"><td><a href="../guide/single.html#searchableComponent" class="guide">component</a></td><td><code>true</code>, <code>false</code></td><td>To use only on domain (or collection of domains), make the property a searchable component.</td></tr><tr class="table-odd"><td>converter</td><td>A <code>Class</code></td><td>A <code>Class</code> to use as a converter during the marshalling/unmarshalling process for that peculiar property. That class must extends the <code>PropertyEditorSupport</code> java class.</td></tr><tr class="table-even"><td>excludeFromAll</td><td><code>true</code>, <code>false</code></td><td>determines if the property is to append in the <code>"_all"</code> field. Default to <code>true</code>.</td></tr><tr class="table-odd"><td>index</td><td><code>"no"</code>, <code>"not_analyzed"</code>, <code>"analyzed"</code>.</td><td>How or if the property is made into searchable element. One of <code>"no"</code>, <code>"not_analyzed"</code> or <code>"analyzed"</code>.</td></tr><tr class="table-even"><td><a href="../guide/single.html#searchableReference" class="guide">reference</a></td><td><code>true</code>, <code>false</code></td><td>To use only on domain (or collection of domains), make the property a searchable reference.</td></tr><tr class="table-odd"><td><a href="../guide/single.html#parentChild" class="guide">parent</a></td><td><code>true</code>, <code>false</code></td><td>A boolean value to be used in conjunction with the <code>reference</code> or <code>component</code> property . Set to <code>true</code> if the referenced field should be mapped as the parent of this document. Default set to <code>false</code>.</td></tr><tr class="table-even"><td>multi_field</td><td><code>true</code>, <code>false</code></td><td>A boolean value. Maps the value of the field twice; Once with it being analyzed, and once with it being not_analyzed under untouched. Default set to <code>false</code>.</td></tr><tr class="table-odd"><td><a href="../guide/single.html#geoPoint" class="guide">geoPoint</a></td><td><code>true</code>, <code>false</code></td><td>Maps the field to a geo_point. Default: <code>false</code></td></tr><tr class="table-even"><td><a href="../guide/single.html#alias" class="guide">alias</a></td><td>String</td><td>A string value.  The field noted with this parameter will be duplicated to an alias.</td></tr></table>
+&#125;</pre></div><p class="paragraph"/><h4>Available options</h4><p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Option name</strong></th><th>Values</th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>boost</td><td>Number</td><td>A decimal boost value. With a positive value, promotes search results for hits in this property; with a negative value, demotes search results that hit this property.</td></tr><tr class="table-even"><td><a href="../guide/single.html#searchableComponent" class="guide">component</a></td><td><code>true</code>, <code>false</code></td><td>To use only on domain (or collection of domains), make the property a searchable component.</td></tr><tr class="table-odd"><td>converter</td><td>A <code>Class</code></td><td>A <code>Class</code> to use as a converter during the marshalling/unmarshalling process for that peculiar property. That class must extends the <code>PropertyEditorSupport</code> java class.</td></tr><tr class="table-even"><td>excludeFromAll</td><td><code>true</code>, <code>false</code></td><td>determines if the property is to append in the <code>"_all"</code> field. Default to <code>true</code>.</td></tr><tr class="table-odd"><td>index</td><td><code>"no"</code>, <code>"not_analyzed"</code>, <code>"analyzed"</code>.</td><td>How or if the property is made into searchable element. One of <code>"no"</code>, <code>"not_analyzed"</code> or <code>"analyzed"</code>.</td></tr><tr class="table-even"><td><a href="../guide/single.html#searchableReference" class="guide">reference</a></td><td><code>true</code>, <code>false</code></td><td>To use only on domain (or collection of domains), make the property a searchable reference.</td></tr><tr class="table-odd"><td><a href="../guide/single.html#parentChild" class="guide">parent</a></td><td><code>true</code>, <code>false</code></td><td>A boolean value to be used in conjunction with the <code>reference</code> or <code>component</code> property . Set to <code>true</code> if the referenced field should be mapped as the parent of this document. Default set to <code>false</code>.</td></tr><tr class="table-even"><td>multi_field</td><td><code>true</code>, <code>false</code></td><td>A boolean value. Maps the value of the field twice; Once with it being analyzed, and once with it being not_analyzed under untouched. Default set to <code>false</code>.</td></tr><tr class="table-odd"><td><a href="../guide/single.html#geoPoint" class="guide">geoPoint</a></td><td><code>true</code>, <code>false</code></td><td>Maps the field to a geo_point. Default: <code>false</code></td></tr><tr class="table-even"><td><a href="../guide/single.html#alias" class="guide">alias</a></td><td>String</td><td>A string value.  The field noted with this parameter will be duplicated to an alias</td></tr><tr class="table-odd"><td><a href="../guide/single.html#dynamic" class="guide">dynamic</a></td><td><code>true</code>, <code>false</code></td><td>Only available for String properties. Determines whether this field should be dynamicly mapped by elasticsearch.</td></tr></table>
 
 
 
@@ -668,6 +689,19 @@ report records by date.<p class="paragraph"/><h4>Example</h4><p class="paragraph
     &#125;
 &#125;</pre></div>
 
+
+
+<h2 id="dynamic">3.3.4 Dynamic</h2>
+Elasticsearch can map field contents as dynamic objects.
+This is especially useful if you store JSON Strings in your database and want to make those objects searchable in elasticsearch.<p class="paragraph"/><h4>Example</h4><p class="paragraph"/><div class="code"><pre>class Session &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> jsonData<p class="paragraph"/>    <span class="java&#45;keyword">static</span> searchable = &#123;
+        dynamic: <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;<p class="paragraph"/>Session session = <span class="java&#45;keyword">new</span> Session()
+session.jsonData = (&#91;foo: 'bar'&#93; as JSON).toString()</pre></div><p class="paragraph"/>The default mapping would make the jsonData field an escaped String field and
+a search for jsonData.foo = bar would result in no result.
+With dynamic mapping enabled for this field, we enable JSON handling of this field and tell elasticsearch to map this field dynamicly.
+The result is that a search for jsonData.foo=bar would result in a search hit.
+Attention: This will only work on String fields and will result in an error if the String is no valid json
 
 
 <h2 id="searchableComponentReference">3.4 Searchable Component-Reference</h2>
