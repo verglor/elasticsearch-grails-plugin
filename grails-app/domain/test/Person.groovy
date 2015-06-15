@@ -7,6 +7,7 @@ class Person {
 
     String firstName
     String lastName
+    String password
 
     List<String> nickNames
 
@@ -23,5 +24,9 @@ class Person {
 
     static searchable = {
         root false
+    }
+
+    static constraints = {
+        password nullable: true
     }
 }
