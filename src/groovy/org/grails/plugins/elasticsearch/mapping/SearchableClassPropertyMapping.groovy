@@ -60,9 +60,6 @@ class SearchableClassPropertyMapping {
         }
     }
     
-    /**
-     * 
-     */
     boolean isAttachment() {
         specialMappingAttributes.attachment != null
     }
