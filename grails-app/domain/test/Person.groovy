@@ -16,6 +16,10 @@ class Person {
 
     static transients = ['fullName']
     static hasMany = [nickNames:String]
+    
+    static mapping = {
+        autoImport(false)
+    }
 
     static searchable = {
         root false
