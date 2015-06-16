@@ -96,6 +96,8 @@ class ElasticSearchMappingFactory {
 
                     if (idTypeIsMongoObjectId(idType)) {
                         idType = treatValueAsAString(idType)
+                    } else if (idTypeIsUUID(idType)) {
+                        idType = 'string'
                     }
 
                     props.id = defaultDescriptor(idType, 'not_analyzed', true)
@@ -208,6 +210,10 @@ class ElasticSearchMappingFactory {
 
     private static boolean idTypeIsMongoObjectId(String idType) {
         idType.equals('objectId')
+    }
+
+    private static boolean idTypeIsUUID(String idType) {
+        idType.equalsIgnoreCase('uuid')
     }
 
     private static String treatValueAsAString(String idType) {
