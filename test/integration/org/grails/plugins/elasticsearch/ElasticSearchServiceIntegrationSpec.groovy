@@ -9,6 +9,8 @@ import org.codehaus.groovy.grails.commons.GrailsDomainClass
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder
 import org.elasticsearch.action.get.GetRequest
+import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.AdminClient
 import org.elasticsearch.client.ClusterAdminClient
 import org.elasticsearch.cluster.ClusterState
@@ -19,6 +21,8 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.search.aggregations.AggregationBuilders
+import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
@@ -644,6 +648,28 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         then:
         findFailures().size() == 0
         elasticSearchService.countHits('Ship\\-') == 1858
+    }
+
+    void 'Use an aggregation'() {
+        given:
+        def jim = new Product(name: 'jim', price: 1.99).save(flush: true, failOnError: true)
+        def xlJim = new Product(name: 'xl-jim', price: 5.99).save(flush: true, failOnError: true)
+        elasticSearchService.index(jim, xlJim)
+        elasticSearchAdminService.refresh()
+
+        def query = QueryBuilders.matchQuery('name', 'jim')
+        SearchRequest request = new SearchRequest()
+        request.searchType SearchType.DFS_QUERY_THEN_FETCH
+
+        SearchSourceBuilder source = new SearchSourceBuilder()
+        source.aggregation(AggregationBuilders.max('max_price').field('price'))
+
+        when:
+        def search = elasticSearchService.search(request.source(source.query(query)), [indices: Product, types: Product])
+
+        then:
+        search.total == 2
+        search.aggregations.'max_price'.max == 5.99f
     }
 
     private def findFailures() {
