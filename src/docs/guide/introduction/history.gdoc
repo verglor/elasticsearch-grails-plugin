@@ -1,5 +1,9 @@
 h4. History
 
+* June 30, 2015
+** 0.0.4.5
+*** Upgrade to ElasticSearch 1.6.0
+*** Support the return of aggregation results
 * June 15, 2015
 ** 0.0.4.5
 *** Add the ability to define property names that are excluded by default
