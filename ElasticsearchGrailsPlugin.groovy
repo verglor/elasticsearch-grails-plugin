@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import grails.plugins.Plugin
 import grails.util.Environment
-import org.codehaus.groovy.grails.commons.GrailsApplication
+import grails.core.GrailsApplication
 import org.grails.plugins.elasticsearch.AuditEventListener
 import org.grails.plugins.elasticsearch.ClientNodeFactoryBean
 import org.grails.plugins.elasticsearch.ElasticSearchBootStrapHelper
@@ -32,12 +34,12 @@ import org.grails.plugins.elasticsearch.util.DomainDynamicMethodsUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class ElasticsearchGrailsPlugin {
+class ElasticsearchGrailsPlugin extends Plugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
-    def version = '0.0.4.x-SNAPSHOT'
-    def grailsVersion = '2.2.0 > *'
+    def version = '1.0.0-SNAPSHOT'
+    def grailsVersion = '3.0.7 > *'
 
     def loadAfter = ['services', 'mongodb']
 
@@ -49,7 +51,7 @@ class ElasticsearchGrailsPlugin {
             'grails-app/utils/test/**',
             'test/**',
             'src/docs/**',
-            'src/groovy/test/**',
+            'src/main/groovy/test/**',
     ]
 
     def license = 'APACHE'
@@ -58,7 +60,8 @@ class ElasticsearchGrailsPlugin {
 
     def developers = [
             [name: 'Noam Y. Tenne', email: 'noam@10ne.org'],
-            [name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com']
+            [name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com'],
+            [name: 'Puneet Behl', email: 'puneet.behl007@gmail.com']
     ]
 
     def issueManagement = [system: 'github', url: 'https://github.com/noamt/elasticsearch-grails-plugin/issues']
@@ -71,79 +74,83 @@ class ElasticsearchGrailsPlugin {
     def description = """The revived Elasticsearch plugin for Grails."""
     def documentation = 'http://noamt.github.io/elasticsearch-grails-plugin'
 
-    def doWithSpring = {
-        def esConfig = getConfiguration(application)
-        elasticSearchContextHolder(ElasticSearchContextHolder) {
-            config = esConfig
-        }
-        elasticSearchHelper(ElasticSearchHelper) {
-            elasticSearchClient = ref('elasticSearchClient')
-        }
-        elasticSearchClient(ClientNodeFactoryBean) { bean ->
-            elasticSearchContextHolder = ref('elasticSearchContextHolder')
-            bean.destroyMethod = 'shutdown'
-        }
-        indexRequestQueue(IndexRequestQueue) {
-            elasticSearchContextHolder = ref('elasticSearchContextHolder')
-            elasticSearchClient = ref('elasticSearchClient')
-            jsonDomainFactory = ref('jsonDomainFactory')
-        }
-        mappingMigrationManager(MappingMigrationManager) {
-            elasticSearchContextHolder = ref('elasticSearchContextHolder')
-            config = esConfig
-            es = ref('elasticSearchAdminService')
-        }
-        searchableClassMappingConfigurator(SearchableClassMappingConfigurator) { bean ->
-            elasticSearchContext = ref('elasticSearchContextHolder')
-            grailsApplication = ref('grailsApplication')
-            es = ref('elasticSearchAdminService')
-            mmm = ref('mappingMigrationManager')
-            config = esConfig
+    def profiles = ['web']
 
-            bean.initMethod = 'configureAndInstallMappings'
-        }
-        domainInstancesRebuilder(DomainClassUnmarshaller) {
-            elasticSearchContextHolder = ref('elasticSearchContextHolder')
-            elasticSearchClient = ref('elasticSearchClient')
-            grailsApplication = ref('grailsApplication')
-        }
-        customEditorRegistrar(CustomEditorRegistrar) {
-            grailsApplication = ref('grailsApplication')
-        }
-
-        if (manager?.hasGrailsPlugin('hibernate') || manager?.hasGrailsPlugin('hibernate4')) {
-            hibernateProxyUnWrapper(HibernateProxyUnWrapper)
-        }
-
-        domainClassUnWrapperChain(DomainClassUnWrapperChain)
-
-        jsonDomainFactory(JSONDomainFactory) {
-            elasticSearchContextHolder = ref('elasticSearchContextHolder')
-            grailsApplication = ref('grailsApplication')
-            domainClassUnWrapperChain = ref('domainClassUnWrapperChain')
-        }
-
-        elasticSearchBootStrapHelper(ElasticSearchBootStrapHelper) {
-            grailsApplication = ref('grailsApplication')
-            elasticSearchService = ref('elasticSearchService')
-            elasticSearchContextHolder = ref('elasticSearchContextHolder')
-            elasticSearchAdminService = ref('elasticSearchAdminService')
-        }
-
-        if (!esConfig.disableAutoIndex) {
-            if (!esConfig.datastoreImpl) {
-                throw new Exception('No datastore implementation specified')
+    Closure doWithSpring() {
+        { ->
+            def esConfig = getConfiguration(grailsApplication)
+            elasticSearchContextHolder(ElasticSearchContextHolder) {
+                config = esConfig
             }
-            auditListener(AuditEventListener, ref(esConfig.datastoreImpl)) {
+            elasticSearchHelper(ElasticSearchHelper) {
+                elasticSearchClient = ref('elasticSearchClient')
+            }
+            elasticSearchClient(ClientNodeFactoryBean) { bean ->
                 elasticSearchContextHolder = ref('elasticSearchContextHolder')
-                indexRequestQueue = ref('indexRequestQueue')
+                bean.destroyMethod = 'shutdown'
+            }
+            indexRequestQueue(IndexRequestQueue) {
+                elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                elasticSearchClient = ref('elasticSearchClient')
+                jsonDomainFactory = ref('jsonDomainFactory')
+            }
+            mappingMigrationManager(MappingMigrationManager) {
+                elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                config = esConfig
+                es = ref('elasticSearchAdminService')
+            }
+            searchableClassMappingConfigurator(SearchableClassMappingConfigurator) { bean ->
+                elasticSearchContext = ref('elasticSearchContextHolder')
+                grailsApplication = ref('grailsApplication')
+                es = ref('elasticSearchAdminService')
+                mmm = ref('mappingMigrationManager')
+                config = esConfig
+
+                bean.initMethod = 'configureAndInstallMappings'
+            }
+            domainInstancesRebuilder(DomainClassUnmarshaller) {
+                elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                elasticSearchClient = ref('elasticSearchClient')
+                grailsApplication = ref('grailsApplication')
+            }
+            customEditorRegistrar(CustomEditorRegistrar) {
+                grailsApplication = ref('grailsApplication')
+            }
+
+            if (manager?.hasGrailsPlugin('hibernate') || manager?.hasGrailsPlugin('hibernate4')) {
+                hibernateProxyUnWrapper(HibernateProxyUnWrapper)
+            }
+
+            domainClassUnWrapperChain(DomainClassUnWrapperChain)
+
+            jsonDomainFactory(JSONDomainFactory) {
+                elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                grailsApplication = ref('grailsApplication')
+                domainClassUnWrapperChain = ref('domainClassUnWrapperChain')
+            }
+
+            elasticSearchBootStrapHelper(ElasticSearchBootStrapHelper) {
+                grailsApplication = ref('grailsApplication')
+                elasticSearchService = ref('elasticSearchService')
+                elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                elasticSearchAdminService = ref('elasticSearchAdminService')
+            }
+
+            if (!esConfig.disableAutoIndex) {
+                if (!esConfig.datastoreImpl) {
+                    throw new Exception('No datastore implementation specified')
+                }
+                auditListener(AuditEventListener, ref(esConfig.datastoreImpl)) {
+                    elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                    indexRequestQueue = ref('indexRequestQueue')
+                }
             }
         }
     }
 
-    def doWithDynamicMethods = { ctx ->
+    void doWithDynamicMethods() {
         // Define the custom ElasticSearch mapping for searchable domain classes
-        DomainDynamicMethodsUtils.injectDynamicMethods(application, ctx)
+        DomainDynamicMethodsUtils.injectDynamicMethods(grailsApplication, applicationContext)
     }
     // Get a configuration instance
     private getConfiguration(GrailsApplication application) {
