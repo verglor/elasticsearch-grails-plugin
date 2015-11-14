@@ -12,7 +12,6 @@ spring:
     groovy:
         template:
             check-template-location: false
-
 ---
 grails:
     mime:
@@ -65,6 +64,61 @@ grails:
                 scriptlets: html
                 taglib: none
                 staticparts: none
+elasticSearch:
+    date:
+        formats: ['yyyy-MM-dd''T''HH:mm:ss.SSS''Z''']
+    client.hosts:
+        - {host: localhost, port: 9300}
+    defaultExcludedProperties: [password]
+    disableAutoIndex: false
+    bulkIndexOnStartup: false
+    maxBulkRequest: 500
+    unmarshallComponents: true
+    searchableProperty:
+        name: searchable
+    migration:
+        strategy: alias
+        aliasReplacesIndex: true
+        disableAliasChange: false
+    index:
+        numberOfReplicas: 0
+        compound_format: true
+    includeTransients: false
+    datastoreImpl: hibernateDatastore
+
+environments:
+    development:
+        elasticSearch:
+            client:
+                mode: local
+                transport.sniff: true
+            bulkIndexOnStartup: true
+    test:
+        elasticSearch:
+            client:
+                mode: local
+                transport.sniff: true
+                hosts:
+                    - {host: localhost, port: 9300}
+            index:
+                store.type: memory
+                analysis:
+                    filter:
+                        replace_synonyms:
+                            type: synonym
+                            synonyms: [abc => xyz]
+                    analyzer:
+                        test_analyzer:
+                            tokenizer: standard
+                            filter: [lowercase]
+                        repl_analyzer:
+                            tokenizer: standard
+                            filter: [lowercase, replace_synonyms]
+            datastoreImpl: hibernateDatastore
+    production:
+        elasticSearch:
+            client:
+                mode: node
 ---
 hibernate:
     cache:
