@@ -50,6 +50,10 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
+jar {
+    exclude "test/**/**"
+}
+
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
     provided "org.springframework.boot:spring-boot-starter-actuator"
@@ -63,6 +67,7 @@ dependencies {
     compile "org.grails.plugins:hibernate"
     compile "org.grails.plugins:cache"
     compile "org.hibernate:hibernate-ehcache"
+    compile 'org.springframework:springloaded:1.2.1.RELEASE'
 
     testRuntime('org.elasticsearch:elasticsearch-groovy:1.6.0') {
         exclude module: 'groovy-all'
@@ -80,4 +85,12 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
+}
+
+tasks.check.doLast {
+    tasks = ['cleanDataDir']
+}
+
+task cleanDataDir(type: Delete) {
+   delete fileTree(dir: 'data')
 }
