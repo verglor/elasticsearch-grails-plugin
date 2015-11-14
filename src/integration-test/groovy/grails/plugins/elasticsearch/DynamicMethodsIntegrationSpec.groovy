@@ -1,37 +1,41 @@
 package grails.plugins.elasticsearch
 
 import grails.test.mixin.integration.Integration
-import spock.lang.Shared
-import spock.lang.Specification
-import test.Photo
-
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Shared
+import spock.lang.Specification
+import test.Photo
 
 @Integration
 class DynamicMethodsIntegrationSpec extends Specification {
 
-    def elasticSearchAdminService
-    def elasticSearchService
+    @Autowired ElasticSearchAdminService elasticSearchAdminService
+    @Autowired ElasticSearchService elasticSearchService
     @Shared captains = []
 
-    def setupSpec() {
-        captains << new Photo(name:"Captain Kirk",    url:"http://www.nicenicejpg.com/100").save(failOnError: true)
-        captains << new Photo(name:"Captain Picard",  url:"http://www.nicenicejpg.com/200").save(failOnError: true)
-        captains << new Photo(name:"Captain Sisko",   url:"http://www.nicenicejpg.com/300").save(failOnError: true)
-        captains << new Photo(name:"Captain Janeway", url:"http://www.nicenicejpg.com/400").save(failOnError: true)
-        captains << new Photo(name:"Captain Archer",  url:"http://www.nicenicejpg.com/500").save(failOnError: true)
-    }
-
-    def cleanupSpec() {
-        captains.each { Photo captain ->
-            captain.delete()
+    void setupSpec() {
+        Photo.withNewSession {
+            captains << new Photo(name: "Captain Kirk", url: "http://www.nicenicejpg.com/100").save(failOnError: true)
+            captains << new Photo(name: "Captain Picard", url: "http://www.nicenicejpg.com/200").save(failOnError: true)
+            captains << new Photo(name: "Captain Sisko", url: "http://www.nicenicejpg.com/300").save(failOnError: true)
+            captains << new Photo(name: "Captain Janeway", url: "http://www.nicenicejpg.com/400").save(failOnError: true)
+            captains << new Photo(name: "Captain Archer", url: "http://www.nicenicejpg.com/500").save(failOnError: true)
         }
     }
 
-    def "can search using Dynamic Methods"() {
+    void cleanupSpec() {
+        Photo.withNewSession {
+            captains.each { Photo captain ->
+                captain.delete()
+            }
+        }
+    }
+
+    void "can search using Dynamic Methods"() {
         given:
         elasticSearchAdminService.refresh()
         expect:
@@ -47,7 +51,7 @@ class DynamicMethodsIntegrationSpec extends Specification {
         results.searchResults.every { it.name =~ /Captain/ }
     }
 
-    def "can search and filter using Dynamic Methods"() {
+    void "can search and filter using Dynamic Methods"() {
         given:
         elasticSearchAdminService.refresh()
         expect:
@@ -65,7 +69,7 @@ class DynamicMethodsIntegrationSpec extends Specification {
         results.searchResults[0].name == "Captain Kirk"
     }
 
-    def "can search using a QueryBuilder and Dynamic Methods"() {
+    void "can search using a QueryBuilder and Dynamic Methods"() {
         given:
         elasticSearchAdminService.refresh()
         expect:
@@ -80,7 +84,7 @@ class DynamicMethodsIntegrationSpec extends Specification {
         results.searchResults[0].name == "Captain Kirk"
     }
 
-    def "can search using a QueryBuilder, a filter and Dynamic Methods"() {
+    void "can search using a QueryBuilder, a filter and Dynamic Methods"() {
         given:
         elasticSearchAdminService.refresh()
         expect:
@@ -97,8 +101,8 @@ class DynamicMethodsIntegrationSpec extends Specification {
         results.total == 1
         results.searchResults[0].name == "Captain Kirk"
     }
-	
-	def "can search using a QueryBuilder, a FilterBuilder and Dynamic Methods"() {
+
+	void "can search using a QueryBuilder, a FilterBuilder and Dynamic Methods"() {
 		given:
 		elasticSearchAdminService.refresh()
 		expect:
@@ -113,8 +117,8 @@ class DynamicMethodsIntegrationSpec extends Specification {
 		results.total == 1
 		results.searchResults[0].name == "Captain Kirk"
 	}
-	
-	def "can search and filter using Dynamic Methods and a FilterBuilder"() {
+
+	void "can search and filter using Dynamic Methods and a FilterBuilder"() {
 		given:
 		elasticSearchAdminService.refresh()
 		expect:

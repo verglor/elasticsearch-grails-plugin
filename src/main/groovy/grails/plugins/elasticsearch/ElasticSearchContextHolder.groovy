@@ -2,12 +2,13 @@ package grails.plugins.elasticsearch
 
 import grails.core.GrailsDomainClass
 import grails.plugins.elasticsearch.mapping.SearchableClassMapping
+import org.grails.config.NavigableMap
 
 class ElasticSearchContextHolder {
     /**
      * The configuration of the ElasticSearch plugin
      */
-    ConfigObject config
+    NavigableMap config
 
     /**
      * A map containing the mapping to ElasticSearch

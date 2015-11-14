@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import grails.plugins.Plugin
-import grails.util.Environment
-import grails.core.GrailsApplication
-import org.grails.plugins.elasticsearch.AuditEventListener
-import org.grails.plugins.elasticsearch.ClientNodeFactoryBean
-import org.grails.plugins.elasticsearch.ElasticSearchBootStrapHelper
-import org.grails.plugins.elasticsearch.ElasticSearchContextHolder
-import org.grails.plugins.elasticsearch.ElasticSearchHelper
-import org.grails.plugins.elasticsearch.conversion.CustomEditorRegistrar
-import org.grails.plugins.elasticsearch.conversion.JSONDomainFactory
-import org.grails.plugins.elasticsearch.conversion.unmarshall.DomainClassUnmarshaller
-import org.grails.plugins.elasticsearch.index.IndexRequestQueue
-import org.grails.plugins.elasticsearch.mapping.MappingMigrationManager
-import org.grails.plugins.elasticsearch.mapping.SearchableClassMappingConfigurator
-import org.grails.plugins.elasticsearch.unwrap.DomainClassUnWrapperChain
-import org.grails.plugins.elasticsearch.unwrap.HibernateProxyUnWrapper
-import org.grails.plugins.elasticsearch.util.DomainDynamicMethodsUtils
+import grails.plugins.elasticsearch.*
+import grails.plugins.elasticsearch.conversion.CustomEditorRegistrar
+import grails.plugins.elasticsearch.conversion.JSONDomainFactory
+import grails.plugins.elasticsearch.conversion.unmarshall.DomainClassUnmarshaller
+import grails.plugins.elasticsearch.index.IndexRequestQueue
+import grails.plugins.elasticsearch.mapping.MappingMigrationManager
+import grails.plugins.elasticsearch.mapping.SearchableClassMappingConfigurator
+import grails.plugins.elasticsearch.unwrap.DomainClassUnWrapperChain
+import grails.plugins.elasticsearch.unwrap.HibernateProxyUnWrapper
+import grails.plugins.elasticsearch.util.DomainDynamicMethodsUtils
+import org.grails.config.NavigableMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -48,10 +42,10 @@ class ElasticsearchGrailsPlugin extends Plugin {
             'grails-app/services/test/**',
             'grails-app/views/elasticSearch/index.gsp',
             'grails-app/domain/test/**',
-            'grails-app/utils/test/**',
-            'test/**',
+            '**/test/**',
             'src/docs/**',
-            'src/main/groovy/test/**',
+            'src/test/**',
+            'src/integration-test/**'
     ]
 
     def license = 'APACHE'
@@ -78,7 +72,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     Closure doWithSpring() {
         { ->
-            def esConfig = getConfiguration(grailsApplication)
+            NavigableMap esConfig = config.elasticSearch
             elasticSearchContextHolder(ElasticSearchContextHolder) {
                 config = esConfig
             }
@@ -101,7 +95,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
             }
             searchableClassMappingConfigurator(SearchableClassMappingConfigurator) { bean ->
                 elasticSearchContext = ref('elasticSearchContextHolder')
-                grailsApplication = ref('grailsApplication')
+                grailsApplication = grailsApplication
                 es = ref('elasticSearchAdminService')
                 mmm = ref('mappingMigrationManager')
                 config = esConfig
@@ -111,10 +105,10 @@ class ElasticsearchGrailsPlugin extends Plugin {
             domainInstancesRebuilder(DomainClassUnmarshaller) {
                 elasticSearchContextHolder = ref('elasticSearchContextHolder')
                 elasticSearchClient = ref('elasticSearchClient')
-                grailsApplication = ref('grailsApplication')
+                grailsApplication = grailsApplication
             }
             customEditorRegistrar(CustomEditorRegistrar) {
-                grailsApplication = ref('grailsApplication')
+                grailsApplication = grailsApplication
             }
 
             if (manager?.hasGrailsPlugin('hibernate') || manager?.hasGrailsPlugin('hibernate4')) {
@@ -125,12 +119,12 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
             jsonDomainFactory(JSONDomainFactory) {
                 elasticSearchContextHolder = ref('elasticSearchContextHolder')
-                grailsApplication = ref('grailsApplication')
+                grailsApplication = grailsApplication
                 domainClassUnWrapperChain = ref('domainClassUnWrapperChain')
             }
 
             elasticSearchBootStrapHelper(ElasticSearchBootStrapHelper) {
-                grailsApplication = ref('grailsApplication')
+                grailsApplication = grailsApplication
                 elasticSearchService = ref('elasticSearchService')
                 elasticSearchContextHolder = ref('elasticSearchContextHolder')
                 elasticSearchAdminService = ref('elasticSearchAdminService')
@@ -151,50 +145,5 @@ class ElasticsearchGrailsPlugin extends Plugin {
     void doWithDynamicMethods() {
         // Define the custom ElasticSearch mapping for searchable domain classes
         DomainDynamicMethodsUtils.injectDynamicMethods(grailsApplication, applicationContext)
-    }
-    // Get a configuration instance
-    private getConfiguration(GrailsApplication application) {
-        def config = application.config
-        // try to load it from class file and merge into GrailsApplication#config
-        // Config.groovy properties override the default one
-        try {
-            Class dataSourceClass = application.getClassLoader().loadClass('DefaultElasticSearch')
-            ConfigSlurper configSlurper = new ConfigSlurper(Environment.current.name)
-            Map binding = [:]
-            binding.userHome = System.properties['user.home']
-            binding.grailsEnv = application.metadata['grails.env']
-            binding.appName = application.metadata['app.name']
-            binding.appVersion = application.metadata['app.version']
-            configSlurper.binding = binding
-
-            ConfigObject defaultConfig = configSlurper.parse(dataSourceClass)
-
-            ConfigObject newElasticSearchConfig = new ConfigObject()
-            newElasticSearchConfig.putAll(defaultConfig.elasticSearch.merge(config.elasticSearch))
-
-            config.elasticSearch = newElasticSearchConfig
-            application.configChanged()
-            return config.elasticSearch
-        } catch (ClassNotFoundException e) {
-            LOG.debug("ElasticSearch default configuration file not found: ${e.message}")
-        }
-        // Here the default configuration file was not found, so we
-        // try to get it from GrailsApplication#config and add some mandatory default values
-        if (config.containsKey('elasticSearch')) {
-            if (!config.elasticSearch.date?.formats) {
-                config.elasticSearch.date.formats = ['yyyy-MM-dd\'T\'HH:mm:ss\'Z\'']
-            }
-            if (config.elasticSearch.unmarshallComponents == [:]) {
-                config.elasticSearch.unmarshallComponents = true
-            }
-            application.configChanged()
-            return config.elasticSearch
-        }
-
-        // No config found, add some default and obligatory properties
-        config.elasticSearch.date.formats = ['yyyy-MM-dd\'T\'HH:mm:ss\'Z\'']
-        config.elasticSearch.unmarshallComponents = true
-        application.configChanged()
-        return config
     }
 }

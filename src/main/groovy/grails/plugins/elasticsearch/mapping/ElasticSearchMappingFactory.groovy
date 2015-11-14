@@ -15,13 +15,11 @@
  */
 package grails.plugins.elasticsearch.mapping
 
-import grails.util.GrailsNameUtils
-import grails.util.Holders
-import org.apache.commons.lang.StringUtils
-import grails.util.GrailsClassUtils
 import grails.core.GrailsDomainClass
 import grails.core.GrailsDomainClassProperty
 import grails.plugins.GrailsPluginManager
+import grails.util.GrailsNameUtils
+import grails.util.Holders
 import org.springframework.util.ClassUtils
 
 /**

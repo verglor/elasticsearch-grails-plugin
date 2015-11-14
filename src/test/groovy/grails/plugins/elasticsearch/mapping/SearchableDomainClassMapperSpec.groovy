@@ -1,6 +1,8 @@
 package grails.plugins.elasticsearch.mapping
 
+import test.File
 import grails.test.mixin.Mock
+import org.grails.config.NavigableMap
 import org.grails.core.DefaultGrailsDomainClass
 import grails.core.GrailsApplication
 import spock.lang.Specification
@@ -11,8 +13,8 @@ import test.Product
 class SearchableDomainClassMapperSpec extends Specification {
 
     void 'a domain class with mapping geoPoint: true is mapped as a geo_point'() {
-        def config = [:] as ConfigObject
-        def grailsApplication = [:] as GrailsApplication
+        NavigableMap config = [:] as NavigableMap
+        GrailsApplication grailsApplication = [:] as GrailsApplication
 
         given: 'a mapper for Building'
 
@@ -30,12 +32,12 @@ class SearchableDomainClassMapperSpec extends Specification {
     }
     
     void 'a domain class with mapping attachment: true is mapped as attachment'() {
-        def config = [:] as ConfigObject
-        def grailsApplication = [:] as GrailsApplication
+        NavigableMap config = [:] as NavigableMap
+        GrailsApplication grailsApplication = [:] as GrailsApplication
 
         given: 'a mapper for File'
 
-        def clazz = new DefaultGrailsDomainClass(test.File)
+        def clazz = new DefaultGrailsDomainClass(File)
         SearchableDomainClassMapper mapper = new SearchableDomainClassMapper(grailsApplication, clazz, config)
 
         when: 'the mapping is built'
@@ -49,8 +51,8 @@ class SearchableDomainClassMapperSpec extends Specification {
     }
 
     void 'the correct mapping is passed to the ES server'() {
-        def config = [:] as ConfigObject
-        def grailsApplication = [:] as GrailsApplication
+        NavigableMap config = new NavigableMap()
+        GrailsApplication grailsApplication = [:] as GrailsApplication
 
         given: 'a mapper for Building'
 
@@ -71,8 +73,8 @@ class SearchableDomainClassMapperSpec extends Specification {
     }
 
     void 'a mapping can be built from a domain class'() {
-        def config = [:] as ConfigObject
-        def grailsApplication = [:] as GrailsApplication
+        NavigableMap config = [:] as NavigableMap
+        GrailsApplication grailsApplication = [:] as GrailsApplication
 
         given: 'a mapper for a domain class'
         SearchableDomainClassMapper mapper = new SearchableDomainClassMapper(grailsApplication, new DefaultGrailsDomainClass(Product), config)
@@ -82,8 +84,8 @@ class SearchableDomainClassMapperSpec extends Specification {
     }
 
     void 'a mapping is aliased'() {
-        def config = [:] as ConfigObject
-        def grailsApplication = [:] as GrailsApplication
+        NavigableMap config = [:] as NavigableMap
+        GrailsApplication grailsApplication = [:] as GrailsApplication
 
         given: 'a mapper for Building'
 
@@ -101,8 +103,8 @@ class SearchableDomainClassMapperSpec extends Specification {
     }
 
     void 'can get the mapped alias'() {
-        def config = [:] as ConfigObject
-        def grailsApplication = [:] as GrailsApplication
+        NavigableMap config = [:] as NavigableMap
+        GrailsApplication grailsApplication = [:] as GrailsApplication
 
         given: 'a mapper for Building'
 

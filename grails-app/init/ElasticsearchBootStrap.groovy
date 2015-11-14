@@ -1,6 +1,10 @@
+
+
+import grails.plugins.elasticsearch.ElasticSearchBootStrapHelper
+
 class ElasticsearchBootStrap {
 
-    def elasticSearchBootStrapHelper
+    ElasticSearchBootStrapHelper elasticSearchBootStrapHelper
 
     def init = { servletContext ->
         elasticSearchBootStrapHelper?.bulkIndexOnStartup()

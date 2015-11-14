@@ -199,6 +199,7 @@ class ElasticSearchAdminService {
      */
     void createIndex(String index, Map settings=null) {
         LOG.debug "Creating index ${index} ..."
+
         elasticSearchHelper.withElasticSearch { Client client ->
             CreateIndexRequestBuilder builder = client.admin().indices().prepareCreate(index)
             if (settings) {

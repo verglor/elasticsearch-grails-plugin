@@ -16,6 +16,7 @@
 
 package grails.plugins.elasticsearch.mapping
 
+import org.grails.config.NavigableMap
 import org.grails.core.artefact.DomainClassArtefactHandler
 import grails.core.GrailsApplication
 import grails.core.GrailsClass
@@ -41,7 +42,7 @@ class SearchableClassMappingConfigurator {
     private GrailsApplication grailsApplication
     private ElasticSearchAdminService es
     private MappingMigrationManager mmm
-    private ConfigObject config
+    private NavigableMap config
 
     /**
      * Init method.
@@ -86,8 +87,7 @@ class SearchableClassMappingConfigurator {
      * @param mappings searchable class mappings to be install.
      */
     public void installMappings(Collection<SearchableClassMapping> mappings){
-
-        Map esConfig = grailsApplication.config.getProperty("elasticSearch")
+        Map esConfig = grailsApplication.config.elasticSearch
         Map<String, Object> indexSettings = buildIndexSettings(esConfig)
 
         LOG.debug("Index settings are " + indexSettings)
@@ -162,7 +162,7 @@ class SearchableClassMappingConfigurator {
         }
     }
 
-    private Map<String, Object> buildIndexSettings(def esConfig) {
+    private Map<String, Object> buildIndexSettings(Map esConfig) {
         Map<String, Object> indexSettings = new HashMap<String, Object>()
         indexSettings.put("number_of_replicas", numberOfReplicas())
         // Look for default index settings.
