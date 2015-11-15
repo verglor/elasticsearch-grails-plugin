@@ -22,7 +22,6 @@ import grails.core.GrailsDomainClassProperty
 import grails.util.GrailsClassUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.grails.config.NavigableMap
 import org.grails.core.DefaultGrailsDomainClass
 import org.grails.core.artefact.DomainClassArtefactHandler
 import org.springframework.util.Assert
@@ -43,7 +42,7 @@ class SearchableDomainClassMapper extends GroovyObjectSupport {
     private only
     private except
 
-    private Map esConfig
+    private ConfigObject esConfig
 
     private Log log = LogFactory.getLog(SearchableDomainClassMapper)
 
@@ -54,7 +53,7 @@ class SearchableDomainClassMapper extends GroovyObjectSupport {
      * @param domainClass Grails domain class to be configured
      * @param esConfig ElasticSearch configuration
      */
-    SearchableDomainClassMapper(GrailsApplication grailsApplication, GrailsDomainClass domainClass, NavigableMap esConfig) {
+    SearchableDomainClassMapper(GrailsApplication grailsApplication, GrailsDomainClass domainClass, ConfigObject esConfig) {
         this.esConfig = esConfig
         this.grailsDomainClass = domainClass
         this.grailsApplication = grailsApplication

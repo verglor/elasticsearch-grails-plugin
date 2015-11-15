@@ -16,7 +16,6 @@
 
 package grails.plugins.elasticsearch.mapping
 
-import org.grails.config.NavigableMap
 import org.grails.core.artefact.DomainClassArtefactHandler
 import grails.core.GrailsApplication
 import grails.core.GrailsClass
@@ -42,7 +41,7 @@ class SearchableClassMappingConfigurator {
     private GrailsApplication grailsApplication
     private ElasticSearchAdminService es
     private MappingMigrationManager mmm
-    private NavigableMap config
+    private ConfigObject config
 
     /**
      * Init method.

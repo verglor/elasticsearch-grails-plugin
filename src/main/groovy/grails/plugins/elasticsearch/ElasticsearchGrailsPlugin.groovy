@@ -24,7 +24,6 @@ import grails.plugins.elasticsearch.mapping.SearchableClassMappingConfigurator
 import grails.plugins.elasticsearch.unwrap.DomainClassUnWrapperChain
 import grails.plugins.elasticsearch.unwrap.HibernateProxyUnWrapper
 import grails.plugins.elasticsearch.util.DomainDynamicMethodsUtils
-import org.grails.config.NavigableMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -72,7 +71,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     Closure doWithSpring() {
         { ->
-            NavigableMap esConfig = config.elasticSearch
+            ConfigObject esConfig = grailsApplication.config.elasticSearch as ConfigObject
             elasticSearchContextHolder(ElasticSearchContextHolder) {
                 config = esConfig
             }

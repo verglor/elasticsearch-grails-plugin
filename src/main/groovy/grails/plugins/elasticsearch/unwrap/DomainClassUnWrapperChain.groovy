@@ -17,7 +17,6 @@ class DomainClassUnWrapperChain {
                 return unWrapped
             }
         }
-
         object
     }
 }

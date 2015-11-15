@@ -3,7 +3,6 @@ package grails.plugins.elasticsearch.mapping
 import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import grails.plugins.elasticsearch.exception.MappingException
-import org.grails.config.NavigableMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -18,7 +17,7 @@ class MappingMigrationManager {
 
     private ElasticSearchContextHolder elasticSearchContextHolder
     private ElasticSearchAdminService es
-    private NavigableMap config
+    private ConfigObject config
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
