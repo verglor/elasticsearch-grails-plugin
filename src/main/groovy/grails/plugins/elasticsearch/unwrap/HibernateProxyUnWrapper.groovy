@@ -7,6 +7,6 @@ class HibernateProxyUnWrapper implements DomainClassUnWrapper {
 
     @Override
     def unWrap(Object object) {
-        return org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsHibernateUtil.unwrapIfProxy(object)
+        return org.grails.orm.hibernate.cfg.GrailsHibernateUtil.unwrapIfProxy(object)
     }
 }
