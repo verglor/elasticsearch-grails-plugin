@@ -52,10 +52,12 @@ class SearchableClassMappingConfigurator {
     }
 
     public Collection<SearchableClassMapping> mappings() {
+        // TODO: Not able to reflect changes in config if we use instance field config in SearchableDomainClassMapper constructor
+        ConfigObject esConfig = grailsApplication.config.elasticSearch
         List<SearchableClassMapping> mappings = []
         for (GrailsClass clazz : grailsApplication.getArtefacts(DomainClassArtefactHandler.TYPE)) {
             GrailsDomainClass domainClass = (GrailsDomainClass) clazz
-            SearchableDomainClassMapper mapper = new SearchableDomainClassMapper(grailsApplication, domainClass, config)
+            SearchableDomainClassMapper mapper = new SearchableDomainClassMapper(grailsApplication, domainClass, esConfig)
             SearchableClassMapping searchableClassMapping = mapper.buildClassMapping()
             if (searchableClassMapping != null) {
                 elasticSearchContext.addMappingContext(searchableClassMapping)

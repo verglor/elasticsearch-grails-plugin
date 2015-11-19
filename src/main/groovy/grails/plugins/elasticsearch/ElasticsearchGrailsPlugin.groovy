@@ -71,7 +71,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     Closure doWithSpring() {
         { ->
-            ConfigObject esConfig = grailsApplication.config.elasticSearch as ConfigObject
+            ConfigObject esConfig = config.elasticSearch as ConfigObject
             elasticSearchContextHolder(ElasticSearchContextHolder) {
                 config = esConfig
             }
@@ -97,7 +97,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
                 grailsApplication = grailsApplication
                 es = ref('elasticSearchAdminService')
                 mmm = ref('mappingMigrationManager')
-                config = esConfig
+                config = config.elasticSearch
 
                 bean.initMethod = 'configureAndInstallMappings'
             }
