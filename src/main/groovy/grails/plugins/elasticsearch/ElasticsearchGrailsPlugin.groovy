@@ -89,6 +89,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
             }
             mappingMigrationManager(MappingMigrationManager) {
                 elasticSearchContextHolder = ref('elasticSearchContextHolder')
+                grailsApplication = grailsApplication
                 config = esConfig
                 es = ref('elasticSearchAdminService')
             }

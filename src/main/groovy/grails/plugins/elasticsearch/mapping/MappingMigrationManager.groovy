@@ -1,5 +1,6 @@
 package grails.plugins.elasticsearch.mapping
 
+import grails.core.GrailsApplication
 import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import grails.plugins.elasticsearch.exception.MappingException
@@ -17,12 +18,13 @@ class MappingMigrationManager {
 
     private ElasticSearchContextHolder elasticSearchContextHolder
     private ElasticSearchAdminService es
+    private GrailsApplication grailsApplication
     private ConfigObject config
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
     private Map getEsConfig() {
-        config
+        grailsApplication.config.elasticSearch as Map
     }
 
     def applyMigrations(MappingMigrationStrategy migrationStrategy, Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
@@ -59,8 +61,11 @@ class MappingMigrationManager {
             SearchableClassMapping scm = it.scm
             if (!migratedIndices.contains(scm.indexName)) {
                 migratedIndices << scm.indexName
+                println "index: $scm.indexName"
                 LOG.debug("Creating new version and alias for conflicting mapping ${scm.indexName}/${scm.elasticTypeName}")
                 boolean conflictOnAlias = es.aliasExists(scm.indexName)
+                println "Conflict: $conflictOnAlias"
+                println "Config: $esConfig.migration.aliasReplacesIndex"
                 if(conflictOnAlias || esConfig.migration.aliasReplacesIndex ) {
                     int nextVersion = es.getNextVersion(scm.indexName)
                     if (!conflictOnAlias) {
@@ -100,6 +105,10 @@ class MappingMigrationManager {
 
     void setElasticSearchContextHolder(ElasticSearchContextHolder elasticSearchContextHolder) {
         this.elasticSearchContextHolder = elasticSearchContextHolder
+    }
+
+    void setGrailsApplication(GrailsApplication grailsApplication) {
+        this.grailsApplication = grailsApplication
     }
 
     void setConfig(ConfigObject config) {
