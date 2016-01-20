@@ -18,21 +18,21 @@ package grails.plugins.elasticsearch
 import grails.core.GrailsApplication
 import grails.core.support.GrailsApplicationAware
 import grails.plugins.elasticsearch.index.IndexRequestQueue
+import grails.plugins.elasticsearch.mapping.SearchableClassMapping
+import grails.plugins.elasticsearch.util.GXContentBuilder
 import org.elasticsearch.action.count.CountRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.action.support.QuerySourceBuilder
 import org.elasticsearch.client.Client
+import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryStringQueryBuilder
-import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortBuilder
 import org.elasticsearch.search.sort.SortOrder
-import grails.plugins.elasticsearch.mapping.SearchableClassMapping
-import grails.plugins.elasticsearch.util.GXContentBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -82,7 +82,7 @@ class ElasticSearchService implements GrailsApplicationAware {
 
 	/**
 	 * Alias for the search(Map params, QueryBuilder query, Closure filter) signature
-	 * 
+	 *
 	 * @param query QueryBuilder query
 	 * @return
 	 */
@@ -106,7 +106,7 @@ class ElasticSearchService implements GrailsApplicationAware {
         SearchRequest request = buildSearchRequest(query, null, params)
         search(request, params)
     }
-	
+
 	def search(String query, filter, Map params = [:]){
 		SearchRequest request = buildSearchRequest(query, filter, params)
 		search(request, params)
@@ -419,11 +419,11 @@ class ElasticSearchService implements GrailsApplicationAware {
     SearchSourceBuilder setQueryInSource(SearchSourceBuilder source, QueryBuilder query, Map params = [:]) {
         source.query(query)
     }
-	
+
 	SearchSourceBuilder setFilterInSource(SearchSourceBuilder source, Closure filter, Map params = [:]){
 		source.postFilter(new GXContentBuilder().buildAsBytes(filter))
 	}
-	
+
 	SearchSourceBuilder setFilterInSource(SearchSourceBuilder source, FilterBuilder filter, Map params = [:]){
 		source.postFilter(filter)
 	}
