@@ -1,12 +1,11 @@
 package grails.plugins.elasticsearch
 
 import grails.converters.JSON
-import grails.test.mixin.integration.Integration
-import grails.util.GrailsNameUtils
-import org.grails.core.DefaultGrailsDomainClass
 import grails.core.GrailsApplication
 import grails.core.GrailsDomainClass
-import org.grails.web.json.JSONObject
+import grails.test.mixin.integration.Integration
+import grails.transaction.Rollback
+import grails.util.GrailsNameUtils
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.search.SearchRequest
@@ -17,53 +16,78 @@ import org.elasticsearch.cluster.ClusterState
 import org.elasticsearch.cluster.metadata.IndexMetaData
 import org.elasticsearch.cluster.metadata.MappingMetaData
 import org.elasticsearch.common.unit.DistanceUnit
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
+import org.grails.core.DefaultGrailsDomainClass
+import org.grails.web.json.JSONObject
+import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 import test.*
 import test.custom.id.Toy
 
 @Integration
+@Rollback
 class ElasticSearchServiceIntegrationSpec extends Specification {
 
+    @Autowired
     ElasticSearchService elasticSearchService
+    @Autowired
     ElasticSearchAdminService elasticSearchAdminService
+    @Autowired
     ElasticSearchHelper elasticSearchHelper
+    @Autowired
     GrailsApplication grailsApplication
+
+    static Boolean isSetup = false
 
     /*
      * This test class doesn't delete any ElasticSearch indices, because that would also delete the mapping.
      * Be aware of this when indexing new objects.
      */
 
-    def setupSpec() {
-        def product01 = new Product(name: 'horst', price: 3.95)
+    void setup() {
+        /*
+        *  This is workaround due to issue with Grails3 and springbboot, otherwise we could have added in setupSpec
+        * */
+        if (!isSetup) {
+            isSetup = true
+            setupData()
+        }
+    }
+
+    void setupData() {
+        Product product01 = new Product(name: 'horst', price: 3.95)
         product01.save(failOnError: true)
 
-        def product02 = new Product(name: 'hobbit', price: 5.99)
+        Product product02 = new Product(name: 'hobbit', price: 5.99)
         product02.save(failOnError: true)
 
-        def product03 = new Product(name: 'best', price: 10.99)
+        Product product03 = new Product(name: 'best', price: 10.99)
         product03.save(failOnError: true)
 
-        def product04 = new Product(name: 'high and supreme', price: 45.50)
+        Product product04 = new Product(name: 'high and supreme', price: 45.50)
         product04.save(failOnError: true)
-
         [
                 [lat: 48.13, lon: 11.60, name: '81667'],
                 [lat: 48.19, lon: 11.65, name: '85774'],
                 [lat: 47.98, lon: 10.18, name: '87700']
         ].each {
-            def geoPoint = new GeoPoint(lat: it.lat, lon: it.lon).save(failOnError: true)
-            new Building(name: "postalCode${it.name}", location: geoPoint).save(failOnError: true)
+            GeoPoint geoPoint = new GeoPoint(lat: it.lat, lon: it.lon).save(failOnError: true)
+            new Building(name: "${it.name}", location: geoPoint).save(failOnError: true)
         }
+
+        /*
+        * TODO: Need to identify why test cases are not working after removing this.
+        * */
+        elasticSearchService.index()
+        elasticSearchAdminService.refresh()
     }
 
     void 'Index and un-index a domain object'() {
@@ -214,34 +238,22 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
 
     void 'a geo point is mapped correctly'() {
 
-        given:
-        def location = new GeoPoint(
+        when:
+        GeoPoint location = new GeoPoint(
                 lat: 53.00,
                 lon: 10.00
         ).save(failOnError: true)
 
-        def building = new Building(
+        Building building = new Building(
                 location: location
         ).save(failOnError: true)
 
         elasticSearchService.index(building)
         elasticSearchAdminService.refresh()
 
-        expect:
+        then:
         def mapping = getFieldMappingMetaData('test', 'building').sourceAsMap
         mapping.(properties).location.type == 'geo_point'
-    }
-
-    private MappingMetaData getFieldMappingMetaData(String indexName, String typeName) {
-        if (elasticSearchAdminService.aliasExists(indexName)) {
-            indexName = elasticSearchAdminService.indexPointedBy(indexName)
-        }
-        AdminClient admin = elasticSearchHelper.elasticSearchClient.admin()
-        ClusterAdminClient cluster = admin.cluster()
-        ClusterStateRequestBuilder indices = cluster.prepareState().setIndices(indexName)
-        ClusterState clusterState = indices.execute().actionGet().state
-        IndexMetaData indexMetaData = clusterState.metaData.index(indexName)
-        return indexMetaData.mapping(typeName)
     }
 
     void 'search with geo distance filter'() {
@@ -330,8 +342,10 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
     }
 
     void 'searching with wildcards in query at first position'() {
-        when: 'search with asterisk at first position'
 
+        when: 'search with asterisk at first position'
+        elasticSearchService.index(Product)
+        elasticSearchAdminService.refresh()
         Map params = [indices: Product, types: Product]
         def result = elasticSearchService.search({
             wildcard(name: '*st')
@@ -345,6 +359,8 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
 
     void 'searching with wildcards in query at last position'() {
         when: 'search with asterisk at last position'
+        elasticSearchService.index(Product)
+        elasticSearchAdminService.refresh()
 
         Map params2 = [indices: Product, types: Product]
         def result2 = elasticSearchService.search({
@@ -360,6 +376,8 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
     void 'searching with wildcards in query in between position'() {
         when: 'search with asterisk in between position'
 
+        elasticSearchService.index(Product)
+        elasticSearchAdminService.refresh()
         Map params3 = [indices: Product, types: Product]
         def result3 = elasticSearchService.search({
             wildcard(name: 's*eme')
@@ -499,26 +517,9 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
         result.searchResults*.name == ['Großer Kasten']
     }
 
-    void 'A search with lowercase Characters should return appropriate results'() {
-        given: 'a product with a lowercase name'
-        def product = new Product(name: 'KLeiner kasten', price: 0.45).save(failOnError: true, flush: true)
-        elasticSearchService.index(product)
-        elasticSearchAdminService.refresh()
-
-        when: 'a search is performed'
-        def params = [indices: Product, types: Product]
-        def query = {
-            wildcard('name': 'klein*')
-        }
-        def result = elasticSearchService.search(query, params)
-
-        then: 'the correct result-part is returned'
-        result.total == 1
-        result.searchResults.size() == 1
-        result.searchResults*.name == ['KLeiner kasten']
-    }
-
     void 'a geo distance search finds geo points at varying distances'() {
+
+        given:
         def buildings = Building.list()
         buildings.each {
             it.delete()
@@ -552,13 +553,33 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
         '1000km'  | ['81667', '85774', '87700']
     }
 
+    void 'A search with lowercase Characters should return appropriate results'() {
+        given: 'a product with a lowercase name'
+        def product = new Product(name: 'KLeiner kasten', price: 0.45).save(failOnError: true, flush: true)
+        elasticSearchService.index(product)
+        elasticSearchAdminService.refresh()
+
+        when: 'a search is performed'
+        def params = [indices: Product, types: Product]
+        def query = {
+            wildcard('name': 'klein*')
+        }
+        def result = elasticSearchService.search(query, params)
+
+        then: 'the correct result-part is returned'
+        result.total == 1
+        result.searchResults.size() == 1
+        result.searchResults*.name == ['KLeiner kasten']
+    }
+
     void 'the distances are returned'() {
+        given:
         def buildings = Building.list()
         buildings.each {
             it.delete()
         }
 
-        when: 'a geo distance search ist sorted by distance'
+        when: 'a geo distance search is sorted by distance'
 
         def sortBuilder = SortBuilders.geoDistanceSort('location').
                 point(48.141, 11.57).
@@ -707,6 +728,18 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
             }
         }
         failures
+    }
+
+    private MappingMetaData getFieldMappingMetaData(String indexName, String typeName) {
+        if (elasticSearchAdminService.aliasExists(indexName)) {
+            indexName = elasticSearchAdminService.indexPointedBy(indexName)
+        }
+        AdminClient admin = elasticSearchHelper.elasticSearchClient.admin()
+        ClusterAdminClient cluster = admin.cluster()
+        ClusterStateRequestBuilder indices = cluster.prepareState().setIndices(indexName)
+        ClusterState clusterState = indices.execute().actionGet().state
+        IndexMetaData indexMetaData = clusterState.metaData.index(indexName)
+        return indexMetaData.mapping(typeName)
     }
 
     private String getIndexName(GrailsDomainClass domainClass) {

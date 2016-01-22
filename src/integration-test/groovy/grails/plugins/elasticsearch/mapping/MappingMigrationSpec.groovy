@@ -1,19 +1,17 @@
 package grails.plugins.elasticsearch.mapping
 
 import grails.core.GrailsApplication
+import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.ElasticSearchBootStrapHelper
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import grails.plugins.elasticsearch.ElasticSearchService
-import grails.test.mixin.integration.Integration
-import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.exception.MappingException
+import grails.test.mixin.integration.Integration
 import grails.transaction.Rollback
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 import test.mapping.migration.Catalog
 import test.mapping.migration.Item
-
 
 /**
  * Created by @marcos-carceles on 07/01/15.
