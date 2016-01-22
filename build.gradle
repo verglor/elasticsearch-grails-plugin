@@ -76,17 +76,20 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
 
     console "org.grails:grails-console"
-    compile "org.grails.plugins:grails-console:2.0.3"
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
 
-tasks.check.doLast {
-    tasks = ['cleanDataDir']
+check.doLast {
+    cleanDataDir.execute()
+}
+
+clean.doLast {
+    cleanDataDir.execute()
 }
 
 task cleanDataDir(type: Delete) {
-   delete fileTree(dir: 'data')
+    delete fileTree(dir: 'data')
 }

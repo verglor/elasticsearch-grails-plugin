@@ -32,7 +32,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
     def version = '1.0.0-SNAPSHOT'
-    def grailsVersion = '3.0.7 > *'
+    def grailsVersion = '3.1.0.RC1 > *'
 
     def loadAfter = ['services', 'mongodb']
 
