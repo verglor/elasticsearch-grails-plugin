@@ -3,6 +3,7 @@ grails:
     profile: web-plugin
     codegen:
         defaultPackage: grails.plugins.elasticsearch
+    databinding.dateFormats: ["yyyy-MM-dd'T'HH:mm:ss.SSSZ"]
 info:
     app:
         name: '@info.app.name@'
@@ -64,61 +65,7 @@ grails:
                 scriptlets: html
                 taglib: none
                 staticparts: none
-elasticSearch:
-    date:
-        formats: ['yyyy-MM-dd''T''HH:mm:ss.SSS''Z''']
-    client.hosts:
-        - {host: localhost, port: 9300}
-    defaultExcludedProperties: [password]
-    disableAutoIndex: false
-    bulkIndexOnStartup: false
-    maxBulkRequest: 500
-    unmarshallComponents: true
-    searchableProperty:
-        name: searchable
-    migration:
-        strategy: alias
-        aliasReplacesIndex: true
-        disableAliasChange: false
-    index:
-        numberOfReplicas: 0
-        compound_format: true
-    includeTransients: false
-    datastoreImpl: hibernateDatastore
 
-environments:
-    development:
-        elasticSearch:
-            client:
-                mode: local
-                transport.sniff: true
-            bulkIndexOnStartup: true
-    test:
-        elasticSearch:
-            client:
-                mode: local
-                transport.sniff: true
-                hosts:
-                    - {host: localhost, port: 9300}
-            index:
-                store.type: memory
-                analysis:
-                    filter:
-                        replace_synonyms:
-                            type: synonym
-                            synonyms: [abc => xyz]
-                    analyzer:
-                        test_analyzer:
-                            tokenizer: standard
-                            filter: [lowercase]
-                        repl_analyzer:
-                            tokenizer: standard
-                            filter: [lowercase, replace_synonyms]
-            datastoreImpl: hibernateDatastore
-    production:
-        elasticSearch:
-            client:
-                mode: node
 ---
 hibernate:
     cache:
@@ -138,34 +85,51 @@ dataSource:
     username: sa
     password:
 
+elasticSearch:
+    date:
+        formats: ["yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
+    client.hosts:
+        - {host: localhost, port: 9300}
+    defaultExcludedProperties: ['password']
+    disableAutoIndex: false
+    index:
+        compound_format: true
+    unmarshallComponents: true
+    searchableProperty:
+        name: searchable
+    includeTransients: false
 environments:
     development:
-        dataSource:
-            dbCreate: create-drop
-            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+        elasticSearch:
+            client:
+                mode: local
+                transport.sniff: true
+            bulkIndexOnStartup: true
     test:
         dataSource:
             dbCreate: update
             url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+        elasticSearch:
+            client:
+                mode: local
+                transport.sniff: true
+            datastoreImpl: hibernateDatastore
+            index:
+                store.type: memory
+                analysis:
+                    filter:
+                        replace_synonyms:
+                            type: synonym
+                            synonyms: ['abc => xyz']
+                    analyzer:
+                        test_analyzer:
+                            tokenizer: standard
+                            filter: ['lowercase']
+                        repl_analyzer:
+                            tokenizer: standard
+                            filter: ['lowercase', 'replace_synonyms']
+
     production:
-        dataSource:
-            dbCreate: update
-            url: jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
-            properties:
-                jmxEnabled: true
-                initialSize: 5
-                maxActive: 50
-                minIdle: 5
-                maxIdle: 25
-                maxWait: 10000
-                maxAge: 600000
-                timeBetweenEvictionRunsMillis: 5000
-                minEvictableIdleTimeMillis: 60000
-                validationQuery: SELECT 1
-                validationQueryTimeout: 3
-                validationInterval: 15000
-                testOnBorrow: true
-                testWhileIdle: true
-                testOnReturn: false
-                jdbcInterceptors: ConnectionState
-                defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+        elasticSearch:
+            client:
+                mode: node
