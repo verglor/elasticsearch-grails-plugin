@@ -10,6 +10,7 @@ build/
 
 # Libraries and others
 *.zip
+.svn
 
 # Target
 target/

@@ -24,15 +24,17 @@ import grails.plugins.elasticsearch.mapping.SearchableClassMappingConfigurator
 import grails.plugins.elasticsearch.unwrap.DomainClassUnWrapperChain
 import grails.plugins.elasticsearch.unwrap.HibernateProxyUnWrapper
 import grails.plugins.elasticsearch.util.DomainDynamicMethodsUtils
+import grails.util.Environment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.core.env.MapPropertySource
 
 class ElasticsearchGrailsPlugin extends Plugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
     def version = '1.0.0-SNAPSHOT'
-    def grailsVersion = '3.1.0.RC1 > *'
+    def grailsVersion = '3.1.1 > *'
 
     def loadAfter = ['services', 'mongodb']
 
@@ -71,7 +73,8 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     Closure doWithSpring() {
         { ->
-            ConfigObject esConfig = config.elasticSearch as ConfigObject
+            ConfigObject esConfig = config.elasticSearch
+
             elasticSearchContextHolder(ElasticSearchContextHolder) {
                 config = esConfig
             }
@@ -98,7 +101,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
                 grailsApplication = grailsApplication
                 es = ref('elasticSearchAdminService')
                 mmm = ref('mappingMigrationManager')
-                config = config.elasticSearch
+                config = esConfig
 
                 bean.initMethod = 'configureAndInstallMappings'
             }
