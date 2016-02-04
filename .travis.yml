@@ -3,7 +3,7 @@ jdk:
 - oraclejdk7
 before_script:
 - rm -rf target
-script: ./travis-build.sh
+script: travis_wait 60 ./travis-build.sh
 env:
   global:
   - GIT_NAME="Puneet Behl"
