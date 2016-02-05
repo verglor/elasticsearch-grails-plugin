@@ -1,6 +1,7 @@
 package grails.plugins.elasticsearch
 
 import grails.test.mixin.integration.Integration
+import grails.transaction.Rollback
 import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
@@ -11,27 +12,24 @@ import spock.lang.Specification
 import test.Photo
 
 @Integration
+@Rollback
 class DynamicMethodsIntegrationSpec extends Specification {
 
     @Autowired ElasticSearchAdminService elasticSearchAdminService
     @Autowired ElasticSearchService elasticSearchService
     @Shared captains = []
 
-    void setupSpec() {
-        Photo.withNewSession {
+    void setup() {
             captains << new Photo(name: "Captain Kirk", url: "http://www.nicenicejpg.com/100").save(failOnError: true)
             captains << new Photo(name: "Captain Picard", url: "http://www.nicenicejpg.com/200").save(failOnError: true)
             captains << new Photo(name: "Captain Sisko", url: "http://www.nicenicejpg.com/300").save(failOnError: true)
             captains << new Photo(name: "Captain Janeway", url: "http://www.nicenicejpg.com/400").save(failOnError: true)
             captains << new Photo(name: "Captain Archer", url: "http://www.nicenicejpg.com/500").save(failOnError: true)
-        }
     }
 
-    void cleanupSpec() {
-        Photo.withNewSession {
-            captains.each { Photo captain ->
-                captain.delete()
-            }
+    void cleanup() {
+        captains.each { Photo captain ->
+            captain.delete()
         }
     }
 
