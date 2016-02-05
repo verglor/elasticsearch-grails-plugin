@@ -1,8 +1,10 @@
 language: groovy
-script: ./grailsw refresh-dependencies
-     && ./grailsw clean
-     && ./grailsw compile
-     && ./grailsw test-app
-branches:
-  only:
-    - master
+jdk:
+- oraclejdk7
+before_script:
+- rm -rf target
+script: travis_wait 60 ./travis-build.sh
+env:
+  global:
+  - GIT_NAME="Puneet Behl"
+  - GIT_EMAIL="puneetbehl@yahoo.com"

@@ -1,11 +1,29 @@
-.idea
+# JetBrains IntelliJ IDEA files
+.idea/
 *.iml
-out
-data
-target
-.link_to_grails_plugins
-web-app
+*.iws
+.gradle
+build/
+
+# Log files
 *.log
+
+# Libraries and others
 *.zip
+.svn
+
+# Target
+target/
+target-eclipse/
+
+.DS_Store
+
+/docs/
 plugin.xml
-/docs
+.settings
+
+# Unused grails files
+.classpath
+.project
+test/reports
+data/
