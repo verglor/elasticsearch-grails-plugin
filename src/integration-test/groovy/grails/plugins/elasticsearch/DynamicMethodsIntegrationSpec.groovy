@@ -15,20 +15,21 @@ import test.Photo
 @Rollback
 class DynamicMethodsIntegrationSpec extends Specification {
 
-    @Autowired ElasticSearchAdminService elasticSearchAdminService
-    @Autowired ElasticSearchService elasticSearchService
-    @Shared captains = []
+    @Autowired
+    ElasticSearchAdminService elasticSearchAdminService
+    @Autowired
+    ElasticSearchService elasticSearchService
 
     void setup() {
-            captains << new Photo(name: "Captain Kirk", url: "http://www.nicenicejpg.com/100").save(failOnError: true)
-            captains << new Photo(name: "Captain Picard", url: "http://www.nicenicejpg.com/200").save(failOnError: true)
-            captains << new Photo(name: "Captain Sisko", url: "http://www.nicenicejpg.com/300").save(failOnError: true)
-            captains << new Photo(name: "Captain Janeway", url: "http://www.nicenicejpg.com/400").save(failOnError: true)
-            captains << new Photo(name: "Captain Archer", url: "http://www.nicenicejpg.com/500").save(failOnError: true)
+        new Photo(name: "Captain Kirk", url: "http://www.nicenicejpg.com/100").save(failOnError: true)
+        new Photo(name: "Captain Picard", url: "http://www.nicenicejpg.com/200").save(failOnError: true)
+        new Photo(name: "Captain Sisko", url: "http://www.nicenicejpg.com/300").save(failOnError: true)
+        new Photo(name: "Captain Janeway", url: "http://www.nicenicejpg.com/400").save(failOnError: true)
+        new Photo(name: "Captain Archer", url: "http://www.nicenicejpg.com/500").save(failOnError: true)
     }
 
     void cleanup() {
-        captains.each { Photo captain ->
+        Photo.all.each { Photo captain ->
             captain.delete()
         }
     }
@@ -41,7 +42,7 @@ class DynamicMethodsIntegrationSpec extends Specification {
 
         when:
         def results = Photo.search {
-            match(name:"Captain")
+            match(name: "Captain")
         }
 
         then:
@@ -57,9 +58,9 @@ class DynamicMethodsIntegrationSpec extends Specification {
 
         when:
         def results = Photo.search({
-            match(name:"Captain")
+            match(name: "Captain")
         }, {
-            term(url:"http://www.nicenicejpg.com/100")
+            term(url: "http://www.nicenicejpg.com/100")
         })
 
         then:
@@ -88,48 +89,48 @@ class DynamicMethodsIntegrationSpec extends Specification {
         expect:
         elasticSearchService.search('captain', [indices: Photo, types: Photo]).total == 5
 
-         when:
+        when:
         QueryBuilder query = QueryBuilders.matchQuery("name", "Captain")
         def results = Photo.search(query,
-        {
-            term(url:"http://www.nicenicejpg.com/100")
-        })
+                {
+                    term(url: "http://www.nicenicejpg.com/100")
+                })
 
         then:
         results.total == 1
         results.searchResults[0].name == "Captain Kirk"
     }
 
-	void "can search using a QueryBuilder, a FilterBuilder and Dynamic Methods"() {
-		given:
-		elasticSearchAdminService.refresh()
-		expect:
-		elasticSearchService.search('captain', [indices: Photo, types: Photo]).total == 5
+    void "can search using a QueryBuilder, a FilterBuilder and Dynamic Methods"() {
+        given:
+        elasticSearchAdminService.refresh()
+        expect:
+        elasticSearchService.search('captain', [indices: Photo, types: Photo]).total == 5
 
-		 when:
-		QueryBuilder query = QueryBuilders.matchAllQuery()
-		FilterBuilder filter = FilterBuilders.termFilter("url", "http://www.nicenicejpg.com/100")
-		def results = Photo.search(query, filter)
+        when:
+        QueryBuilder query = QueryBuilders.matchAllQuery()
+        FilterBuilder filter = FilterBuilders.termFilter("url", "http://www.nicenicejpg.com/100")
+        def results = Photo.search(query, filter)
 
-		then:
-		results.total == 1
-		results.searchResults[0].name == "Captain Kirk"
-	}
+        then:
+        results.total == 1
+        results.searchResults[0].name == "Captain Kirk"
+    }
 
-	void "can search and filter using Dynamic Methods and a FilterBuilder"() {
-		given:
-		elasticSearchAdminService.refresh()
-		expect:
-		elasticSearchService.search('Captain', [indices: Photo, types: Photo]).total == 5
+    void "can search and filter using Dynamic Methods and a FilterBuilder"() {
+        given:
+        elasticSearchAdminService.refresh()
+        expect:
+        elasticSearchService.search('Captain', [indices: Photo, types: Photo]).total == 5
 
-		when:
-		FilterBuilder filter = FilterBuilders.termFilter("url", "http://www.nicenicejpg.com/100")
-		def results = Photo.search({
-			match(name:"Captain")
-		}, filter)
+        when:
+        FilterBuilder filter = FilterBuilders.termFilter("url", "http://www.nicenicejpg.com/100")
+        def results = Photo.search({
+            match(name: "Captain")
+        }, filter)
 
-		then:
-		results.total == 1
-		results.searchResults[0].name == "Captain Kirk"
-	}
+        then:
+        results.total == 1
+        results.searchResults[0].name == "Captain Kirk"
+    }
 }
