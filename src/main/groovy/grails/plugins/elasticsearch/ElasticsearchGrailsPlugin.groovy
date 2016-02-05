@@ -56,7 +56,8 @@ class ElasticsearchGrailsPlugin extends Plugin {
     def developers = [
             [name: 'Noam Y. Tenne', email: 'noam@10ne.org'],
             [name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com'],
-            [name: 'Puneet Behl', email: 'puneet.behl007@gmail.com']
+            [name: 'Puneet Behl', email: 'puneet.behl007@gmail.com'],
+            [name: 'James Kleeh', email: '	james.kleeh@gmail.com']
     ]
 
     def issueManagement = [system: 'github', url: 'https://github.com/noamt/elasticsearch-grails-plugin/issues']
