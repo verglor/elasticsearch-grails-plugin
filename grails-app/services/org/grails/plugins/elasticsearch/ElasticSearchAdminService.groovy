@@ -5,7 +5,6 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.exists.types.TypesExistsRequest
-import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRequest
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
 import org.elasticsearch.action.support.broadcast.BroadcastResponse
 import org.elasticsearch.client.Client
@@ -131,21 +130,6 @@ class ElasticSearchAdminService {
         // If toDelete is empty, it might be because of a misuse of a Class the user thought to be a searchable class
         if (!toDelete.isEmpty()) {
             deleteIndex(toDelete.unique())
-        }
-    }
-
-    /**
-     * Deletes a mapping on an index
-     * @param index The index the mapping will be deleted on
-     * @param type The type which mapping will be deleted
-     */
-    void deleteMapping(String index, String type) {
-        log.info("Deleting Elasticsearch mapping for ${index} and type ${type} ...")
-        elasticSearchHelper.withElasticSearch { Client client ->
-            client.admin().indices().deleteMapping(
-                    new DeleteMappingRequest(index).
-                            types(type)
-            ).actionGet()
         }
     }
 
