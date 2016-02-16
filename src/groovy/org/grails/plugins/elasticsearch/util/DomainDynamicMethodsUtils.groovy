@@ -15,15 +15,12 @@
  */
 package org.grails.plugins.elasticsearch.util
 
-import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.GrailsDomainClass
 import org.grails.plugins.elasticsearch.ElasticSearchContextHolder
 import org.grails.plugins.elasticsearch.ElasticSearchService
 import org.grails.plugins.elasticsearch.mapping.SearchableClassMapping
-import org.grails.plugins.elasticsearch.mapping.SearchableDomainClassMapper
 import org.apache.commons.logging.LogFactory
 import org.grails.plugins.elasticsearch.exception.IndexException
-import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.QueryBuilder
 
 class DomainDynamicMethodsUtils {
@@ -90,10 +87,10 @@ class DomainDynamicMethodsUtils {
             domain.metaClass.'static'.search << { QueryBuilder q, f = null, Map params = [:] ->
                 elasticSearchService.search(q, f, params + indexAndType)
             }
-			domain.metaClass.'static'.search << { Map params, QueryBuilder q, FilterBuilder f ->
+			domain.metaClass.'static'.search << { Map params, QueryBuilder q, QueryBuilder f ->
 				elasticSearchService.search(params + indexAndType, q, f)
 			}
-			domain.metaClass.'static'.search << { QueryBuilder q, FilterBuilder f, Map params = [:] ->
+			domain.metaClass.'static'.search << { QueryBuilder q, QueryBuilder f, Map params = [:] ->
 				elasticSearchService.search(q, f, params + indexAndType)
 			}
 

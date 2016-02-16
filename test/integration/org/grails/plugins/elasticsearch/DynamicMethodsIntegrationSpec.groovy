@@ -4,8 +4,6 @@ import grails.test.spock.IntegrationSpec
 import spock.lang.Shared
 import test.Photo
 
-import org.elasticsearch.index.query.FilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
 
@@ -96,7 +94,7 @@ class DynamicMethodsIntegrationSpec extends IntegrationSpec {
         results.searchResults[0].name == "Captain Kirk"
     }
 	
-	def "can search using a QueryBuilder, a FilterBuilder and Dynamic Methods"() {
+	def "can search using a QueryBuilder, a QueryBuilder and Dynamic Methods"() {
 		given:
 		elasticSearchAdminService.refresh()
 		expect:
@@ -104,7 +102,7 @@ class DynamicMethodsIntegrationSpec extends IntegrationSpec {
 
 		 when:
 		QueryBuilder query = QueryBuilders.matchAllQuery()
-		FilterBuilder filter = FilterBuilders.termFilter("url", "http://www.nicenicejpg.com/100")
+		QueryBuilder filter = QueryBuilders.termQuery("url", "http://www.nicenicejpg.com/100")
 		def results = Photo.search(query, filter)
 
 		then:
@@ -112,14 +110,14 @@ class DynamicMethodsIntegrationSpec extends IntegrationSpec {
 		results.searchResults[0].name == "Captain Kirk"
 	}
 	
-	def "can search and filter using Dynamic Methods and a FilterBuilder"() {
+	def "can search and filter using Dynamic Methods and a QueryBuilder"() {
 		given:
 		elasticSearchAdminService.refresh()
 		expect:
 		elasticSearchService.search('Captain', [indices: Photo, types: Photo]).total == 5
 
 		when:
-		FilterBuilder filter = FilterBuilders.termFilter("url", "http://www.nicenicejpg.com/100")
+		QueryBuilder filter = QueryBuilders.termQuery("url", "http://www.nicenicejpg.com/100")
 		def results = Photo.search({
 			match(name:"Captain")
 		}, filter)

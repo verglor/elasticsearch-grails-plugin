@@ -24,7 +24,6 @@ import org.elasticsearch.action.support.QuerySourceBuilder
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryStringQueryBuilder
-import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.highlight.HighlightBuilder
@@ -35,7 +34,7 @@ import org.grails.plugins.elasticsearch.util.GXContentBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static org.elasticsearch.index.query.QueryBuilders.queryString
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.index.query.QueryStringQueryBuilder.Operator
 
 class ElasticSearchService implements GrailsApplicationAware {
@@ -336,7 +335,7 @@ class ElasticSearchService implements GrailsApplicationAware {
             request.source(new GXContentBuilder().buildAsBytes(query))
         } else {
             Operator defaultOperator = params['default_operator'] ?: Operator.AND
-            QueryStringQueryBuilder builder = queryString(query).defaultOperator(defaultOperator)
+            QueryStringQueryBuilder builder = queryStringQuery(query).defaultOperator(defaultOperator)
             if (params.analyzer) {
                 builder.analyzer(params.analyzer)
             }
@@ -351,7 +350,7 @@ class ElasticSearchService implements GrailsApplicationAware {
      *
      * @param params The query parameters
      * @param query The search query, whether a String, a Closure or a QueryBuilder
-     * @param filter The search filter, whether a Closure or a FilterBuilder
+     * @param filter The search filter, whether a Closure or a QueryBuilder
      * @return The SearchRequest instance
      */
     private SearchRequest buildSearchRequest(query, filter, Map params) {
@@ -404,7 +403,7 @@ class ElasticSearchService implements GrailsApplicationAware {
 
     SearchSourceBuilder setQueryInSource(SearchSourceBuilder source, String query, Map params = [:]) {
         Operator defaultOperator = params['default_operator'] ?: Operator.AND
-        QueryStringQueryBuilder builder = queryString(query).defaultOperator(defaultOperator)
+        QueryStringQueryBuilder builder = queryStringQuery(query).defaultOperator(defaultOperator)
         if (params.analyzer) {
             builder.analyzer(params.analyzer)
         }
@@ -423,7 +422,7 @@ class ElasticSearchService implements GrailsApplicationAware {
 		source.postFilter(new GXContentBuilder().buildAsBytes(filter))
 	}
 	
-	SearchSourceBuilder setFilterInSource(SearchSourceBuilder source, FilterBuilder filter, Map params = [:]){
+	SearchSourceBuilder setFilterInSource(SearchSourceBuilder source, QueryBuilder filter, Map params = [:]){
 		source.postFilter(filter)
 	}
 
