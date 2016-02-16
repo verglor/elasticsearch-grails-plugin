@@ -127,6 +127,8 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if(confDirectory){
                     nb.settings().put('path.conf', confDirectory as String)
                 }
+                
+                nb.settings().put("path.home", '/tmp/elasticsearch')
 
                 nb.local(true)
                 break
