@@ -426,7 +426,7 @@ class MappingMigrationSpec extends IntegrationSpec {
 
     private void createConflictingCatalogMapping() {
         //Delete existing Mapping
-        es.deleteMapping catalogMapping.indexName, catalogMapping.elasticTypeName
+        es.deleteIndex catalogMapping.indexName
         //Create conflicting Mapping
         catalogPagesMapping.addAttributes([component:true])
         searchableClassMappingConfigurator.installMappings([catalogMapping])
@@ -436,7 +436,7 @@ class MappingMigrationSpec extends IntegrationSpec {
 
     private void createConflictingProductMapping() {
         //Delete existing Mapping
-        es.deleteMapping itemMapping.indexName, itemMapping.elasticTypeName
+        es.deleteIndex itemMapping.indexName
         //Create conflicting Mapping
         itemSupplierMapping.addAttributes([component:true])
         searchableClassMappingConfigurator.installMappings([itemMapping])
