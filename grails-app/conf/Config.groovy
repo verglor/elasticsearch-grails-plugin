@@ -78,6 +78,8 @@ environments {
                     }
                 }
             }
+
+            path.plugins = 'test/resources/plugins'
         }
     }
 
