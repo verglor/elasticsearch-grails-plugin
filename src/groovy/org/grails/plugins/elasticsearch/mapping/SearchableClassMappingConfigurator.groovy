@@ -132,7 +132,7 @@ class SearchableClassMappingConfigurator {
             mmm.applyMigrations(migrationStrategy, elasticMappings, mappingConflicts, indexSettings)
         }
 
-        es.waitForClusterYellowStatus()
+        es.waitForClusterStatus()
     }
 
 
@@ -144,7 +144,7 @@ class SearchableClassMappingConfigurator {
      */
     private boolean createIndexWithReadAndWrite(MappingMigrationStrategy strategy, SearchableClassMapping scm, Map indexSettings) throws RemoteTransportException {
         // Could be blocked on index level, thus wait.
-        es.waitForIndex(scm.indexName)
+        es.waitForClusterStatus()
         if(!es.indexExists(scm.indexName)) {
             LOG.debug("Index ${scm.indexName} does not exists, initiating creation...")
             if (strategy == alias) {

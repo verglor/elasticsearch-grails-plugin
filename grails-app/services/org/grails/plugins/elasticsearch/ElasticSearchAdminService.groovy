@@ -2,6 +2,7 @@ package org.grails.plugins.elasticsearch
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.exists.types.TypesExistsRequest
@@ -151,7 +152,7 @@ class ElasticSearchAdminService {
     }
 
     /**
-     * Check whether a mpping exists
+     * Check whether a mapping exists
      * @param index The name of the index to check on
      * @param type The type which mapping is being checked
      * @return true if the mapping exists
@@ -236,7 +237,7 @@ class ElasticSearchAdminService {
     String indexPointedBy(String alias) {
         elasticSearchHelper.withElasticSearch { Client client ->
             def index = client.admin().indices().getAliases(new GetAliasesRequest().aliases([alias] as String[])).actionGet().getAliases()?.find {
-                it.value.element.alias() == alias
+                alias in it.value*.alias()
             }?.key
             if (!index) {
                 LOG.debug("Alias ${alias} does not exist")
@@ -346,31 +347,12 @@ class ElasticSearchAdminService {
     }
 
     /**
-     * Waits for an index to be on Yellow status
-     * @param index
-     * @return
+     * Waits for the cluster to be on (Yellow) status
      */
-    def waitForIndex(index) {
-        elasticSearchHelper.withElasticSearch { Client client ->
-            try {
-                LOG.debug("Waiting at least yellow status on ${index}")
-                client.admin().cluster().prepareHealth(index)
-                        .setWaitForYellowStatus()
-                        .execute().actionGet()
-            } catch (Exception e) {
-                // ignore any exceptions due to non-existing index.
-                LOG.debug('Index health', e)
-            }
-        }
-    }
-
-    /**
-     * Waits for the cluster to be on Yellow status
-     */
-    void waitForClusterYellowStatus() {
+    void waitForClusterStatus(ClusterHealthStatus status=ClusterHealthStatus.YELLOW) {
         elasticSearchHelper.withElasticSearch { Client client ->
             ClusterHealthResponse response = client.admin().cluster().health(
-                    new ClusterHealthRequest([] as String[]).waitForYellowStatus()).actionGet()
+                    new ClusterHealthRequest([] as String[]).waitForStatus(status)).actionGet()
             LOG.debug("Cluster status: ${response.status}")
         }
     }

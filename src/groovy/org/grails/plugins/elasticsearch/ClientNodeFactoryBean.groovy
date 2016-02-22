@@ -49,7 +49,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         if (configFile) {
             LOG.info "Looking for bootstrap configuration file at: $configFile"
             Resource resource = new PathMatchingResourcePatternResolver().getResource(configFile)
-            nb.settings(Settings.settingsBuilder().loadFromUrl(resource.URL))
+            nb.settings(Settings.settingsBuilder().loadFromStream(configFile,resource.inputStream))
         }
 
         def transportClient
@@ -73,7 +73,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 def transportSettingsFile = elasticSearchContextHolder.config.bootstrap.transportSettings.file
                 if(transportSettingsFile) {
                     Resource resource = new PathMatchingResourcePatternResolver().getResource(transportSettingsFile)
-                    transportSettings.loadFromUrl(resource.URL)
+                    transportSettings.loadFromStream(transportSettingsFile, resource.inputStream)
                 }
                 // Use the "sniff" feature of transport client ?
                 if (elasticSearchContextHolder.config.client.transport.sniff) {
@@ -82,14 +82,15 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if (elasticSearchContextHolder.config.cluster.name) {
                     transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
-                transportClient = new TransportClient(transportSettings)
+
+                transportClient = TransportClient.builder().settings(transportSettings).build()
 
                 // Configure transport addresses
                 if (!elasticSearchContextHolder.config.client.hosts) {
-                    transportClient.addTransportAddress(new InetSocketTransportAddress('localhost', 9300))
+                    transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress('localhost', 9300)))
                 } else {
                     elasticSearchContextHolder.config.client.hosts.each {
-                        transportClient.addTransportAddress(new InetSocketTransportAddress(it.host, it.port))
+                        transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(it.host, it.port)))
                     }
                 }
                 break
