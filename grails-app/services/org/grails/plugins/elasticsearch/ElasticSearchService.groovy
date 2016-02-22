@@ -15,6 +15,7 @@
  */
 package org.grails.plugins.elasticsearch
 
+import groovy.transform.CompileStatic
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware
 import org.elasticsearch.action.count.CountRequest
@@ -23,6 +24,7 @@ import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.action.support.QuerySourceBuilder
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.builder.SearchSourceBuilder

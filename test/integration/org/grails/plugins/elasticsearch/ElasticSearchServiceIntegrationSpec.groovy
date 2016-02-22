@@ -258,7 +258,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         when: 'a geo distance filter search is performed'
 
         Map params = [indices: Building, types: Building]
-        Closure query = null
+        def query = QueryBuilders.matchAllQuery()
         def location = '50, 13'
 
         Closure filter = {
@@ -291,7 +291,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         elasticSearchAdminService.refresh()
 
         when: 'searching for a price'
-        def result = elasticSearchService.search(null as Closure, {
+        def result = elasticSearchService.search(QueryBuilders.matchAllQuery(), {
             range {
                 "price"(gte: 1.99, lte: 2.3)
             }
@@ -306,7 +306,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
 	void 'searching with a QueryBuilder (FilterBuilder replacement) filter and a Closure query'(){
         when: 'searching for a price'
 		QueryBuilder filter = QueryBuilders.rangeQuery("price").gte(1.99).lte(2.3)
-        def result = elasticSearchService.search(null as Closure, filter)
+        def result = elasticSearchService.search(QueryBuilders.matchAllQuery(), filter)
 
         then: "the result should be product 'wurm'"
         result.total == 1
@@ -317,7 +317,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
 	void 'searching with a QueryBuilder (FilterBuilder replacement) filter and a QueryBuilder query'(){
 		when: 'searching for a price'
 		QueryBuilder filter = QueryBuilders.rangeQuery("price").gte(1.99).lte(2.3)
-        def result = elasticSearchService.search(null as QueryBuilder, filter)
+        def result = elasticSearchService.search(QueryBuilders.matchAllQuery(), filter)
 
         then: "the result should be product 'wurm'"
         result.total == 1
@@ -405,7 +405,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
         when:
         def result = elasticSearchService.search(
                 QueryBuilders.hasParentQuery('store', QueryBuilders.matchQuery('owner', 'Horst')),
-                null as Closure,
+                QueryBuilders.matchAllQuery(),
                 [indices: Department, types: Department]
         )
 
@@ -522,7 +522,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
 
         when: 'a geo distance search is performed'
         Map params = [indices: Building, types: Building]
-        Closure query = null
+        def query = QueryBuilders.matchAllQuery()
         def location = [lat: 48.141, lon: 11.57]
 
         Closure filter = {
@@ -562,7 +562,7 @@ class ElasticSearchServiceIntegrationSpec extends IntegrationSpec {
                 order(SortOrder.ASC)
 
         Map params = [indices: Building, types: Building, sort: sortBuilder]
-        Closure query = null
+        def query = QueryBuilders.matchAllQuery()
         def location = [lat: 48.141, lon: 11.57]
 
         Closure filter = {
