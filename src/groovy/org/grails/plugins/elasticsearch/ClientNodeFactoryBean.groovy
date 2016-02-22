@@ -19,6 +19,10 @@ package org.grails.plugins.elasticsearch
 import org.elasticsearch.common.settings.Settings
 import org.springframework.core.io.Resource
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 
 import org.elasticsearch.client.transport.TransportClient
@@ -128,8 +132,10 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if(confDirectory){
                     nb.settings().put('path.conf', confDirectory as String)
                 }
-                
-                nb.settings().put("path.home", '/tmp/elasticsearch')
+
+                def tmpDirectory = tmpDirectory()
+                LOG.info "Setting embedded ElasticSearch tmp dir to ${tmpDirectory}"
+                nb.settings().put("path.home", tmpDirectory)
 
                 nb.local(true)
                 break
@@ -198,5 +204,13 @@ class ClientNodeFactoryBean implements FactoryBean {
             LOG.info "Stopping embedded ElasticSearch."
             node.close()        // close() seems to be more appropriate than stop()
         }
+    }
+
+    private String tmpDirectory() {
+        String baseDirectory = System.getProperty("java.io.tmpdir") ?: '/tmp'
+        Path path = Files.createTempDirectory(Paths.get(baseDirectory), 'elastic-data-'+new Date().time)
+        File file = path.toFile()
+        file.deleteOnExit()
+        return file.absolutePath
     }
 }
