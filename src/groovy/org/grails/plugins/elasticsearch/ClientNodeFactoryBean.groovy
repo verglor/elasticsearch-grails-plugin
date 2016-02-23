@@ -87,7 +87,12 @@ class ClientNodeFactoryBean implements FactoryBean {
                     transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
 
-                transportClient = TransportClient.builder().settings(transportSettings).build()
+                try {
+                    def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
+                    transportClient = TransportClient.builder().addPlugin(shield).settings(transportSettings).build();
+                } catch (ClassNotFoundException e) {
+                    transportClient = TransportClient.builder().settings(transportSettings).build()
+                }
 
                 // Configure transport addresses
                 if (!elasticSearchContextHolder.config.client.hosts) {
