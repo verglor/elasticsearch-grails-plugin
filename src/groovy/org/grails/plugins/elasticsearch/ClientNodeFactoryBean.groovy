@@ -81,11 +81,14 @@ class ClientNodeFactoryBean implements FactoryBean {
                 }
                 // Use the "sniff" feature of transport client ?
                 if (elasticSearchContextHolder.config.client.transport.sniff) {
-                    transportSettings.put("client.transport.sniff", true)
+                    transportSettings.put("client.transport.sniff", false)
                 }
                 if (elasticSearchContextHolder.config.cluster.name) {
                     transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
+
+                boolean ip4Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: true
+                boolean ip6Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: false
 
                 try {
                     def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
@@ -98,8 +101,17 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if (!elasticSearchContextHolder.config.client.hosts) {
                     transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress('localhost', 9300)))
                 } else {
+
                     elasticSearchContextHolder.config.client.hosts.each {
-                        transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(it.host, it.port)))
+                        try {
+                            for (InetAddress address : InetAddress.getAllByName(it.host)) {
+                                if ((ip6Enabled && address instanceof Inet6Address) || (ip4Enabled && address instanceof Inet4Address)) {
+                                    transportClient.addTransportAddress(new InetSocketTransportAddress(address, it.port));
+                                }
+                            }
+                        } catch (UnknownHostException e) {
+                            LOG.error("Unable to get the host", e.getMessage());
+                        }
                     }
                 }
                 break
