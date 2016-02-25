@@ -88,7 +88,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 }
 
                 boolean ip4Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: true
-                boolean ip6Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: false
+                boolean ip6Enabled = elasticSearchContextHolder.config.shield.ip6Enabled ?: false
 
                 try {
                     def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
