@@ -93,6 +93,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 try {
                     def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
                     transportClient = TransportClient.builder().addPlugin(shield).settings(transportSettings).build();
+                    LOG.info("Shield Enabled")
                 } catch (ClassNotFoundException e) {
                     transportClient = TransportClient.builder().settings(transportSettings).build()
                 }
@@ -106,6 +107,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                         try {
                             for (InetAddress address : InetAddress.getAllByName(it.host)) {
                                 if ((ip6Enabled && address instanceof Inet6Address) || (ip4Enabled && address instanceof Inet4Address)) {
+                                    LOG.info("Adding host: ${address}")
                                     transportClient.addTransportAddress(new InetSocketTransportAddress(address, it.port));
                                 }
                             }
