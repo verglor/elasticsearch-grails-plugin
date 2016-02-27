@@ -22,10 +22,8 @@ apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "org.grails.grails-plugin"
+apply plugin:"org.grails.grails-plugin-publish"
 apply plugin: "org.grails.grails-gsp"
-// Used for publishing to central repository, remove if not needed
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
 ext {
     grailsVersion = project.grailsVersion
@@ -93,3 +91,14 @@ clean.doLast {
 task cleanDataDir(type: Delete) {
     delete fileTree(dir: 'data')
 }
+
+grailsPublish {
+    githubSlug = 'noamt/elasticsearch-grails-plugin'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "Elasticserach"
+    desc = "An Elasticsearch plugin for Grails"
+    developers = [noam: 'Noam Y. Tenne', macrcos: 'Marcos Carceles', puneet: 'Puneet Behl', james: 'James Kleeh']
+}
+
