@@ -64,5 +64,4 @@ eventAllTestsEnd = {msg ->
         println "Cleaning up ElasticSerch data directory"
         FileUtils.deleteDirectory(dataFolder)
     }
-    println "MC - HERE END!!!"
 }
