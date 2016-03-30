@@ -9,3 +9,6 @@ web-app
 *.zip
 plugin.xml
 /docs
+
+# Elasticsearch plugins installation
+test/resources/plugins
