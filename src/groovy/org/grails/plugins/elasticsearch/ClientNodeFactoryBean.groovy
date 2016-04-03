@@ -16,10 +16,16 @@
 
 package org.grails.plugins.elasticsearch
 
+import org.elasticsearch.common.settings.Settings
+import org.springframework.core.io.Resource
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -46,8 +52,8 @@ class ClientNodeFactoryBean implements FactoryBean {
         def configFile = elasticSearchContextHolder.config.bootstrap.config.file
         if (configFile) {
             LOG.info "Looking for bootstrap configuration file at: $configFile"
-            def resource = new PathMatchingResourcePatternResolver().getResource(configFile)
-            nb.settings(ImmutableSettings.settingsBuilder().loadFromUrl(resource.URL))
+            Resource resource = new PathMatchingResourcePatternResolver().getResource(configFile)
+            nb.settings(Settings.settingsBuilder().loadFromStream(configFile,resource.inputStream))
         }
 
         def transportClient
@@ -66,28 +72,48 @@ class ClientNodeFactoryBean implements FactoryBean {
         // Configure the client based on the client mode
         switch (clientMode) {
             case 'transport':
-                def transportSettings = ImmutableSettings.settingsBuilder()
+                def transportSettings = Settings.settingsBuilder()
 
                 def transportSettingsFile = elasticSearchContextHolder.config.bootstrap.transportSettings.file
                 if(transportSettingsFile) {
-                    def resource = new PathMatchingResourcePatternResolver().getResource(transportSettingsFile)
-                    transportSettings.loadFromUrl(resource.URL)
+                    Resource resource = new PathMatchingResourcePatternResolver().getResource(transportSettingsFile)
+                    transportSettings.loadFromStream(transportSettingsFile, resource.inputStream)
                 }
                 // Use the "sniff" feature of transport client ?
                 if (elasticSearchContextHolder.config.client.transport.sniff) {
-                    transportSettings.put("client.transport.sniff", true)
+                    transportSettings.put("client.transport.sniff", false)
                 }
                 if (elasticSearchContextHolder.config.cluster.name) {
                     transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
-                transportClient = new TransportClient(transportSettings)
+
+                boolean ip4Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: true
+                boolean ip6Enabled = elasticSearchContextHolder.config.shield.ip6Enabled ?: false
+
+                try {
+                    def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
+                    transportClient = TransportClient.builder().addPlugin(shield).settings(transportSettings).build();
+                    LOG.info("Shield Enabled")
+                } catch (ClassNotFoundException e) {
+                    transportClient = TransportClient.builder().settings(transportSettings).build()
+                }
 
                 // Configure transport addresses
                 if (!elasticSearchContextHolder.config.client.hosts) {
-                    transportClient.addTransportAddress(new InetSocketTransportAddress('localhost', 9300))
+                    transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress('localhost', 9300)))
                 } else {
+
                     elasticSearchContextHolder.config.client.hosts.each {
-                        transportClient.addTransportAddress(new InetSocketTransportAddress(it.host, it.port))
+                        try {
+                            for (InetAddress address : InetAddress.getAllByName(it.host)) {
+                                if ((ip6Enabled && address instanceof Inet6Address) || (ip4Enabled && address instanceof Inet4Address)) {
+                                    LOG.info("Adding host: ${address}")
+                                    transportClient.addTransportAddress(new InetSocketTransportAddress(address, it.port));
+                                }
+                            }
+                        } catch (UnknownHostException e) {
+                            LOG.error("Unable to get the host", e.getMessage());
+                        }
                     }
                 }
                 break
@@ -125,6 +151,10 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if(confDirectory){
                     nb.settings().put('path.conf', confDirectory as String)
                 }
+
+                def tmpDirectory = tmpDirectory()
+                LOG.info "Setting embedded ElasticSearch tmp dir to ${tmpDirectory}"
+                nb.settings().put("path.home", tmpDirectory)
 
                 nb.local(true)
                 break
@@ -193,5 +223,13 @@ class ClientNodeFactoryBean implements FactoryBean {
             LOG.info "Stopping embedded ElasticSearch."
             node.close()        // close() seems to be more appropriate than stop()
         }
+    }
+
+    private String tmpDirectory() {
+        String baseDirectory = System.getProperty("java.io.tmpdir") ?: '/tmp'
+        Path path = Files.createTempDirectory(Paths.get(baseDirectory), 'elastic-data-'+new Date().time)
+        File file = path.toFile()
+        file.deleteOnExit()
+        return file.absolutePath
     }
 }

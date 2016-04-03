@@ -1,27 +1,7 @@
 package org.grails.plugins.elasticsearch
 
-import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
-import grails.util.GrailsNameUtils
-import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.codehaus.groovy.grails.commons.GrailsDomainClass
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder
-import org.elasticsearch.action.get.GetRequest
-import org.elasticsearch.client.AdminClient
-import org.elasticsearch.client.ClusterAdminClient
-import org.elasticsearch.cluster.ClusterState
-import org.elasticsearch.cluster.metadata.IndexMetaData
-import org.elasticsearch.cluster.metadata.MappingMetaData
-import org.elasticsearch.common.unit.DistanceUnit
-import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.FilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.search.sort.FieldSortBuilder
-import org.elasticsearch.search.sort.SortBuilders
-import org.elasticsearch.search.sort.SortOrder
 import test.*
 
 class AttachmentMappingIntegrationSpec extends IntegrationSpec {

@@ -51,7 +51,7 @@ environments {
             datastoreImpl = 'hibernateDatastore'
 
             index {
-                store.type = 'memory'
+                store.type = 'simplefs'
                 analysis {
                     filter {
                         replace_synonyms {
@@ -78,6 +78,8 @@ environments {
                     }
                 }
             }
+
+            path.plugins = 'test/resources/plugins'
         }
     }
 

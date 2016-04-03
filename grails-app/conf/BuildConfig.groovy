@@ -40,15 +40,25 @@ grails.project.dependency.resolution = {
                 "org.grails:grails-datastore-core:$datastoreVersion",
                 "org.grails:grails-datastore-web:$datastoreVersion", excludes)
 
-        runtime 'org.elasticsearch:elasticsearch-groovy:1.6.0', {
+        runtime 'org.elasticsearch:elasticsearch-groovy:2.1.2', {
             excludes 'groovy-all'
         }
-        runtime "org.elasticsearch:elasticsearch-mapper-attachments:2.6.0"
+        runtime "org.elasticsearch:elasticsearch-mapper-attachments:3.1.2"
         runtime 'com.spatial4j:spatial4j:0.4.1'
 
         compile 'com.vividsolutions:jts:1.13'
 
         test 'com.googlecode.json-simple:json-simple:1.1.1'
+
+        //BUG: Elasticsearch 2.1.2 does not explictly sets a version of jackson libraries (but needs >2.6), so grails will pick up the latest from any other plugin/dependency
+        def jacksonVersion = '2.6.2'
+        compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+        compile "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
+        compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+        compile "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
+
+        def nettyVersion = '3.10.5.Final'
+        compile "io.netty:netty:${nettyVersion}"
     }
 
     plugins {

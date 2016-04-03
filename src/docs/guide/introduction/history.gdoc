@@ -1,5 +1,12 @@
 h4. History
 
+* February 24, 2016
+** 0.1.0
+*** Upgrade to ElasticSearch 2.1.2 - This is a breaking upgrade, please refer to:
+**** [Breaking changes in 2.1|https://www.elastic.co/guide/en/elasticsearch/reference/2.1/breaking-changes-2.1.html]
+**** [Breaking changes in 2.0|https://www.elastic.co/guide/en/elasticsearch/reference/2.1/breaking-changes-2.0.html]
+**** New @deleteIndex@ migration strategy (although @alias@ is still the recommended one)
+**** The @delete@ migration strategy has been deprecated and it not behaves as the @none@ migration strategy
 * June 30, 2015
 ** 0.0.4.5
 *** Upgrade to ElasticSearch 1.6.0

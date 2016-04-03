@@ -17,8 +17,6 @@ package org.grails.plugins.elasticsearch.mapping
 
 import grails.util.GrailsNameUtils
 import grails.util.Holders
-import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.grails.commons.GrailsClassUtils
 import org.codehaus.groovy.grails.commons.GrailsDomainClass
 import org.codehaus.groovy.grails.commons.GrailsDomainClassProperty
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager
@@ -107,7 +105,7 @@ class ElasticSearchMappingFactory {
             }
             propOptions.type = propType
             // See http://www.elasticsearch.com/docs/elasticsearch/mapping/all_field/
-            if ((propType != 'object') && scm.isAll()) {
+            if (!(propType in ['object', 'attachment']) && scm.isAll()) {
                 // does it make sense to include objects into _all?
                 propOptions.include_in_all = !scpm.shouldExcludeFromAll()
             }
