@@ -74,6 +74,11 @@ elasticSearch {
      * Whether to index and search all non excluded transient properties. All explicitly included transients in @only@ will be indexed regardless.
      */
     includeTransients = false
+
+	/** 
+	* Search method name in domain class, defaults to search
+	*/
+	searchMethodName = "search"
 }
 
 environments {
