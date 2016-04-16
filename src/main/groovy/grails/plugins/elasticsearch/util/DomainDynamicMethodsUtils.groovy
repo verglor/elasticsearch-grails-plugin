@@ -54,44 +54,46 @@ class DomainDynamicMethodsUtils {
             SearchableClassMapping scm = elasticSearchContextHolder.getMappingContext(domainCopy)
             def indexAndType = [indices: scm.queryingIndex, types: domainCopy.clazz]
 
+			String searchMethodName = grailsApplication.config.searchMethodName ?: 'search'
+
             // Inject the search method
-            domain.metaClass.'static'.search << { String q, Map params = [:] ->
+            domain.metaClass.'static'."$searchMethodName" << { String q, Map params = [:] ->
                 elasticSearchService.search(q, params + indexAndType)
             }
-            domain.metaClass.'static'.search << { Map params = [:], Closure q ->
+            domain.metaClass.'static'."$searchMethodName" << { Map params = [:], Closure q ->
                 elasticSearchService.search(params + indexAndType, q)
             }
-            domain.metaClass.'static'.search << { Closure q, Map params = [:] ->
+            domain.metaClass.'static'."$searchMethodName" << { Closure q, Map params = [:] ->
                 elasticSearchService.search(params + indexAndType, q)
             }
-            domain.metaClass.'static'.search << { Closure q, Closure f, Map params = [:] ->
+            domain.metaClass.'static'."$searchMethodName" << { Closure q, Closure f, Map params = [:] ->
                 elasticSearchService.search(q, f, params + indexAndType)
             }
-            domain.metaClass.'static'.search << { Map params, Closure q, Closure f ->
+            domain.metaClass.'static'."$searchMethodName" << { Map params, Closure q, Closure f ->
                 elasticSearchService.search(params + indexAndType, q, f)
             }
-            domain.metaClass.'static'.search << { Map params, QueryBuilder q, Closure f = null->
+            domain.metaClass.'static'."$searchMethodName" << { Map params, QueryBuilder q, Closure f = null->
                 elasticSearchService.search(params + indexAndType, q, f)
             }
-            domain.metaClass.'static'.search << { QueryBuilder q, Closure f = null, Map params = [:] ->
+            domain.metaClass.'static'."$searchMethodName" << { QueryBuilder q, Closure f = null, Map params = [:] ->
                 elasticSearchService.search(q, f, params + indexAndType)
             }
-            domain.metaClass.'static'.search << { Closure q, f, Map params = [:] ->
+            domain.metaClass.'static'."$searchMethodName" << { Closure q, f, Map params = [:] ->
                 elasticSearchService.search(q, f, params + indexAndType)
             }
-            domain.metaClass.'static'.search << { Map params, Closure q, f ->
+            domain.metaClass.'static'."$searchMethodName" << { Map params, Closure q, f ->
                 elasticSearchService.search(params + indexAndType, q, f)
             }
-            domain.metaClass.'static'.search << { Map params, QueryBuilder q, f = null->
+            domain.metaClass.'static'."$searchMethodName" << { Map params, QueryBuilder q, f = null->
                 elasticSearchService.search(params + indexAndType, q, f)
             }
-            domain.metaClass.'static'.search << { QueryBuilder q, f = null, Map params = [:] ->
+            domain.metaClass.'static'."$searchMethodName" << { QueryBuilder q, f = null, Map params = [:] ->
                 elasticSearchService.search(q, f, params + indexAndType)
             }
-			domain.metaClass.'static'.search << { Map params, QueryBuilder q, FilterBuilder f ->
+			domain.metaClass.'static'."$searchMethodName" << { Map params, QueryBuilder q, FilterBuilder f ->
 				elasticSearchService.search(params + indexAndType, q, f)
 			}
-			domain.metaClass.'static'.search << { QueryBuilder q, FilterBuilder f, Map params = [:] ->
+			domain.metaClass.'static'."$searchMethodName" << { QueryBuilder q, FilterBuilder f, Map params = [:] ->
 				elasticSearchService.search(q, f, params + indexAndType)
 			}
 
