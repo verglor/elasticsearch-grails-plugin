@@ -1,0 +1,25 @@
+=== Plugin Versioning
+
+[NOTE]
+====
+The versioning model has changed. The version number of the plugin will reflect the one of the underline integrated Elasticsearch.
+If necessary a 4th level point release number will be used for successive changes on the plugin's code with same version of Elasticsearch.
+====
+
+`<GRAILS_VERSION>.<ES_VERSION>.<FEATURE/PATCH_VERSION>`, where there isn't really a 1-to-1 plugin version to grails or es version, but we just increase our major or minor version by one, whenever there are breaking changes on either Grails or ES. Therefore have something that looks like:
+
+|===
+| Plugin Version        | Grails           | Elasticsearch 
+| 0.0.4      | 2.4.x | 1.x 
+| 0.1.x      | 2.4.x      |   2.1.x 
+| 0.2.x      | 2.4.x      |   2.2.x 
+| 0.3.x      | 2.4.x      |   (hypothetical) 3.0 
+| 1.0.x | 3.1.x      |    1.x 
+| 1.1.x | 3.1.x      |    2.1.x 
+| 1.2.x | 3.1.x      |    2.2.x 
+| 2.2.x | (hypothetical )3.2.x      |    2.2.x 
+| 3.2.x | (hypothetical ) 4.0.x      |    2.2.x 
+|===
+
+
+Current version is *{revnumber}* (for Grails 2.x the latest version is *0.1.0*)
