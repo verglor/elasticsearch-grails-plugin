@@ -31,7 +31,7 @@ def asciidoctorAttributes = [
     toc2                : '',
     toclevels           : '2',
     grailsVersion       : project.grailsVersion,
-    elasticsearchVersion     : project.elasticsearchVersion
+    elasticsearchVersion: project.elasticsearchVersion
 ]
 
 import org.asciidoctor.gradle.AsciidoctorTask

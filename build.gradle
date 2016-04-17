@@ -17,7 +17,7 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-version "1.0.0"
+version "1.0.0.1"
 group "org.grails.plugins"
 
 apply plugin: 'maven-publish'
@@ -96,6 +96,9 @@ task cleanDataDir(type: Delete) {
 }
 
 apply from: "gradle/documentation.gradle"
+
+apply from: "gradle/publish.gradle"
+
 
 
 
