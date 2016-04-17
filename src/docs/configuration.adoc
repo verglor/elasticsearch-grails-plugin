@@ -302,7 +302,7 @@ MyDomain.search("${params.query}")
 
 [TIP]
 ====
- In order to change the method name to `esSearch` just update the `elasticSearch.searchMethodName='esSearch'` in application.groovy
+In order to change the method name to `esSearch` just update the `elasticSearch.searchMethodName='esSearch'` in application.groovy
 ====
 
 
@@ -385,7 +385,6 @@ environments {
     elasticSearch.client.mode = 'node'
   }
 }
-{code}
 ----
 
 ==== Grails 3.x
