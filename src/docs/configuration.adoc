@@ -288,6 +288,24 @@ Whether to index and search all non excluded transient properties. All explicitl
 Default is `false`.
 ====
 
+==== `elasticSearch.searchMethodName`
+
+Change the name of search method in domain class. By default it's `search`. 
+
+For example
+
+[source, groovy]
+----
+MyDomain.search("${params.query}")
+
+----
+
+[TIP]
+====
+ In order to change the method name to `esSearch` just update the `elasticSearch.searchMethodName='esSearch'` in application.groovy
+====
+
+
 === Default configuration script
 
 ==== Grails 2.x
