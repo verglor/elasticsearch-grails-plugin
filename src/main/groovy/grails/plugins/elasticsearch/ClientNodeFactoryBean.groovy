@@ -16,8 +16,8 @@
 
 package grails.plugins.elasticsearch
 
+import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -47,7 +47,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         if (configFile) {
             LOG.info "Looking for bootstrap configuration file at: $configFile"
             def resource = new PathMatchingResourcePatternResolver().getResource(configFile)
-            nb.settings(ImmutableSettings.settingsBuilder().loadFromUrl(resource.URL))
+            nb.settings(Settings.settingsBuilder().loadFromUrl(resource.URL))
         }
 
         def transportClient
@@ -66,7 +66,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         // Configure the client based on the client mode
         switch (clientMode) {
             case 'transport':
-                def transportSettings = ImmutableSettings.settingsBuilder()
+                def transportSettings = Settings.settingsBuilder()
 
                 def transportSettingsFile = elasticSearchContextHolder.config.bootstrap.transportSettings.file
                 if (transportSettingsFile) {
