@@ -37,16 +37,11 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     def loadAfter = ['services', 'mongodb']
 
-    def pluginExcludes = [
-            'grails-app/controllers/test/**',
-            'grails-app/services/test/**',
-            'grails-app/views/elasticSearch/index.gsp',
-            'grails-app/domain/test/**',
-            '**/test/**',
-            'src/docs/**',
-            'src/test/**',
-            'src/integration-test/**'
-    ]
+	def pluginExcludes = [
+			"grails-app/views/error.gsp",
+			"**/test/**",
+			"src/docs/**"
+	]
 
     def license = 'APACHE'
 
@@ -147,6 +142,6 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     void doWithDynamicMethods() {
         // Define the custom ElasticSearch mapping for searchable domain classes
-        DomainDynamicMethodsUtils.injectDynamicMethods(grailsApplication, applicationContext)
+		DomainDynamicMethodsUtils.injectDynamicMethods(grailsApplication, applicationContext)
     }
 }

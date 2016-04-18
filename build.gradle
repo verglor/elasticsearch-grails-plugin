@@ -50,6 +50,7 @@ dependencyManagement {
 }
 
 jar {
+	exclude "test/**"
     exclude "test/**/**"
 }
 
