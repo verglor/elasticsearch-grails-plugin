@@ -1,5 +1,5 @@
 File bintrayProperties = project.rootProject.file('bintray.properties')
-if (bintrayProperties.exists() && false) {
+if (bintrayProperties.exists()) {
   Properties properties = new Properties()
   properties.load(bintrayProperties.newDataInputStream())
 
