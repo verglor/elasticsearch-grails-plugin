@@ -142,6 +142,8 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     void doWithDynamicMethods() {
         // Define the custom ElasticSearch mapping for searchable domain classes
-		DomainDynamicMethodsUtils.injectDynamicMethods(grailsApplication, applicationContext)
+		if(grailsApplication.config.elasticSearch.disableDynamicMethodsInjection == false) {
+			DomainDynamicMethodsUtils.injectDynamicMethods(grailsApplication, applicationContext)
+		}
     }
 }

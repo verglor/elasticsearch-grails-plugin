@@ -137,6 +137,50 @@ In some cases the developer may prefer not to upgrade the alias to the new versi
 The default is `false`.
 ====
 
+=== Dynamic Method Injection
+
+==== `elasticSearch.searchMethodName`
+
+Change the name of search method in domain class. By default it's `search`. 
+
+For example
+
+[source, groovy]
+----
+MyDomain.search("${params.query}")
+
+----
+
+[TIP]
+====
+In order to change the method name to `esSearch` just update the `elasticSearch.searchMethodName='esSearch'` in application.groovy
+====
+
+
+==== `elasticSearch.countHitsMethodName`
+
+Change the name of countHits method in domain class. By default it's `countHits`. 
+
+For example
+
+[source, groovy]
+----
+MyDomain.countHits("${params.query}")
+
+----
+
+[TIP]
+====
+In order to change the method name to `esCountHits` just update the `elasticSearch.countHitsMethodName='esCountHits'` in application.groovy
+====
+
+
+
+==== `elasticSearch.disableDynamicMethodsInjection`
+
+To complete disabled injection of dynamic methods set `elasticSearch.disableDynamicMethodsInjection = true` in `applicaiton.groovy` 
+
+
 === Others properties
 
 ==== `elasticSearch.datastoreImpl`
@@ -287,24 +331,6 @@ Whether to index and search all non excluded transient properties. All explicitl
 ====
 Default is `false`.
 ====
-
-==== `elasticSearch.searchMethodName`
-
-Change the name of search method in domain class. By default it's `search`. 
-
-For example
-
-[source, groovy]
-----
-MyDomain.search("${params.query}")
-
-----
-
-[TIP]
-====
-In order to change the method name to `esSearch` just update the `elasticSearch.searchMethodName='esSearch'` in application.groovy
-====
-
 
 === Default configuration script
 

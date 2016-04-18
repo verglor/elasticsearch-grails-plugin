@@ -54,7 +54,8 @@ class DomainDynamicMethodsUtils {
             SearchableClassMapping scm = elasticSearchContextHolder.getMappingContext(domainCopy)
             def indexAndType = [indices: scm.queryingIndex, types: domainCopy.clazz]
 
-			String searchMethodName = grailsApplication.config.searchMethodName ?: 'search'
+			String searchMethodName = grailsApplication.config.elasticSearch.searchMethodName ?: 'search'
+			String countHitsMethodName = grailsApplication.config.elasticSearch.countHitsMethodName ?: 'countHits'
 
             // Inject the search method
             domain.metaClass.'static'."$searchMethodName" << { String q, Map params = [:] ->
@@ -98,35 +99,35 @@ class DomainDynamicMethodsUtils {
 			}
 
             // Inject the countHits method
-            domain.metaClass.'static'.countHits << { String q, Map params = [:] ->
+            domain.metaClass.'static'."$countHitsMethodName" << { String q, Map params = [:] ->
                 elasticSearchService.countHits(q, params + indexAndType)
             }
-            domain.metaClass.'static'.countHits << { Map params = [:], Closure q ->
+            domain.metaClass.'static'."$countHitsMethodName" << { Map params = [:], Closure q ->
                 elasticSearchService.countHits(params + indexAndType, q)
             }
-            domain.metaClass.'static'.countHits << { Closure q, Map params = [:] ->
+            domain.metaClass.'static'."$countHitsMethodName" << { Closure q, Map params = [:] ->
                 elasticSearchService.countHits(params + indexAndType, q)
             }
 
             // Inject the search method
-            domain.metaClass.static.search << { String q, Map params = [:] ->
+            domain.metaClass.static."$searchMethodName" << { String q, Map params = [:] ->
                 elasticSearchService.search(q, params + indexAndType)
             }
-            domain.metaClass.static.search << { Map params = [:], Closure q ->
+            domain.metaClass.static."$searchMethodName" << { Map params = [:], Closure q ->
                 elasticSearchService.search(params + indexAndType, q)
             }
-            domain.metaClass.static.search << { Closure q, Map params = [:] ->
+            domain.metaClass.static."$searchMethodName" << { Closure q, Map params = [:] ->
                 elasticSearchService.search(params + indexAndType, q)
             }
 
             // Inject the countHits method
-            domain.metaClass.static.countHits << { String q, Map params = [:] ->
+            domain.metaClass.static."$countHitsMethodName" << { String q, Map params = [:] ->
                 elasticSearchService.countHits(q, params + indexAndType)
             }
-            domain.metaClass.static.countHits << { Map params = [:], Closure q ->
+            domain.metaClass.static."$countHitsMethodName" << { Map params = [:], Closure q ->
                 elasticSearchService.countHits(params + indexAndType, q)
             }
-            domain.metaClass.static.countHits << { Closure q, Map params = [:] ->
+            domain.metaClass.static."$countHitsMethodName" << { Closure q, Map params = [:] ->
                 elasticSearchService.countHits(params + indexAndType, q)
             }
 
