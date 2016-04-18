@@ -2,22 +2,26 @@
 
 ==== Grails 3.x version
 
-* April , 2016
-** 1.0.1 
+* April 18, 2016
+** 1.0.0.1
 *** Add ability to change search method name in domain class via config
 *** Updated documentation to asciidoc
 
-* 2016
+* February 29, 2016
 ** 1.0.0
-*** Upgrade for Grails 3.1.1
-***
+*** Support for Grails 3.1.1
 
 ==== Grails 2.x version
 
-* April , 2016
+* April 3, 2016
 ** 0.1.0 
-*** Upgrade to Elasticsearch 2.1.2
-***
+*** New Elasticsearch 2.1.2 release
+*** Immutable Settings Removed  - Use `Settings.builder()` instead of `ImmutableSettings.builder()`
+*** `BroadcastOperationResponse` got renamed to `BroadcastResponse`
+*** Removed `deleteMapping`
+*** `memory` type is now deprecated
+*** Query/filter refactoring - `org.elasticsearch.index.queries.FilterBuilders` has been removed as part of the merge of queries and filters. These filters are now available in `QueryBuilders` with the same name. All methods that used to accept a `FilterBuilder` now accept a `QueryBuilder` instead.
+*** For more information related to changes in underline Java API https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking_20_java_api_changes.html#_query_filter_refactoring[click here]
  
 * June 30, 2015
 ** 0.0.4.5
