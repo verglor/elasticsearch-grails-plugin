@@ -66,10 +66,10 @@ dependencies {
     compile "org.grails.plugins:cache"
     compile "org.hibernate:hibernate-ehcache"
 
-    testRuntime('org.elasticsearch:elasticsearch-groovy:1.6.0') {
+    testRuntime('org.elasticsearch:elasticsearch-groovy:2.1.2') {
         exclude module: 'groovy-all'
-    }
-    compile "org.elasticsearch:elasticsearch-mapper-attachments:2.6.0"
+    }	
+    compile "org.elasticsearch:elasticsearch-mapper-attachments:3.1.2"
 
     testRuntime 'com.spatial4j:spatial4j:0.4.1'
     testCompile 'com.vividsolutions:jts:1.13'
