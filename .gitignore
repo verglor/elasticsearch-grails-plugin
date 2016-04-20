@@ -27,3 +27,6 @@ plugin.xml
 .project
 test/reports
 data/
+
+github.properties
+bintray.properties
