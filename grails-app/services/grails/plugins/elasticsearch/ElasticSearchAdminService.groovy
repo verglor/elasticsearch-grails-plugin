@@ -9,7 +9,7 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder
 import org.elasticsearch.action.admin.indices.exists.types.TypesExistsRequest
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRequest
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest
-import org.elasticsearch.action.support.broadcast.BroadcastOperationResponse
+import org.elasticsearch.action.support.broadcast.BroadcastResponse
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.Requests
 import org.slf4j.Logger
@@ -44,7 +44,7 @@ class ElasticSearchAdminService {
 
         // Refresh ES
         elasticSearchHelper.withElasticSearch { Client client ->
-            BroadcastOperationResponse response
+            BroadcastResponse response
             if (!indices) {
                 response = client.admin().indices().refresh(Requests.refreshRequest()).actionGet()
             } else {
