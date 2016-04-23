@@ -433,8 +433,8 @@ class MappingMigrationSpec extends Specification {
     }
 
     private void createConflictingCatalogMapping() {
-        //Delete existing Mapping
-        es.deleteMapping catalogMapping.indexName, catalogMapping.elasticTypeName
+        //Delete index and recreate with new mappings
+        es.deleteIndex catalogMapping.indexName
         //Create conflicting Mapping
         catalogPagesMapping.addAttributes([component:true])
         searchableClassMappingConfigurator.installMappings([catalogMapping])
@@ -443,8 +443,8 @@ class MappingMigrationSpec extends Specification {
     }
 
     private void createConflictingProductMapping() {
-        //Delete existing Mapping
-        es.deleteMapping itemMapping.indexName, itemMapping.elasticTypeName
+        //Delete index and recreate with new mappings
+        es.deleteIndex itemMapping.indexName
         //Create conflicting Mapping
         itemSupplierMapping.addAttributes([component:true])
         searchableClassMappingConfigurator.installMappings([itemMapping])

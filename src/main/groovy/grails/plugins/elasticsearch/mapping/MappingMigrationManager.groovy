@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 
 import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.alias
 import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.delete
+import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.deleteIndex
 import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.none
 
 /**
@@ -29,25 +30,44 @@ class MappingMigrationManager {
 
     def applyMigrations(MappingMigrationStrategy migrationStrategy, Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
         switch(migrationStrategy) {
-            case delete:
-                applyDeleteStrategy(elasticMappings, mappingConflicts)
-                break;
+			case delete:
+				LOG.error("Delete a Mapping is no longer supported since Elasticsearch 2.0 (see https://www.elastic.co/guide/en/elasticsearch/reference/2.0/indices-delete-mapping.html). To prevent data loss, this strategy has been replaced by 'deleteIndex' It delete the index and recreate it with the new mappings.")
+				break
+            case deleteIndex:
+			    // It is no longer possible to delete the mapping for a type. Instead you should delete the index and recreate it with the new mappings.
+                applyDeleteIndexStrategy(elasticMappings, mappingConflicts, indexSettings)
+                break
             case alias:
                 applyAliasStrategy(elasticMappings, mappingConflicts, indexSettings)
-                break;
+                break
             case none:
                 LOG.error("Could not install mappings : ${mappingConflicts}. No migration strategy selected.")
                 throw new MappingException()
         }
     }
 
-    def applyDeleteStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts) {
+	/**
+	 * It is no longer possible to delete the mapping for a type. Instead you should delete the index and recreate it with the new mappings.
+	 */
+    def applyDeleteIndexStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
+		List deletedIndeices = []
         mappingConflicts.each {
             SearchableClassMapping scm = it.scm
-            es.deleteMapping scm.indexName, scm.elasticTypeName
-            es.createMapping scm.indexName, scm.elasticTypeName, elasticMappings[it.scm]
-            elasticSearchContextHolder.deletedOnMigration << scm.domainClass.clazz
+			if( scm.indexName in deleteIndices ) {
+				LOG.debug("$scm.indexName is already deleted")
+			} else {
+				es.deleteIndex( scm.indexName )
+				int nextVersion = es.getNextVersion( scm.indexName )
+				es.createIndex( scm.indexName, nextVersion, indexSettings )
+				//Ensure new index exists so later on mappings are created on the right version
+				es.waitForIndex( scm.indexName, nextVersion ) 
+				es.pointAliasTo( scm.indexName, scm.indexName, nextVersion )
+				if( !esConfig.bulkIndexOnStartup && !esConfig.migration.disableAliasChange ) {
+					es.pointAliasTo( scm.queryingIndex, scm.indexName, nextVersion )
+				}
+			}
         }
+		rebuildMappings( elasticMappings, deletedIndices )
     }
 
     def applyAliasStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
