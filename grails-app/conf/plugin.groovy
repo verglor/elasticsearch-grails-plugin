@@ -1,4 +1,5 @@
 elasticSearch {
+	
     /**
      * Date formats used by the unmarshaller of the JSON responses
      */
@@ -92,7 +93,7 @@ environments {
     test {
         elasticSearch {
             client.mode = 'local'
-            index.store.type = 'memory' // store local node in memory and not on disk
+            index.store.type = 'simplefs' // file system storage
         }
     }
     production {

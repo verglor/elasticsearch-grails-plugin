@@ -125,6 +125,11 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if (confDirectory) {
                     nb.settings().put('path.conf', confDirectory as String)
                 }
+				
+				def esHomeDirectory = elasticSearchContextHolder.config.path.home
+				if( esHomeDirectory ) {
+					nb.settings().put('path.home', esHomeDirectory as String)
+				}
 
                 nb.local(true)
                 break
