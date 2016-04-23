@@ -17,7 +17,7 @@
 package grails.plugins.elasticsearch
 
 import org.elasticsearch.common.settings.Settings
-import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.client.transport.TranportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -66,7 +66,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         // Configure the client based on the client mode
         switch (clientMode) {
             case 'transport':
-                def transportSettings = Settings.settingsBuilder()
+                Settings transportSettings = Settings.settingsBuilder()
 
                 def transportSettingsFile = elasticSearchContextHolder.config.bootstrap.transportSettings.file
                 if (transportSettingsFile) {
@@ -80,7 +80,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if (elasticSearchContextHolder.config.cluster.name) {
                     transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
-                transportClient = new TransportClient(transportSettings)
+				transportClient = TransportClient.builder().settings(transportClient).build()
 
                 // Configure transport addresses
                 if (!elasticSearchContextHolder.config.client.hosts) {
