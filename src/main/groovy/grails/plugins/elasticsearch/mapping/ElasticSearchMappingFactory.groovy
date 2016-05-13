@@ -105,7 +105,7 @@ class ElasticSearchMappingFactory {
             }
             propOptions.type = propType
             // See http://www.elasticsearch.com/docs/elasticsearch/mapping/all_field/
-            if ((propType != 'object') && scm.isAll()) {
+            if (!(propType in ['object', 'attachment']) && scm.isAll()) {
                 // does it make sense to include objects into _all?
                 propOptions.include_in_all = !scpm.shouldExcludeFromAll()
             }

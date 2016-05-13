@@ -102,8 +102,10 @@ environments {
     test {
         elasticSearch {
             client.mode = 'local'
-            index.store.type = 'memory' // store local node in memory and not on disk
+            index.store.type = 'simplefs' // store local node in memory and not on disk
         }
+
+        path.plugins = 'src/test/resources/plugins'
     }
     production {
         elasticSearch.client.mode = 'node'

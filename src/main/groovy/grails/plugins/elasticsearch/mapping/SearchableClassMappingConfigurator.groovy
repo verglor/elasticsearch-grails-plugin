@@ -16,6 +16,7 @@
 
 package grails.plugins.elasticsearch.mapping
 
+import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.grails.core.artefact.DomainClassArtefactHandler
 import grails.core.GrailsApplication
 import grails.core.GrailsClass
@@ -133,7 +134,7 @@ class SearchableClassMappingConfigurator {
             mmm.applyMigrations(migrationStrategy, elasticMappings, mappingConflicts, indexSettings)
         }
 
-        es.waitForClusterYellowStatus()
+        es.waitForClusterStatus(ClusterHealthStatus.YELLOW)
     }
 
 
@@ -145,7 +146,7 @@ class SearchableClassMappingConfigurator {
      */
     private boolean createIndexWithReadAndWrite(MappingMigrationStrategy strategy, SearchableClassMapping scm, Map indexSettings) throws RemoteTransportException {
         // Could be blocked on index level, thus wait.
-        es.waitForIndex(scm.indexName)
+        es.waitForClusterStatus(ClusterHealthStatus.YELLOW)
         if(!es.indexExists(scm.indexName)) {
             LOG.debug("Index ${scm.indexName} does not exists, initiating creation...")
             if (strategy == alias) {

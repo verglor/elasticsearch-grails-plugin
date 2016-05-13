@@ -7,9 +7,7 @@ import grails.plugins.elasticsearch.exception.MappingException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.alias
-import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.delete
-import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.none
+import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.*
 
 /**
  * Created by @marcos-carceles on 26/01/15.
@@ -28,10 +26,13 @@ class MappingMigrationManager {
     }
 
     def applyMigrations(MappingMigrationStrategy migrationStrategy, Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
-        switch(migrationStrategy) {
+        switch (migrationStrategy) {
             case delete:
-                applyDeleteStrategy(elasticMappings, mappingConflicts)
-                break;
+                LOG.error("Delete a Mapping is no longer supported since Elasticsearch 2.0 (see https://www.elastic.co/guide/en/elasticsearch/reference/2.0/indices-delete-mapping.html)." +
+                        " To prevent data loss, this strategy has been replaced by 'deleteIndex'")
+                throw new MappingException()
+            case deleteIndex:
+                applyDeleteIndexStrategy(elasticMappings, mappingConflicts, indexSettings)
             case alias:
                 applyAliasStrategy(elasticMappings, mappingConflicts, indexSettings)
                 break;
@@ -41,13 +42,26 @@ class MappingMigrationManager {
         }
     }
 
-    def applyDeleteStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts) {
+    def applyDeleteIndexStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
+        List deletedIndices = []
         mappingConflicts.each {
             SearchableClassMapping scm = it.scm
-            es.deleteMapping scm.indexName, scm.elasticTypeName
-            es.createMapping scm.indexName, scm.elasticTypeName, elasticMappings[it.scm]
-            elasticSearchContextHolder.deletedOnMigration << scm.domainClass.clazz
+            if(!deletedIndices.contains(scm.indexName)) {
+                deletedIndices << scm.indexName
+                es.deleteIndex scm.indexName
+                int nextVersion = es.getNextVersion(scm.indexName)
+                es.createIndex scm.indexName, nextVersion, indexSettings
+                es.waitForIndex scm.indexName, nextVersion //Ensure it exists so later on mappings are created on the right version
+                es.pointAliasTo scm.indexName, scm.indexName, nextVersion
+                es.pointAliasTo scm.indexingIndex, scm.indexName, nextVersion
+                if(!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
+                    if (!esConfig.migration.disableAliasChange) {
+                        es.pointAliasTo scm.queryingIndex, scm.indexName, nextVersion
+                    }
+                }
+            }
         }
+        rebuildMappings(elasticMappings, deletedIndices)
     }
 
     def applyAliasStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
@@ -66,17 +80,18 @@ class MappingMigrationManager {
                 boolean conflictOnAlias = es.aliasExists(scm.indexName)
                 println "Conflict: $conflictOnAlias"
                 println "Config: $esConfig.migration.aliasReplacesIndex"
-                if(conflictOnAlias || esConfig.migration.aliasReplacesIndex ) {
+                if (conflictOnAlias || esConfig.migration.aliasReplacesIndex) {
                     int nextVersion = es.getNextVersion(scm.indexName)
                     if (!conflictOnAlias) {
                         es.deleteIndex(scm.indexName)
                     }
                     es.createIndex scm.indexName, nextVersion, indexSettings
-                    es.waitForIndex scm.indexName, nextVersion //Ensure it exists so later on mappings are created on the right version
+                    es.waitForIndex scm.indexName, nextVersion
+                    //Ensure it exists so later on mappings are created on the right version
                     es.pointAliasTo scm.indexName, scm.indexName, nextVersion
                     es.pointAliasTo scm.indexingIndex, scm.indexName, nextVersion
 
-                    if(!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
+                    if (!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
                         if (!conflictOnAlias || !esConfig.migration.disableAliasChange) {
                             es.pointAliasTo scm.queryingIndex, scm.indexName, nextVersion
                         }
@@ -93,7 +108,8 @@ class MappingMigrationManager {
         //Recreate the mappings for all the indexes that were changed
         elasticMappings.each { SearchableClassMapping scm, elasticMapping ->
             if (migratedIndices.contains(scm.indexName)) {
-                elasticSearchContextHolder.deletedOnMigration << scm.domainClass.clazz //Mark it for potential content index on Bootstrap
+                elasticSearchContextHolder.deletedOnMigration << scm.domainClass.clazz
+                //Mark it for potential content index on Bootstrap
                 if (scm.isRoot()) {
                     int newVersion = es.getLatestVersion(scm.indexName)
                     String indexName = es.versionIndex(scm.indexName, newVersion)
