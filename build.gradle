@@ -54,6 +54,16 @@ jar {
     exclude "test/**/**"
 }
 
+groovydoc {
+    exclude "test/**"
+    exclude "test/**/**"
+}
+
+sourcesJar {
+    exclude "test/**"
+    exclude "test/**/**"
+}
+
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
     provided "org.springframework.boot:spring-boot-starter-actuator"
