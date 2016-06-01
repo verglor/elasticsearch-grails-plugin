@@ -182,13 +182,16 @@ class ElasticSearchAdminService {
      * @param index The name of the index
      * @param settings The index settings (ie. number of shards)
      */
-    void createIndex(String index, Map settings=null) {
+    void createIndex(String index, Map settings=null, Map<String, Map> esMappings = [:]) {
         LOG.debug "Creating index ${index} ..."
 
         elasticSearchHelper.withElasticSearch { Client client ->
             CreateIndexRequestBuilder builder = client.admin().indices().prepareCreate(index)
             if (settings) {
                 builder.setSettings(settings)
+            }
+            esMappings.each { String type, Map elasticMapping ->
+                builder.addMapping(type, elasticMapping)
             }
             builder.execute().actionGet()
         }
@@ -200,9 +203,9 @@ class ElasticSearchAdminService {
      * @param version the version number, if provided <index>_v<version> will be used
      * @param settings The index settings (ie. number of shards)
      */
-    void createIndex(String index, Integer version, Map settings=null) {
+    void createIndex(String index, Integer version, Map settings=null, Map<String, Map> esMappings = [:]) {
         index = versionIndex(index, version)
-        createIndex(index, settings)
+        createIndex(index, settings, esMappings)
     }
 
     /**

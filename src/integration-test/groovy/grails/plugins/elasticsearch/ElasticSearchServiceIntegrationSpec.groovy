@@ -30,6 +30,8 @@ import spock.lang.Specification
 import test.*
 import test.custom.id.Toy
 
+import java.math.RoundingMode
+
 @Integration
 @Rollback
 class ElasticSearchServiceIntegrationSpec extends Specification {
@@ -272,7 +274,7 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
         when: 'a geo distance filter search is performed'
 
         Map params = [indices: Building, types: Building]
-        Closure query = QueryBuilders.matchAllQuery()
+        QueryBuilder query = QueryBuilders.matchAllQuery()
         def location = '50, 13'
 
         Closure filter = {
@@ -592,10 +594,13 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
         }
         def result = elasticSearchService.search(params, query, filter)
 
-        then: 'all geo points in the search radius are found'
+        and:
         List<Building> searchResults = result.searchResults
+        //Avoid double precission issues
+        def sortResults = result.sort.(searchResults[0].id).collect {(it as BigDecimal).setScale(4, RoundingMode.HALF_UP) }
 
-        result.sort.(searchResults[0].id) == [2.5382648464733575]
+        then: 'all geo points in the search radius are found'
+        sortResults == [2.5383]
     }
 
     void 'Component as an inner object'() {

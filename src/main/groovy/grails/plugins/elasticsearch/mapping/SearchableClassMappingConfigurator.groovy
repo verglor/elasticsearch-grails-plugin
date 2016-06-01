@@ -29,6 +29,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import static grails.plugins.elasticsearch.mapping.MappingMigrationStrategy.*
+import static grails.plugins.elasticsearch.util.IndexNamingUtils.indexingIndexFor
+import static grails.plugins.elasticsearch.util.IndexNamingUtils.queryingIndexFor
 
 /**
  * Build searchable mappings, configure ElasticSearch indexes,
@@ -99,33 +101,42 @@ class SearchableClassMappingConfigurator {
         LOG.debug "elasticMappings are ${elasticMappings.keySet()}"
 
         MappingMigrationStrategy migrationStrategy = esConfig?.migration?.strategy ? MappingMigrationStrategy.valueOf(esConfig.migration.strategy) : none
-        Set<String> installedIndices = []
         def mappingConflicts = []
-        for (SearchableClassMapping scm : mappings) {
-            if (scm.isRoot()) {
 
-                Map elasticMapping = elasticMappings[scm]
+        Set indices = mappings.collect { it.indexName } as Set
 
-                // todo wait for success, maybe retry.
-                // If the index was not created, create it
-                if (!installedIndices.contains(scm.indexName)) {
-                    try {
-                        createIndexWithReadAndWrite(migrationStrategy, scm, indexSettings)
-                        installedIndices.add(scm.indexName)
-                    } catch (RemoteTransportException rte) {
-                        LOG.debug(rte.getMessage())
-                    }
-                }
+        //Install the mappings for each index all together
+        indices.each { String indexName ->
 
-                // Install mapping
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Installing mapping [" + scm.elasticTypeName + "] => " + elasticMapping)
-                }
+            List<SearchableClassMapping> indexMappings = mappings.findAll { it.indexName == indexName && it.isRoot() }
+            Map<String, Map> esMappings = indexMappings.collectEntries { [(it.elasticTypeName) : elasticMappings[it]] }
+
+            //If the index does not exist we attempt to create all the mappings at once with it
+            if(!es.indexExists(indexName)) {
                 try {
-                    es.createMapping scm.indexName, scm.elasticTypeName, elasticMapping
-                } catch (MergeMappingException e) {
-                    LOG.warn("Could not install mapping ${scm.indexName}/${scm.elasticTypeName} due to ${e.message}, migrations needed")
-                    mappingConflicts << new MappingConflict(scm: scm, exception: e)
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Creating index [" + indexName + "] => with new mappings:")
+                        esMappings.each {String type, Map esMapping ->
+                            LOG.debug("\t\tMapping ["+ type +"] => " + esMapping)
+                        }
+                    }
+                    createIndexWithMappings(indexName,  migrationStrategy, esMappings, indexSettings)
+                } catch (RemoteTransportException rte) {
+                    LOG.debug(rte.getMessage())
+                }
+            } else { //We install the mappings one by one
+                indexMappings.each { SearchableClassMapping scm ->
+                    Map elasticMapping = elasticMappings[scm]
+                    // Install mapping
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Installing mapping [" + scm.elasticTypeName + "] => " + elasticMapping)
+                    }
+                    try {
+                        es.createMapping scm.indexName, scm.elasticTypeName, elasticMapping
+                    } catch (IllegalArgumentException|MergeMappingException e) {
+                        LOG.warn("Could not install mapping ${scm.indexName}/${scm.elasticTypeName} due to ${e.message}, migrations needed")
+                        mappingConflicts << new MappingConflict(scm: scm, exception: e)
+                    }
                 }
             }
         }
@@ -144,23 +155,26 @@ class SearchableClassMappingConfigurator {
      * @returns true if it created a new index, false if it already existed
      * @throws RemoteTransportException if some other error occured
      */
-    private boolean createIndexWithReadAndWrite(MappingMigrationStrategy strategy, SearchableClassMapping scm, Map indexSettings) throws RemoteTransportException {
-        // Could be blocked on index level, thus wait.
+    private boolean createIndexWithMappings(String indexName, MappingMigrationStrategy strategy, Map<String, Map> esMappings, Map indexSettings) throws RemoteTransportException {
+        // Could be blocked on cluster level, thus wait.
+        String queryingIndex = queryingIndexFor(indexName)
+        String indexingIndex = indexingIndexFor(indexName)
+
         es.waitForClusterStatus(ClusterHealthStatus.YELLOW)
-        if(!es.indexExists(scm.indexName)) {
-            LOG.debug("Index ${scm.indexName} does not exists, initiating creation...")
+        if(!es.indexExists(indexName)) {
+            LOG.debug("Index ${indexName} does not exists, initiating creation...")
             if (strategy == alias) {
-                def nextVersion = es.getNextVersion scm.indexName
-                es.createIndex scm.indexName, nextVersion, indexSettings
-                es.pointAliasTo scm.indexName, scm.indexName, nextVersion
+                def nextVersion = es.getNextVersion indexName
+                es.createIndex indexName, nextVersion, indexSettings, esMappings
+                es.pointAliasTo indexName, indexName, nextVersion
             } else {
-                es.createIndex scm.indexName, indexSettings
+                es.createIndex indexName, indexSettings
             }
         }
         //Create them only if they don't exist so it does not mess with other migrations
-        if(!es.aliasExists(scm.queryingIndex)) {
-            es.pointAliasTo(scm.queryingIndex, scm.indexName)
-            es.pointAliasTo(scm.indexingIndex, scm.indexName)
+        if(!es.aliasExists(queryingIndex)) {
+            es.pointAliasTo(queryingIndex, indexName)
+            es.pointAliasTo(indexingIndex, indexName)
         }
     }
 

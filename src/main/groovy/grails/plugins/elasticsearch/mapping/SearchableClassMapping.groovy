@@ -16,6 +16,7 @@
 
 package grails.plugins.elasticsearch.mapping
 
+import grails.plugins.elasticsearch.util.IndexNamingUtils
 import grails.util.GrailsNameUtils
 import grails.core.GrailsDomainClass
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
@@ -29,9 +30,6 @@ class SearchableClassMapping {
     /** Searchable root? */
     private boolean root = true
     protected all = true
-
-    public static final READ_SUFFIX = "_read"
-    public static final WRITE_SUFFIX = "_write"
 
     String indexName
 
@@ -91,11 +89,11 @@ class SearchableClassMapping {
     }
 
     String getIndexingIndex() {
-        return indexName + WRITE_SUFFIX
+        return IndexNamingUtils.indexingIndexFor(indexName)
     }
 
     String getQueryingIndex() {
-        return indexName + READ_SUFFIX
+        return IndexNamingUtils.queryingIndexFor(indexName)
     }
 
     /**

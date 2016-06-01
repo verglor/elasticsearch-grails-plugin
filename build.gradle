@@ -64,6 +64,8 @@ sourcesJar {
     exclude "test/**/**"
 }
 
+def elasticsearchVersion = '2.3.3'
+
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
     provided "org.springframework.boot:spring-boot-starter-actuator"
@@ -77,7 +79,7 @@ dependencies {
     compile "org.grails.plugins:cache"
     compile "org.hibernate:hibernate-ehcache"
 
-    compile 'org.elasticsearch:elasticsearch:2.3.2'
+    compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
 
     testRuntime 'com.spatial4j:spatial4j:0.4.1'
     testCompile 'com.vividsolutions:jts:1.13'
@@ -85,6 +87,8 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
 
     console "org.grails:grails-console"
+
+    compile "org.elasticsearch.plugin:mapper-attachments:${elasticsearchVersion}"
 }
 
 task wrapper(type: Wrapper) {

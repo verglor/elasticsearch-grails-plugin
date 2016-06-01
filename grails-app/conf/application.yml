@@ -105,7 +105,6 @@ environments:
                         repl_analyzer:
                             tokenizer: standard
                             filter: ['lowercase', 'replace_synonyms']
-
     production:
         elasticSearch:
             client:
