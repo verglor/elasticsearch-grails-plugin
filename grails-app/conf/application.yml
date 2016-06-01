@@ -86,8 +86,8 @@ dataSource:
     password:
 
 elasticSearch:
-	path:
-		home: /tmp/elasticsearch
+    path:
+        home: /tmp/elasticsearch
     date:
         formats: ["yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
     client.hosts:
