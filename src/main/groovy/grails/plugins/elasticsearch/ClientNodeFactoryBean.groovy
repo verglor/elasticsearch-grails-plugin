@@ -34,8 +34,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder
-
 class ClientNodeFactoryBean implements FactoryBean {
 
     static final SUPPORTED_MODES = ['local', 'transport', 'node', 'dataNode']
@@ -90,7 +88,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 if (elasticSearchContextHolder.config.cluster.name) {
                     transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
-                transportClient = new TransportClient(transportSettings)
+                transportClient = TransportClient.builder().settings(transportSettings).build()
 
                 boolean ip4Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: true
                 boolean ip6Enabled = elasticSearchContextHolder.config.shield.ip6Enabled ?: false
