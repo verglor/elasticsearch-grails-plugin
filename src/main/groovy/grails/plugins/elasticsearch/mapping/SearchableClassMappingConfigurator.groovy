@@ -133,11 +133,21 @@ class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
                     }
                     try {
                         es.createMapping scm.indexName, scm.elasticTypeName, elasticMapping
-                    } catch (IllegalArgumentException|MergeMappingException e) {
+                    } catch (IllegalArgumentException e) {
+                        LOG.warn("Could not install mapping ${scm.indexName}/${scm.elasticTypeName} due to ${e.message}, migrations needed")
+                        mappingConflicts << new MappingConflict(scm: scm, exception: e)
+                    } catch (MergeMappingException e) {
                         LOG.warn("Could not install mapping ${scm.indexName}/${scm.elasticTypeName} due to ${e.message}, migrations needed")
                         mappingConflicts << new MappingConflict(scm: scm, exception: e)
                     }
                 }
+            }
+            //Create them only if they don't exist so it does not mess with other migrations
+            String queryingIndex = queryingIndexFor(indexName)
+            String indexingIndex = indexingIndexFor(indexName)
+            if(!es.aliasExists(queryingIndex)) {
+                es.pointAliasTo(queryingIndex, indexName)
+                es.pointAliasTo(indexingIndex, indexName)
             }
         }
         if(mappingConflicts) {
@@ -152,14 +162,10 @@ class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
     /**
      * Creates the Elasticsearch index once unblocked and its read and write aliases
      * @param indexName
-     * @returns true if it created a new index, false if it already existed
      * @throws RemoteTransportException if some other error occured
      */
-    private boolean createIndexWithMappings(String indexName, MappingMigrationStrategy strategy, Map<String, Map> esMappings, Map indexSettings) throws RemoteTransportException {
+    private void createIndexWithMappings(String indexName, MappingMigrationStrategy strategy, Map<String, Map> esMappings, Map indexSettings) throws RemoteTransportException {
         // Could be blocked on cluster level, thus wait.
-        String queryingIndex = queryingIndexFor(indexName)
-        String indexingIndex = indexingIndexFor(indexName)
-
         es.waitForClusterStatus(ClusterHealthStatus.YELLOW)
         if(!es.indexExists(indexName)) {
             LOG.debug("Index ${indexName} does not exists, initiating creation...")
@@ -168,13 +174,8 @@ class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
                 es.createIndex indexName, nextVersion, indexSettings, esMappings
                 es.pointAliasTo indexName, indexName, nextVersion
             } else {
-                es.createIndex indexName, indexSettings
+                es.createIndex indexName, indexSettings, esMappings
             }
-        }
-        //Create them only if they don't exist so it does not mess with other migrations
-        if(!es.aliasExists(queryingIndex)) {
-            es.pointAliasTo(queryingIndex, indexName)
-            es.pointAliasTo(indexingIndex, indexName)
         }
     }
 

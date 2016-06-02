@@ -32,9 +32,10 @@ class MappingMigrationManager implements ElasticSearchConfigAware {
                         " To prevent data loss, this strategy has been replaced by 'deleteIndex'")
                 throw new MappingException()
             case deleteIndex:
-                applyDeleteIndexStrategy(elasticMappings, mappingConflicts, indexSettings)
+                elasticSearchContextHolder.indexesRebuiltOnMigration = applyDeleteIndexStrategy(elasticMappings, mappingConflicts, indexSettings)
+                break;
             case alias:
-                applyAliasStrategy(elasticMappings, mappingConflicts, indexSettings)
+                elasticSearchContextHolder.indexesRebuiltOnMigration = applyAliasStrategy(elasticMappings, mappingConflicts, indexSettings)
                 break;
             case none:
                 LOG.error("Could not install mappings : ${mappingConflicts}. No migration strategy selected.")
@@ -49,9 +50,8 @@ class MappingMigrationManager implements ElasticSearchConfigAware {
             es.deleteIndex indexName
 
             int nextVersion = es.getNextVersion(indexName)
-            boolean buildQueryingAlias = (!!esConfig.bulkIndexOnStartup) && (migrationConfig?.disableAliasChange)
 
-            rebuildIndexWithMappings(indexName, nextVersion, indexSettings, elasticMappings, buildQueryingAlias)
+            rebuildIndexWithMappings(indexName, nextVersion, indexSettings, elasticMappings, true)
         }
         indices
     }
