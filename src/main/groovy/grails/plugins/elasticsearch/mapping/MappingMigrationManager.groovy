@@ -4,6 +4,8 @@ import grails.core.GrailsApplication
 import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import grails.plugins.elasticsearch.exception.MappingException
+import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
+import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -14,18 +16,14 @@ import static grails.plugins.elasticsearch.util.IndexNamingUtils.queryingIndexFo
 /**
  * Created by @marcos-carceles on 26/01/15.
  */
-class MappingMigrationManager {
+@CompileStatic
+class MappingMigrationManager implements ElasticSearchConfigAware {
 
-    private ElasticSearchContextHolder elasticSearchContextHolder
-    private ElasticSearchAdminService es
-    private GrailsApplication grailsApplication
-    private ConfigObject config
+    ElasticSearchContextHolder elasticSearchContextHolder
+    ElasticSearchAdminService es
+    GrailsApplication grailsApplication
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
-
-    private Map getEsConfig() {
-        grailsApplication.config.elasticSearch as Map
-    }
 
     def applyMigrations(MappingMigrationStrategy migrationStrategy, Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
         switch (migrationStrategy) {
@@ -44,35 +42,35 @@ class MappingMigrationManager {
         }
     }
 
-    def applyDeleteIndexStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
-        List indices = mappingConflicts.collect { it.scm.indexName } as Set
+    Set applyDeleteIndexStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
+        Set<String> indices = mappingConflicts.collect { it.scm.indexName } as Set<String>
         indices.each { String indexName ->
 
             es.deleteIndex indexName
 
             int nextVersion = es.getNextVersion(indexName)
-            boolean buildQueryingAlias = (!!esConfig.bulkIndexOnStartup) && (!esConfig.migration.disableAliasChange)
+            boolean buildQueryingAlias = (!!esConfig.bulkIndexOnStartup) && (migrationConfig?.disableAliasChange)
 
             rebuildIndexWithMappings(indexName, nextVersion, indexSettings, elasticMappings, buildQueryingAlias)
         }
         indices
     }
 
-    def applyAliasStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
+    Set applyAliasStrategy(Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
 
-        List indices = mappingConflicts.collect { it.scm.indexName } as Set
+        Set<String> indices = mappingConflicts.collect { it.scm.indexName } as Set<String>
 
         indices.each { String indexName ->
             LOG.debug("Creating new version and alias for conflicting index ${indexName}")
             boolean conflictOnAlias = es.aliasExists(indexName)
-            if (conflictOnAlias || esConfig.migration.aliasReplacesIndex) {
+            if (conflictOnAlias || migrationConfig?.aliasReplacesIndex) {
 
                 if (!conflictOnAlias) {
                     es.deleteIndex(indexName)
                 }
 
                 int nextVersion = es.getNextVersion(indexName)
-                boolean buildQueryingAlias = (!esConfig.bulkIndexOnStartup) && (!conflictOnAlias || !esConfig.migration.disableAliasChange)
+                boolean buildQueryingAlias = (!esConfig.bulkIndexOnStartup) && (!conflictOnAlias || !migrationConfig?.disableAliasChange)
                 rebuildIndexWithMappings(indexName, nextVersion, indexSettings, elasticMappings, buildQueryingAlias)
 
             } else {
@@ -87,7 +85,7 @@ class MappingMigrationManager {
             scm.indexName == indexName && scm.isRoot()
         }.collectEntries { SearchableClassMapping scm, Map esMapping ->
             [(scm.elasticTypeName) : esMapping]
-        }
+        } as Map<String, Map>
         es.createIndex indexName, nextVersion, indexSettings, esMappings
         es.waitForIndex indexName, nextVersion //Ensure it exists so later on mappings are created on the right version
         es.pointAliasTo indexName, indexName, nextVersion
@@ -96,21 +94,4 @@ class MappingMigrationManager {
             es.pointAliasTo queryingIndexFor(indexName), indexName, nextVersion
         }
     }
-
-    void setElasticSearchContextHolder(ElasticSearchContextHolder elasticSearchContextHolder) {
-        this.elasticSearchContextHolder = elasticSearchContextHolder
-    }
-
-    void setGrailsApplication(GrailsApplication grailsApplication) {
-        this.grailsApplication = grailsApplication
-    }
-
-    void setConfig(ConfigObject config) {
-        this.config = config
-    }
-
-    void setEs(ElasticSearchAdminService es) {
-        this.es = es
-    }
-
 }

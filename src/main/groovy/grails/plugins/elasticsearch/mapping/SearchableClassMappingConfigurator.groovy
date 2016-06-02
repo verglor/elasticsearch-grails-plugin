@@ -16,6 +16,8 @@
 
 package grails.plugins.elasticsearch.mapping
 
+import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
+import groovy.transform.CompileStatic
 import org.elasticsearch.cluster.health.ClusterHealthStatus
 import org.grails.core.artefact.DomainClassArtefactHandler
 import grails.core.GrailsApplication
@@ -36,15 +38,15 @@ import static grails.plugins.elasticsearch.util.IndexNamingUtils.queryingIndexFo
  * Build searchable mappings, configure ElasticSearch indexes,
  * build and install ElasticSearch mappings.
  */
-class SearchableClassMappingConfigurator {
+@CompileStatic
+class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
-    private ElasticSearchContextHolder elasticSearchContext
-    private GrailsApplication grailsApplication
-    private ElasticSearchAdminService es
-    private MappingMigrationManager mmm
-    private ConfigObject config
+    ElasticSearchContextHolder elasticSearchContext
+    GrailsApplication grailsApplication
+    ElasticSearchAdminService es
+    MappingMigrationManager mmm
 
     /**
      * Init method.
@@ -56,7 +58,6 @@ class SearchableClassMappingConfigurator {
 
     public Collection<SearchableClassMapping> mappings() {
         // TODO: Not able to reflect changes in config if we use instance field config in SearchableDomainClassMapper constructor
-        ConfigObject esConfig = grailsApplication.config.elasticSearch
         List<SearchableClassMapping> mappings = []
         for (GrailsClass clazz : grailsApplication.getArtefacts(DomainClassArtefactHandler.TYPE)) {
             GrailsDomainClass domainClass = (GrailsDomainClass) clazz
@@ -91,8 +92,7 @@ class SearchableClassMappingConfigurator {
      * @param mappings searchable class mappings to be install.
      */
     public void installMappings(Collection<SearchableClassMapping> mappings){
-        Map esConfig = grailsApplication.config.elasticSearch
-        Map<String, Object> indexSettings = buildIndexSettings(esConfig)
+        Map<String, Object> indexSettings = buildIndexSettings()
 
         LOG.debug("Index settings are " + indexSettings)
         
@@ -100,15 +100,15 @@ class SearchableClassMappingConfigurator {
         Map<SearchableClassMapping, Map> elasticMappings = buildElasticMappings(mappings)
         LOG.debug "elasticMappings are ${elasticMappings.keySet()}"
 
-        MappingMigrationStrategy migrationStrategy = esConfig?.migration?.strategy ? MappingMigrationStrategy.valueOf(esConfig.migration.strategy) : none
+        MappingMigrationStrategy migrationStrategy = migrationConfig?.strategy ? MappingMigrationStrategy.valueOf(migrationConfig?.strategy as String) : none
         def mappingConflicts = []
 
-        Set indices = mappings.collect { it.indexName } as Set
+        Set<String> indices = mappings.collect { it.indexName } as Set<String>
 
         //Install the mappings for each index all together
         indices.each { String indexName ->
 
-            List<SearchableClassMapping> indexMappings = mappings.findAll { it.indexName == indexName && it.isRoot() }
+            List<SearchableClassMapping> indexMappings = mappings.findAll { it.indexName == indexName && it.isRoot() } as List<SearchableClassMapping>
             Map<String, Map> esMappings = indexMappings.collectEntries { [(it.elasticTypeName) : elasticMappings[it]] }
 
             //If the index does not exist we attempt to create all the mappings at once with it
@@ -178,12 +178,12 @@ class SearchableClassMappingConfigurator {
         }
     }
 
-    private Map<String, Object> buildIndexSettings(Map esConfig) {
+    private Map<String, Object> buildIndexSettings() {
         Map<String, Object> indexSettings = new HashMap<String, Object>()
         indexSettings.put("number_of_replicas", numberOfReplicas())
         // Look for default index settings.
         if (esConfig != null) {
-            Map<String, Object> indexDefaults = esConfig.get("index")
+            Map<String, Object> indexDefaults = esConfig.get("index") as Map<String, Object>
             LOG.debug("Retrieved index settings")
             if (indexDefaults != null) {
                 for (Map.Entry<String, Object> entry : indexDefaults.entrySet()) {
@@ -204,30 +204,11 @@ class SearchableClassMappingConfigurator {
         elasticMappings
     }
 
-    void setElasticSearchContext(ElasticSearchContextHolder elasticSearchContext) {
-        this.elasticSearchContext = elasticSearchContext
-    }
-
-    void setGrailsApplication(GrailsApplication grailsApplication) {
-        this.grailsApplication = grailsApplication
-    }
-
-    void setEs(ElasticSearchAdminService es) {
-        this.es = es
-    }
-
-    void setMmm(MappingMigrationManager mmm) {
-        this.mmm = mmm
-    }
-    void setConfig(ConfigObject config) {
-        this.config = config
-    }
-
     private int numberOfReplicas() {
-        def defaultNumber = elasticSearchContext.config.index.numberOfReplicas
+        def defaultNumber = (esConfig.index as ConfigObject).numberOfReplicas
         if (!defaultNumber) {
             return 0
         }
-        defaultNumber
+        defaultNumber as int
     }
 }
