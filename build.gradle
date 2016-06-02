@@ -30,7 +30,7 @@ apply plugin: "org.grails.grails-gsp"
 ext {
     grailsVersion = project.grailsVersion
     gradleWrapperVersion = project.gradleWrapperVersion
-	elasticsearchVersion = "2.3.0"
+	elasticsearchVersion = "2.3.3"
 }
 
 sourceCompatibility = 1.8
