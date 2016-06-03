@@ -2,11 +2,12 @@
 
 ==== Grails 3.x version
 
-* May 13, 2016
-** 2.3.0
-*** Upgraded to Elasticsearch 2.3.2, versioning now follow pattern described on https://github.com/noamt/elasticsearch-grails-plugin/issues/141[Issue 141]
+* June 3, 2016
+** 1.2.0
+*** Upgraded to Elasticsearch 2.3.3
+**** Support for `elasticsearch-groovy` client removed (no available compatible version, pending on https://github.com/elastic/elasticsearch-groovy/issues/35[Issue 35])
+**** `delete` migration strategy has been replaced by `deleteIndex`, due to new Elasticsearch 2.x API's
 *** Removed test classes from plugin distribution
-*** elasticsearch-groovy client removed (no available compatible version, pending on https://github.com/elastic/elasticsearch-groovy/issues/35[Issue 35])
 
 * April 18, 2016
 ** 1.0.0.1
