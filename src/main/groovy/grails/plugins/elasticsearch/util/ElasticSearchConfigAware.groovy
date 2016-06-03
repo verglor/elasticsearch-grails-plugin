@@ -12,10 +12,10 @@ trait ElasticSearchConfigAware {
     abstract GrailsApplication getGrailsApplication()
 
     ConfigObject getEsConfig() {
-        grailsApplication.config.elasticSearch as ConfigObject
+        grailsApplication?.config?.elasticSearch as ConfigObject
     }
 
     ConfigObject getMigrationConfig() {
-        (grailsApplication.config.elasticSearch as ConfigObject).migration as ConfigObject
+        (grailsApplication?.config?.elasticSearch as ConfigObject)?.migration as ConfigObject
     }
 }
