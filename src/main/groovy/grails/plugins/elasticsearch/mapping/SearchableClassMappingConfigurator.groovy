@@ -103,7 +103,7 @@ class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
         MappingMigrationStrategy migrationStrategy = migrationConfig?.strategy ? MappingMigrationStrategy.valueOf(migrationConfig?.strategy as String) : none
         def mappingConflicts = []
 
-        Set<String> indices = mappings.collect { it.indexName } as Set<String>
+        Set<String> indices = mappings.findAll { it.isRoot() }.collect { it.indexName } as Set<String>
 
         //Install the mappings for each index all together
         indices.each { String indexName ->
