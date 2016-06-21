@@ -17,7 +17,7 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-version "1.0.0.2"
+version "1.2.0"
 group "org.grails.plugins"
 
 apply plugin: 'maven-publish'
@@ -30,11 +30,11 @@ apply plugin: "org.grails.grails-gsp"
 ext {
     grailsVersion = project.grailsVersion
     gradleWrapperVersion = project.gradleWrapperVersion
-	elasticsearchVersion = "1.0.0.3"
+	elasticsearchVersion = "2.3.3"
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
@@ -64,6 +64,8 @@ sourcesJar {
     exclude "test/**/**"
 }
 
+def elasticsearchVersion = '2.3.3'
+
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
     provided "org.springframework.boot:spring-boot-starter-actuator"
@@ -77,10 +79,7 @@ dependencies {
     compile "org.grails.plugins:cache"
     compile "org.hibernate:hibernate-ehcache"
 
-    testRuntime('org.elasticsearch:elasticsearch-groovy:1.6.0') {
-        exclude module: 'groovy-all'
-    }
-    compile "org.elasticsearch:elasticsearch-mapper-attachments:2.6.0"
+    compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
 
     testRuntime 'com.spatial4j:spatial4j:0.4.1'
     testCompile 'com.vividsolutions:jts:1.13'
@@ -88,6 +87,8 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
 
     console "org.grails:grails-console"
+
+    compile "org.elasticsearch.plugin:mapper-attachments:${elasticsearchVersion}"
 }
 
 task wrapper(type: Wrapper) {

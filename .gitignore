@@ -27,3 +27,6 @@ plugin.xml
 .project
 test/reports
 data/
+
+#Elasticserch plugin binaries
+src/integration-test/resources/elasticsearch/plugins

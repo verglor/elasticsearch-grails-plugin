@@ -88,7 +88,6 @@ class ElasticsearchGrailsPlugin extends Plugin {
             mappingMigrationManager(MappingMigrationManager) {
                 elasticSearchContextHolder = ref('elasticSearchContextHolder')
                 grailsApplication = grailsApplication
-                config = esConfig
                 es = ref('elasticSearchAdminService')
             }
             searchableClassMappingConfigurator(SearchableClassMappingConfigurator) { bean ->
@@ -96,7 +95,6 @@ class ElasticsearchGrailsPlugin extends Plugin {
                 grailsApplication = grailsApplication
                 es = ref('elasticSearchAdminService')
                 mmm = ref('mappingMigrationManager')
-                config = esConfig
 
                 bean.initMethod = 'configureAndInstallMappings'
             }
