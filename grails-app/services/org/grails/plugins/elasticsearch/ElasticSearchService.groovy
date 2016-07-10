@@ -325,10 +325,12 @@ class ElasticSearchService implements GrailsApplicationAware {
 
     /**
      * Builds a count request
+     * @deprecated Use SearchRequest, {@link #buildSearchRequest(java.lang.Object, java.lang.Object, java.util.Map)} )} instead and set the size to 0
      * @param query
      * @param params
      * @return
      */
+    @Deprecated
     private CountRequest buildCountRequest(query, Map params) {
         CountRequest request = new CountRequest()
 
