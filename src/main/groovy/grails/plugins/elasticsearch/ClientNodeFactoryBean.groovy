@@ -195,7 +195,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         //Inject http settings...
         if (elasticSearchContextHolder.config.http) {
             flattenMap(elasticSearchContextHolder.config.http).each { p ->
-                nb.settings().put("http.${p.key}", p.value as String)
+                settings.put("http.${p.key}", p.value as String)
             }
         }
 
