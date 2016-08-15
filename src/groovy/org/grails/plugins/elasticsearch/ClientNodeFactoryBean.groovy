@@ -16,21 +16,20 @@
 
 package org.grails.plugins.elasticsearch
 
+import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.Settings
+import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.FactoryBean
 import org.springframework.core.io.Resource
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
-
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.FactoryBean
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
 class ClientNodeFactoryBean implements FactoryBean {
 
@@ -39,7 +38,7 @@ class ClientNodeFactoryBean implements FactoryBean {
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
     ElasticSearchContextHolder elasticSearchContextHolder
-	 def node
+    def node
 
     Object getObject() {
         // Retrieve client mode, default is "node"
@@ -53,7 +52,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         if (configFile) {
             LOG.info "Looking for bootstrap configuration file at: $configFile"
             Resource resource = new PathMatchingResourcePatternResolver().getResource(configFile)
-            nb.settings(Settings.settingsBuilder().loadFromStream(configFile,resource.inputStream))
+            nb.settings(Settings.settingsBuilder().loadFromStream(configFile, resource.inputStream))
         }
 
         def transportClient
@@ -75,7 +74,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 def transportSettings = Settings.settingsBuilder()
 
                 def transportSettingsFile = elasticSearchContextHolder.config.bootstrap.transportSettings.file
-                if(transportSettingsFile) {
+                if (transportSettingsFile) {
                     Resource resource = new PathMatchingResourcePatternResolver().getResource(transportSettingsFile)
                     transportSettings.loadFromStream(transportSettingsFile, resource.inputStream)
                 }
@@ -92,8 +91,13 @@ class ClientNodeFactoryBean implements FactoryBean {
 
                 try {
                     def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
-                    transportClient = TransportClient.builder().addPlugin(shield).settings(transportSettings).build();
+                    transportClient = TransportClient.builder()
+                            .addPlugin(shield)
+                            .settings(transportSettings)
+                            .build();
+
                     LOG.info("Shield Enabled")
+
                 } catch (ClassNotFoundException e) {
                     transportClient = TransportClient.builder().settings(transportSettings).build()
                 }
@@ -142,13 +146,13 @@ class ClientNodeFactoryBean implements FactoryBean {
                 }
 
                 def pluginsDirectory = elasticSearchContextHolder.config.path.plugins
-                if(pluginsDirectory){
+                if (pluginsDirectory) {
                     nb.settings().put('path.plugins', pluginsDirectory as String)
                 }
 
                 // Path to the config folder of ES
                 def confDirectory = elasticSearchContextHolder.config.path.conf
-                if(confDirectory){
+                if (confDirectory) {
                     nb.settings().put('path.conf', confDirectory as String)
                 }
 
@@ -162,19 +166,19 @@ class ClientNodeFactoryBean implements FactoryBean {
             case 'dataNode':
                 def storeType = elasticSearchContextHolder.config.index.store.type
                 if (storeType) {
-                  nb.settings().put('index.store.type', storeType as String)
-                  LOG.debug "DataNode ElasticSearch client with store type of ${storeType} configured."
+                    nb.settings().put('index.store.type', storeType as String)
+                    LOG.debug "DataNode ElasticSearch client with store type of ${storeType} configured."
                 } else {
-                  LOG.debug "DataNode ElasticSearch client with default store type configured."
+                    LOG.debug "DataNode ElasticSearch client with default store type configured."
                 }
                 def queryParsers = elasticSearchContextHolder.config.index.queryparser
                 if (queryParsers) {
-                  queryParsers.each { type, clz ->
-                    nb.settings().put("index.queryparser.types.${type}".toString(), clz)
-                  }
+                    queryParsers.each { type, clz ->
+                        nb.settings().put("index.queryparser.types.${type}".toString(), clz)
+                    }
                 }
                 if (elasticSearchContextHolder.config.discovery.zen.ping.unicast.hosts) {
-                  nb.settings().put("discovery.zen.ping.unicast.hosts", elasticSearchContextHolder.config.discovery.zen.ping.unicast.hosts)
+                    nb.settings().put("discovery.zen.ping.unicast.hosts", elasticSearchContextHolder.config.discovery.zen.ping.unicast.hosts)
                 }
 
                 nb.client(false)
@@ -189,14 +193,14 @@ class ClientNodeFactoryBean implements FactoryBean {
         if (transportClient) {
             return transportClient
         }
-		
-	//Inject http settings...
-	if(elasticSearchContextHolder.config.http){
-		flattenMap(elasticSearchContextHolder.config.http).each { p ->
-			nb.settings().put("http.${p.key}",p.value as String)
-		}
-	}
-		
+
+        //Inject http settings...
+        if (elasticSearchContextHolder.config.http) {
+            flattenMap(elasticSearchContextHolder.config.http).each { p ->
+                nb.settings().put("http.${p.key}", p.value as String)
+            }
+        }
+
         // Avoiding this:
         node = nb.node()
         node.start()
@@ -206,10 +210,15 @@ class ClientNodeFactoryBean implements FactoryBean {
         //            client.admin().cluster().health(new ClusterHealthRequest().waitForGreenStatus()).actionGet()
         return client
     }
+
+
     //From http://groovy.329449.n5.nabble.com/Flatten-Map-using-closure-td364360.html
-    def flattenMap(map){
-	    [:].putAll(map.entrySet().flatten{ it.value instanceof Map ? it.value.collect{ k, v -> new MapEntry(it.key + '.' + k, v)} : it })
+    def flattenMap(map) {
+        [:].putAll(map.entrySet().flatten {
+            it.value instanceof Map ? it.value.collect { k, v -> new MapEntry(it.key + '.' + k, v) } : it
+        })
     }
+
     Class getObjectType() {
         return org.elasticsearch.client.Client
     }
@@ -227,7 +236,7 @@ class ClientNodeFactoryBean implements FactoryBean {
 
     private String tmpDirectory() {
         String baseDirectory = System.getProperty("java.io.tmpdir") ?: '/tmp'
-        Path path = Files.createTempDirectory(Paths.get(baseDirectory), 'elastic-data-'+new Date().time)
+        Path path = Files.createTempDirectory(Paths.get(baseDirectory), 'elastic-data-' + new Date().time)
         File file = path.toFile()
         file.deleteOnExit()
         return file.absolutePath

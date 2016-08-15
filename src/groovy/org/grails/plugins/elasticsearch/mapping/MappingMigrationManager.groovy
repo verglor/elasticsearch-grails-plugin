@@ -27,7 +27,7 @@ class MappingMigrationManager {
     }
 
     def applyMigrations(MappingMigrationStrategy migrationStrategy, Map<SearchableClassMapping, Map> elasticMappings, List<MappingConflict> mappingConflicts, Map indexSettings) {
-        switch(migrationStrategy) {
+        switch (migrationStrategy) {
             case delete:
                 LOG.error("Delete a Mapping is no longer supported since Elasticsearch 2.0 (see https://www.elastic.co/guide/en/elasticsearch/reference/2.0/indices-delete-mapping.html)." +
                         " To prevent data loss, this strategy has been replaced by 'deleteIndex'")
@@ -48,15 +48,16 @@ class MappingMigrationManager {
         List deletedIndices = []
         mappingConflicts.each {
             SearchableClassMapping scm = it.scm
-            if(!deletedIndices.contains(scm.indexName)) {
+            if (!deletedIndices.contains(scm.indexName)) {
                 deletedIndices << scm.indexName
                 es.deleteIndex scm.indexName
                 int nextVersion = es.getNextVersion(scm.indexName)
                 es.createIndex scm.indexName, nextVersion, indexSettings
-                es.waitForIndex scm.indexName, nextVersion //Ensure it exists so later on mappings are created on the right version
+                es.waitForIndex scm.indexName, nextVersion
+                //Ensure it exists so later on mappings are created on the right version
                 es.pointAliasTo scm.indexName, scm.indexName, nextVersion
                 es.pointAliasTo scm.indexingIndex, scm.indexName, nextVersion
-                if(!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
+                if (!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
                     if (!esConfig.migration.disableAliasChange) {
                         es.pointAliasTo scm.queryingIndex, scm.indexName, nextVersion
                     }
@@ -79,17 +80,18 @@ class MappingMigrationManager {
                 migratedIndices << scm.indexName
                 LOG.debug("Creating new version and alias for conflicting mapping ${scm.indexName}/${scm.elasticTypeName}")
                 boolean conflictOnAlias = es.aliasExists(scm.indexName)
-                if(conflictOnAlias || esConfig.migration.aliasReplacesIndex ) {
+                if (conflictOnAlias || esConfig.migration.aliasReplacesIndex) {
                     int nextVersion = es.getNextVersion(scm.indexName)
                     if (!conflictOnAlias) {
                         es.deleteIndex(scm.indexName)
                     }
                     es.createIndex scm.indexName, nextVersion, indexSettings
-                    es.waitForIndex scm.indexName, nextVersion //Ensure it exists so later on mappings are created on the right version
+                    es.waitForIndex scm.indexName, nextVersion
+                    //Ensure it exists so later on mappings are created on the right version
                     es.pointAliasTo scm.indexName, scm.indexName, nextVersion
                     es.pointAliasTo scm.indexingIndex, scm.indexName, nextVersion
 
-                    if(!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
+                    if (!esConfig.bulkIndexOnStartup) { //Otherwise, it will be done post content creation
                         if (!conflictOnAlias || !esConfig.migration.disableAliasChange) {
                             es.pointAliasTo scm.queryingIndex, scm.indexName, nextVersion
                         }
@@ -106,7 +108,8 @@ class MappingMigrationManager {
         //Recreate the mappings for all the indexes that were changed
         elasticMappings.each { SearchableClassMapping scm, elasticMapping ->
             if (migratedIndices.contains(scm.indexName)) {
-                elasticSearchContextHolder.deletedOnMigration << scm.domainClass.clazz //Mark it for potential content index on Bootstrap
+                elasticSearchContextHolder.deletedOnMigration << scm.domainClass.clazz
+                //Mark it for potential content index on Bootstrap
                 if (scm.isRoot()) {
                     int newVersion = es.getLatestVersion(scm.indexName)
                     String indexName = es.versionIndex(scm.indexName, newVersion)

@@ -29,7 +29,6 @@ class ElasticSearchAdminService {
     private static final WAIT_FOR_INDEX_MAX_RETRIES = 10
     private static final WAIT_FOR_INDEX_SLEEP_INTERVAL = 100
 
-
     /**
      * Explicitly refresh one or more index, making all operations performed since the last refresh available for search
      * This method will also flush all pending request in the indexRequestQueue and will wait for their completion.
@@ -53,7 +52,7 @@ class ElasticSearchAdminService {
             if (response.getFailedShards() > 0) {
                 LOG.info "Refresh failure"
             } else {
-                LOG.info "Refreshed ${ indices ?: 'all' } indices"
+                LOG.info "Refreshed ${indices ?: 'all'} indices"
             }
         }
     }
@@ -181,7 +180,7 @@ class ElasticSearchAdminService {
      * @param index The name of the index
      * @param settings The index settings (ie. number of shards)
      */
-    void createIndex(String index, Map settings=null) {
+    void createIndex(String index, Map settings = null) {
         LOG.debug "Creating index ${index} ..."
         elasticSearchHelper.withElasticSearch { Client client ->
             CreateIndexRequestBuilder builder = client.admin().indices().prepareCreate(index)
@@ -198,7 +197,7 @@ class ElasticSearchAdminService {
      * @param version the version number, if provided <index>_v<version> will be used
      * @param settings The index settings (ie. number of shards)
      */
-    void createIndex(String index, Integer version, Map settings=null) {
+    void createIndex(String index, Integer version, Map settings = null) {
         index = versionIndex(index, version)
         createIndex(index, settings)
     }
@@ -207,7 +206,7 @@ class ElasticSearchAdminService {
      * Checks whether the index exists
      * @param index The name of the index
      * @param version the version number, if provided <index>_v<version> will be used
-     * @return true, if the index exists
+     * @return true , if the index exists
      */
     boolean indexExists(String index, Integer version = null) {
         index = versionIndex(index, version)
@@ -271,9 +270,9 @@ class ElasticSearchAdminService {
             def aliasRequest = client.admin().indices().prepareAliases()
             if (oldIndex && oldIndex != index) {
                 LOG.debug "Index used to point to ${oldIndex}, removing ..."
-                aliasRequest.removeAlias(oldIndex,alias)
+                aliasRequest.removeAlias(oldIndex, alias)
             }
-            aliasRequest.   addAlias(index,alias)
+            aliasRequest.addAlias(index, alias)
             aliasRequest.execute().actionGet()
         }
     }
@@ -349,7 +348,7 @@ class ElasticSearchAdminService {
     /**
      * Waits for the cluster to be on (Yellow) status
      */
-    void waitForClusterStatus(ClusterHealthStatus status=ClusterHealthStatus.YELLOW) {
+    void waitForClusterStatus(ClusterHealthStatus status = ClusterHealthStatus.YELLOW) {
         elasticSearchHelper.withElasticSearch { Client client ->
             ClusterHealthResponse response = client.admin().cluster().health(
                     new ClusterHealthRequest([] as String[]).waitForStatus(status)).actionGet()
