@@ -425,7 +425,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Elasticsearch Plugin - Reference Documentation</h1>
 <div class="details">
 <span id="author" class="author">Noam Y. Tenne</span><br>
-<span id="revnumber">version 1.0.0.2</span>
+<span id="revnumber">version 1.2.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -441,11 +441,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#configuration">2. Configuration</a>
 <ul class="sectlevel2">
-<li><a href="#client-mode">2.1. Client mode</a></li>
-<li><a href="#mapping-migration-properties">2.2. Mapping Migration properties</a></li>
-<li><a href="#dynamic-method-injection">2.3. Dynamic Method Injection</a></li>
-<li><a href="#others-properties">2.4. Others properties</a></li>
-<li><a href="#default-configuration-script">2.5. Default configuration script</a></li>
+<li><a href="#overriding-spring-boot-elasticsearch-version">2.1. Overriding Spring Boot elasticsearch version</a></li>
+<li><a href="#client-mode">2.2. Client mode</a></li>
+<li><a href="#mapping-migration-properties">2.3. Mapping Migration properties</a></li>
+<li><a href="#dynamic-method-injection">2.4. Dynamic Method Injection</a></li>
+<li><a href="#others-properties">2.5. Others properties</a></li>
+<li><a href="#default-configuration-script">2.6. Default configuration script</a></li>
 </ul>
 </li>
 <li><a href="#mapping">3. Mapping</a>
@@ -476,6 +477,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#filterBuilder">5.5. Filter Builder</a></li>
 <li><a href="#highlighting">5.6. Highlighting</a></li>
 <li><a href="#sorting">5.7. Sorting</a></li>
+<li><a href="#pagination">5.8. Pagination</a></li>
 </ul>
 </li>
 <li><a href="#admin">6. Admin</a>
@@ -544,6 +546,36 @@ reference for its syntax and behaviour.</p>
 <h4 id="grails-3-x-version">1.2.1. Grails 3.x version</h4>
 <div class="ulist">
 <ul>
+<li>
+<p>June 3, 2016</p>
+<div class="ulist">
+<ul>
+<li>
+<p>1.2.0</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Upgraded to Elasticsearch 2.3.3</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Support for <code>elasticsearch-groovy</code> client removed (no available compatible version, pending on <a href="https://github.com/elastic/elasticsearch-groovy/issues/35">Issue 35</a>)</p>
+</li>
+<li>
+<p><code>delete</code> migration strategy has been replaced by <code>deleteIndex</code>, due to new Elasticsearch 2.x API&#8217;s</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed test classes from plugin distribution</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
 <li>
 <p>April 18, 2016</p>
 <div class="ulist">
@@ -1094,6 +1126,9 @@ reference for its syntax and behaviour.</p>
 <p>Michael Schwartz (Dating Cafe)</p>
 </li>
 <li>
+<p><a href="https://github.com/marcoscarceles">Marcos Carceles</a></p>
+</li>
+<li>
 <p><a href="https://github.com/puneetbehl">Puneet Behl</a></p>
 </li>
 </ul>
@@ -1143,7 +1178,8 @@ If necessary a 4th level point release number will be used for successive change
 </table>
 </div>
 <div class="paragraph">
-<p><code>&lt;GRAILS_VERSION&gt;.&lt;ES_VERSION&gt;.&lt;FEATURE/PATCH_VERSION&gt;</code>, where there isn&#8217;t really a 1-to-1 plugin version to grails or es version, but we just increase our major or minor version by one, whenever there are breaking changes on either Grails or ES. Therefore have something that looks like:</p>
+<p><code>&lt;GRAILS_VERSION&gt;.&lt;ES_VERSION&gt;.&lt;FEATURE/PATCH_VERSION&gt;</code>, where there isn&#8217;t really a 1-to-1 plugin version to grails or es version, but we just increase our major or minor version by one, whenever there are breaking changes on either Grails or ES.
+<code>&lt;GRAILS_VERSION&gt;.&lt;ES_VERSION&gt;.&lt;FEATURE/PATCH_VERSION&gt;</code>, where there isn&#8217;t really a 1-to-1 plugin version to grails or es version, but we just increase our major or minor version by one, whenever there are breaking changes on either Grails or ES. Therefore future release versions could look something similar to this (depending on Grails and Elasticsearch versions):</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1153,59 +1189,72 @@ If necessary a 4th level point release number will be used for successive change
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Plugin Version</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Grails</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Elasticsearch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Plugin Version</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Grails</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Elasticsearch</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.0.4</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.2.0</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.1.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>2.3.x</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.1.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.1.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.0.0.2</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.1.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.x</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>0.1.0</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>2.4.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>2.1.x</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>0.0.4.5</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>2.4.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.x</strong></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0.2.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.2.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.3.x</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0.3.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 3.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 2.4.x</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1.0.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.4.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 5.0.x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.3.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3.1.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 2.4.x</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1.1.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.4.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3.1.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.1.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 5.0.x</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1.2.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3.1.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.2.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.3.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 3.2.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 2.3.x</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.2.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical )3.2.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.2.x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3.2.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical ) 4.0.x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.2.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.3.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 4.0.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 2.3.x</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Current version is <strong>1.0.0.2</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
+<p><em>Existing versions in</em> <strong>bold</strong></p>
+</div>
+<div class="paragraph">
+<p>Current version is <strong>1.2.0</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
 </div>
 </div>
 <div class="sect2">
@@ -1223,7 +1272,20 @@ If necessary a 4th level point release number will be used for successive change
 <p>The plugin provide a default configuration, but you may add your own settings in your <strong>Config.groovy</strong> for Grails 2.x and <strong>application.groovy</strong> or <strong>application.yml</strong> for Grails 3.x.</p>
 </div>
 <div class="sect2">
-<h3 id="client-mode">2.1. Client mode</h3>
+<h3 id="overriding-spring-boot-elasticsearch-version">2.1. Overriding Spring Boot elasticsearch version</h3>
+<div class="paragraph">
+<p>Spring Boot 1.3.x supports Elasticsearch 1.5.2 OOTB (<a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml#L76" class="bare">https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml#L76</a>) and will install dependencies for this version, if not explicitly overriden. To do so add the following to your <code>build.gradle</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">applicaiton.groovy or Config.groovy</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def elasticsearchVersion = '2.3.3'
+ext['elasticsearch.version'] = elasticsearchVersion</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="client-mode">2.2. Client mode</h3>
 <div class="paragraph">
 <p>You can set the plugin in 3 different modes, detailed on the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/">official ElasticSearch doc</a>.
 The mode is defined with the following config key:</p>
@@ -1300,12 +1362,12 @@ The mode is defined with the following config key:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="mapping-migration-properties">2.2. Mapping Migration properties</h3>
+<h3 id="mapping-migration-properties">2.3. Mapping Migration properties</h3>
 <div class="paragraph">
 <p>Define the application&#8217;s behaviour when a conflict is found while installing Elasticsearch mappings on startup. For a detailed explanation, see <a href="#mappingMigrations">Mapping Migrations</a>.</p>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-migration-strategy-code">2.2.1. <code>elasticSearch.migration.strategy</code></h4>
+<h4 id="code-elasticsearch-migration-strategy-code">2.3.1. <code>elasticSearch.migration.strategy</code></h4>
 <div class="paragraph">
 <p>Defines the behaviour to follow if an error occurs on startup when the application is installing new mappings on ElasticSearch due to conflicting mappings.</p>
 </div>
@@ -1352,7 +1414,7 @@ The mode is defined with the following config key:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-migration-aliasreplacesindex-code">2.2.2. <code>elasticSearch.migration.aliasReplacesIndex</code></h4>
+<h4 id="code-elasticsearch-migration-aliasreplacesindex-code">2.3.2. <code>elasticSearch.migration.aliasReplacesIndex</code></h4>
 <div class="paragraph">
 <p>Deals with a special conflict case using the <code>'alias'</code> strategy. When the <code>'alias'</code> migration strategy is chosen and there&#8217;s a mapping conflict on an index, defines whether to replace the index with a versioned index (<code>&lt;indexName&gt;_vX</code>) and an alias (<code>&lt;indexName&gt;</code>). This is required when applying the alias strategy on top of existing indices for the first time as indices cannot be renamed (from <code>&lt;indexName&gt;</code> to <code>&lt;indexName&gt;_vX</code>) and an alias cannot exist with the same name as an index.</p>
 </div>
@@ -1395,7 +1457,7 @@ The mode is defined with the following config key:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-migration-disablealiaschange-code">2.2.3. <code>elasticSearch.migration.disableAliasChange</code></h4>
+<h4 id="code-elasticsearch-migration-disablealiaschange-code">2.3.3. <code>elasticSearch.migration.disableAliasChange</code></h4>
 <div class="paragraph">
 <p>In some cases the developer may prefer not to upgrade the alias to the new version of the index until some other tasks are performed. This allows them to disable automatically pointing the alias to a new version of the index when this is created. Aliases can be changed later on manually or programatically using <code>elasticSearchAdminService</code></p>
 </div>
@@ -1439,9 +1501,9 @@ The mode is defined with the following config key:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="dynamic-method-injection">2.3. Dynamic Method Injection</h3>
+<h3 id="dynamic-method-injection">2.4. Dynamic Method Injection</h3>
 <div class="sect3">
-<h4 id="code-elasticsearch-searchmethodname-code">2.3.1. <code>elasticSearch.searchMethodName</code></h4>
+<h4 id="code-elasticsearch-searchmethodname-code">2.4.1. <code>elasticSearch.searchMethodName</code></h4>
 <div class="paragraph">
 <p>Change the name of search method in domain class. By default it&#8217;s <code>search</code>.</p>
 </div>
@@ -1469,7 +1531,7 @@ The mode is defined with the following config key:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-counthitsmethodname-code">2.3.2. <code>elasticSearch.countHitsMethodName</code></h4>
+<h4 id="code-elasticsearch-counthitsmethodname-code">2.4.2. <code>elasticSearch.countHitsMethodName</code></h4>
 <div class="paragraph">
 <p>Change the name of countHits method in domain class. By default it&#8217;s <code>countHits</code>.</p>
 </div>
@@ -1497,16 +1559,16 @@ The mode is defined with the following config key:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-disabledynamicmethodsinjection-code">2.3.3. <code>elasticSearch.disableDynamicMethodsInjection</code></h4>
+<h4 id="code-elasticsearch-disabledynamicmethodsinjection-code">2.4.3. <code>elasticSearch.disableDynamicMethodsInjection</code></h4>
 <div class="paragraph">
 <p>To complete disabled injection of dynamic methods set <code>elasticSearch.disableDynamicMethodsInjection = true</code> in <code>applicaiton.groovy</code></p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="others-properties">2.4. Others properties</h3>
+<h3 id="others-properties">2.5. Others properties</h3>
 <div class="sect3">
-<h4 id="code-elasticsearch-datastoreimpl-code">2.4.1. <code>elasticSearch.datastoreImpl</code></h4>
+<h4 id="code-elasticsearch-datastoreimpl-code">2.5.1. <code>elasticSearch.datastoreImpl</code></h4>
 <div class="paragraph">
 <p>Only required when enabling the auto-index feature.
 This property specifies which GORM datastore implementation should be watched for storage events.
@@ -1537,20 +1599,20 @@ The value should be the name of the datastore bean as it is configured in the Sp
 </table>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-bootstrap-config-file-code">2.4.2. <code>elasticSearch.bootstrap.config.file</code></h4>
+<h4 id="code-elasticsearch-bootstrap-config-file-code">2.5.2. <code>elasticSearch.bootstrap.config.file</code></h4>
 <div class="paragraph">
 <p>When using then plugin to construct a local node, the default Elasticsearch configuration is used by default.
 If you use a modified Elasticsearch configuration, you can use this property to specify the location of the file (as an application resource).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-bootstrap-transportsettings-file-code">2.4.3. <code>elasticSearch.bootstrap.transportSettings.file</code></h4>
+<h4 id="code-elasticsearch-bootstrap-transportsettings-file-code">2.5.3. <code>elasticSearch.bootstrap.transportSettings.file</code></h4>
 <div class="paragraph">
 <p>When choosing transport mode this configuration will be used to set up the TransportClient settings (used by some cloud providers).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-client-transport-sniff-code">2.4.4. <code>elasticSearch.client.transport.sniff</code></h4>
+<h4 id="code-elasticsearch-client-transport-sniff-code">2.5.4. <code>elasticSearch.client.transport.sniff</code></h4>
 <div class="paragraph">
 <p>Only usable in with a transport client.
 Allows to sniff the rest of the cluster, and add those into its list of machines to use.
@@ -1558,20 +1620,20 @@ In this case, the ip addresses used will be the ones that the other nodes were s
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-cluster-name-code">2.4.5. <code>elasticSearch.cluster.name</code></h4>
+<h4 id="code-elasticsearch-cluster-name-code">2.5.5. <code>elasticSearch.cluster.name</code></h4>
 <div class="paragraph">
 <p>The name of the cluster for the client to join.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-date-formats-code">2.4.6. <code>elasticSearch.date.formats</code></h4>
+<h4 id="code-elasticsearch-date-formats-code">2.5.6. <code>elasticSearch.date.formats</code></h4>
 <div class="paragraph">
 <p>List of date formats used by the JSON unmarshaller to parse any date field properly.
 Note : future version of the plugin may change how formats are manipulated.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-defaultexcludedproperties-code">2.4.7. <code>elasticSearch.defaultExcludedProperties</code></h4>
+<h4 id="code-elasticsearch-defaultexcludedproperties-code">2.5.7. <code>elasticSearch.defaultExcludedProperties</code></h4>
 <div class="paragraph">
 <p>List of domain class properties to automatically ignore (will not be indexed) if their name match one of those.
 This will apply to both the default-mapped domain class, with the static <code>searchable</code> property set to "true", and when using closure mapping.
@@ -1579,14 +1641,14 @@ To override this setting on a specific class, it can be added to the <code>only<
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-disableautoindex-code">2.4.8. <code>elasticSearch.disableAutoIndex</code></h4>
+<h4 id="code-elasticsearch-disableautoindex-code">2.5.8. <code>elasticSearch.disableAutoIndex</code></h4>
 <div class="paragraph">
 <p>A boolean determining if the plugin should reflect any database save/update/delete automatically on the indices.
 Default to <code>false</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-bulkindexonstartup-code">2.4.9. <code>elasticSearch.bulkIndexOnStartup</code></h4>
+<h4 id="code-elasticsearch-bulkindexonstartup-code">2.5.9. <code>elasticSearch.bulkIndexOnStartup</code></h4>
 <div class="paragraph">
 <p>Determines whether the application should launch a bulk index operation upon startup.</p>
 </div>
@@ -1633,13 +1695,13 @@ Default to <code>false</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-index-name-code">2.4.10. <code>elasticSearch.index.name</code></h4>
+<h4 id="code-elasticsearch-index-name-code">2.5.10. <code>elasticSearch.index.name</code></h4>
 <div class="paragraph">
 <p>A string indicating which ElasticSearch index should be used.  If not present, will default to the package name of the domain in question.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-index-compound_format-code">2.4.11. <code>elasticSearch.index.compound_format</code></h4>
+<h4 id="code-elasticsearch-index-compound_format-code">2.5.11. <code>elasticSearch.index.compound_format</code></h4>
 <div class="paragraph">
 <p>Should the compound file format be used (boolean setting).
 Set to <code>false</code> by default (really applicable for file system based index storage).
@@ -1647,7 +1709,7 @@ More details on this setting on the <a href="http://www.elasticsearch.org/guide/
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-index-store-type-code">2.4.12. <code>elasticSearch.index.store.type</code></h4>
+<h4 id="code-elasticsearch-index-store-type-code">2.5.12. <code>elasticSearch.index.store.type</code></h4>
 <div class="paragraph">
 <p>Determine how the indices will be stored.
 More details on the possible values on the <a href="http://www.elasticsearch.org/guide/reference/index-modules/store.html">ElasticSearch Documentation</a>.</p>
@@ -1667,7 +1729,7 @@ More details on the possible values on the <a href="http://www.elasticsearch.org
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">memory</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the index in memory. Useful for testing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the index in memory. Useful for testing. <strong>Please note</strong> that it&#8217;s not support in ES 2.0 and later versions.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">mmapfs</p></td>
@@ -1685,13 +1747,13 @@ More details on the possible values on the <a href="http://www.elasticsearch.org
 </table>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-index-numberofreplicas-code">2.4.13. <code>elasticSearch.index.numberOfReplicas</code></h4>
+<h4 id="code-elasticsearch-index-numberofreplicas-code">2.5.13. <code>elasticSearch.index.numberOfReplicas</code></h4>
 <div class="paragraph">
 <p>Sets the number of replicas created for each shard of the index. If not present, will default to zero.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-gateway-type-code">2.4.14. <code>elasticSearch.gateway.type</code></h4>
+<h4 id="code-elasticsearch-gateway-type-code">2.5.14. <code>elasticSearch.gateway.type</code></h4>
 <div class="paragraph">
 <p>Determine the gateway type to be used.
 More details on the possible values are in the <a href="http://www.elasticsearch.org/guide/reference/modules/gateway/">ElasticSearch Documentation</a>.
@@ -1699,7 +1761,7 @@ Using a setting of "none" (possibly in combination with index.store.type set to 
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-maxbulkrequest-code">2.4.15. <code>elasticSearch.maxBulkRequest</code></h4>
+<h4 id="code-elasticsearch-maxbulkrequest-code">2.5.15. <code>elasticSearch.maxBulkRequest</code></h4>
 <div class="paragraph">
 <p>Max number of requests to process at once.
 Reduce this value if you have memory issue when indexing a big amount of data at once.
@@ -1707,25 +1769,25 @@ If this setting is not specified, 500 will be use by default.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-path-data-code">2.4.16. <code>elasticSearch.path.data</code></h4>
+<h4 id="code-elasticsearch-path-data-code">2.5.16. <code>elasticSearch.path.data</code></h4>
 <div class="paragraph">
 <p>The location of the data files of each index / shard allocated on the node.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-path-plugins-code">2.4.17. <code>elasticSearch.path.plugins</code></h4>
+<h4 id="code-elasticsearch-path-plugins-code">2.5.17. <code>elasticSearch.path.plugins</code></h4>
 <div class="paragraph">
 <p>The location of plugin files such as native scripts. Each plugin will be contained in a subdirectory.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-searchableproperty-name-code">2.4.18. <code>elasticSearch.searchableProperty.name</code></h4>
+<h4 id="code-elasticsearch-searchableproperty-name-code">2.5.18. <code>elasticSearch.searchableProperty.name</code></h4>
 <div class="paragraph">
 <p>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code-elasticsearch-includetransients-code">2.4.19. <code>elasticSearch.includeTransients</code></h4>
+<h4 id="code-elasticsearch-includetransients-code">2.5.19. <code>elasticSearch.includeTransients</code></h4>
 <div class="paragraph">
 <p>Whether to index and search all non excluded transient properties. All explicitly included transients in <code>only</code> will be indexed regardless.</p>
 </div>
@@ -1746,9 +1808,9 @@ If this setting is not specified, 500 will be use by default.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="default-configuration-script">2.5. Default configuration script</h3>
+<h3 id="default-configuration-script">2.6. Default configuration script</h3>
 <div class="sect3">
-<h4 id="grails-2-x">2.5.1. Grails 2.x</h4>
+<h4 id="grails-2-x">2.6.1. Grails 2.x</h4>
 <div class="paragraph">
 <p>Below is the default configuration loaded by the plugin (any of your settings in the Config.groovy script overwrite those).</p>
 </div>
@@ -1829,7 +1891,7 @@ environments {
 </div>
 </div>
 <div class="sect3">
-<h4 id="grails-3-x">2.5.2. Grails 3.x</h4>
+<h4 id="grails-3-x">2.6.2. Grails 3.x</h4>
 <div class="paragraph">
 <p>Below is the default configuration loaded by the plugin (any of your settings in the application.yml script overwrite those).</p>
 </div>
@@ -2543,7 +2605,10 @@ class OtherDomain {
 <p><code>'none'</code></p>
 </li>
 <li>
-<p><code>'delete'</code></p>
+<p><code>'deleteIndex'</code></p>
+</li>
+<li>
+<p><span class="line-through"><code>'delete'</code> is no longer supported since the upgrade to Elasticsearch &gt; 2.0</span></p>
 </li>
 <li>
 <p><code>'alias'</code></p>
@@ -2568,17 +2633,17 @@ It will be responsibility for the application administrator to manually fix the 
 </div>
 </div>
 <div class="sect3">
-<h4 id="migration-strategy-delete">3.9.3. Migration Strategy 'delete'</h4>
+<h4 id="migration-strategy-deleteindex">3.9.3. Migration Strategy 'deleteIndex'</h4>
 <div class="paragraph">
-<p>When choosing this option, when a conflict occurs installing  mapping, the application will delete the existing mapping for the type, alongside with all content indexed on that index and type and recreated the mapping. There are a couple of important details on this information:</p>
+<p>When choosing this option, when a conflict occurs installing  mapping, the application will delete the existing index for the type, <strong>alongside with all content indexed on that index (including content from other mappings)</strong> and it will recreate the index and all its mappings. There are a couple of important details on this information:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Only documents indexed on the conflicting mapping will be deleted, any other document on a different mapping on the same (or other) index will remain untouched.</p>
+<p>Deleted documents can be automatically reindexed on startup by using the <code>elasticSearch.bulkIndexOnStartup</code> configuration property (See below)</p>
 </li>
 <li>
-<p>Deleted documents can be automatically reindexed on startup by using the <code>elasticSearch.bulkIndexOnStartup</code> configuration property (See below)</p>
+<p>New indices will be created with a version number and the right aliases, to make them compatible with potential future 'alias' migrations (without requiring additional index deletions)</p>
 </li>
 <li>
 <p>Using this configuration there will always be a time window (between deletion and reindexation) where documents can&#8217;t be found by search, therefore this option cannot achieve a <strong>zero-downtime</strong> deployment</p>
@@ -3143,6 +3208,24 @@ def result = elasticSearchService.search(
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="pagination">5.8. Pagination</h3>
+<div class="paragraph">
+<p>To return paginated results one can pass <code>from</code> and <code>size</code> to search method query params.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">Post.search('xyz', [ indices: Post, types: Post, from: 0, size: 10 ] )
+
+// or
+
+elasticSearchService.search('xyz', [ indices: Post, types: Post, from: 0, size: 10 ])</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3558,8 +3641,8 @@ class Department {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0.2<br>
-Last updated 2016-04-17 23:22:19 IST
+Version 1.2.0<br>
+Last updated 2016-08-15 22:22:46 IST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
