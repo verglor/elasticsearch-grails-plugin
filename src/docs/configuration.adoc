@@ -293,7 +293,7 @@ More details on the possible values on the http://www.elasticsearch.org/guide/re
 | Value | Description
 
 | memory 
-| Stores the index in memory. Useful for testing.
+| Stores the index in memory. Useful for testing. *Please note* that it's not support in ES 2.0 and later versions.
 
 | mmapfs
 | Stores the shard index on the file system (maps to Lucene MMapDirectory) using mmap.
