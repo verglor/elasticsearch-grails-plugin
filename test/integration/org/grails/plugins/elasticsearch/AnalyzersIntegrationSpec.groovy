@@ -2,6 +2,9 @@ package org.grails.plugins.elasticsearch
 
 import grails.test.spock.IntegrationSpec
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.search.sort.SortBuilder
+import org.elasticsearch.search.sort.SortBuilders
+import org.elasticsearch.search.sort.SortOrder
 import spock.lang.Shared
 import test.all.Post
 
@@ -73,6 +76,36 @@ class AnalyzersIntegrationSpec extends IntegrationSpec {
         then:
         results.total == 1
         results.searchResults[0].body.startsWith('[xyz] GORM')
+    }
+
+    def "should sort in descending order of subject"() {
+        given:
+        elasticSearchAdminService.refresh()
+
+        when:
+        SortBuilder sortBuilder = SortBuilders.fieldSort('subject').order(SortOrder.DESC)
+
+        then:
+        Post.search('xyz', [indices: Post, types: Post, sort: sortBuilder, from: 0, size: 2]).searchResults*.subject == [
+                "The Future of Groovy and Grails Sponsorship",
+                "[abc] Grails 3.0 M1 Released!"
+        ]
+
+    }
+
+    def "should sort in ascending order of subject"() {
+        given:
+        elasticSearchAdminService.refresh()
+
+        when:
+        SortBuilder sortBuilder = SortBuilders.fieldSort('subject').order(SortOrder.ASC)
+
+        then:
+        Post.search('xyz', [indices: Post, types: Post, sort: sortBuilder, from: 0, size: 2]).searchResults*.subject == [
+                "[abc] Grails 3.0 M1 Released!",
+                "GORM for MongoDB 3.0 Released"
+        ]
+
     }
 
 }
