@@ -29,7 +29,7 @@ elasticSearch.client.mode = '<mode>'
 ----
 elasticSearch:
 	client:
-		node: <mode>
+		mode: <mode>
 ----
 
 .Possible values for client node
