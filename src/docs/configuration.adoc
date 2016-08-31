@@ -8,7 +8,6 @@ The plugin provide a default configuration, but you may add your own settings in
 Spring Boot 1.3.x supports Elasticsearch 1.5.2 OOTB (https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml#L76) and will install dependencies for this version, if not explicitly overriden. To do so add the following to your `build.gradle`:
 
 [source, groovy]
-.applicaiton.groovy or Config.groovy
 ----
 def elasticsearchVersion = '2.3.3'
 ext['elasticsearch.version'] = elasticsearchVersion
