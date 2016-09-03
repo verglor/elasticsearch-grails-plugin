@@ -75,6 +75,32 @@ elasticSearch:
 
 If no host is defined, `localhost:9300` will be used by the transport client.
 
+==== Using node or dataNode during development
+
+If you configure your dev environment to use `node` or `dataNode` you might see the following exception:
+
+[source, groovy]
+----
+'elasticSearchClient': FactoryBean threw exception on object creation; nested exception is java.lang.IllegalStateException: path.home is not configured
+----
+
+In order to make this work you need to define `es.path.home` in VM options.
+
+[source, groovy]
+.Grails 2.x
+----
+grails run-app -Des.path.home=<PATH_TO_ELASTICSEARCH_HOME_DIR>
+----
+
+[source, groovy]
+.Grails 3.x (build.gradle)
+----
+bootRun {
+    jvmArgs = ['-Des.path.home=<PATH_TO_ELASTICSEARCH_HOME_DIR>']
+}
+----
+
+
 === Mapping Migration properties
 
 Define the application's behaviour when a conflict is found while installing Elasticsearch mappings on startup. For a detailed explanation, see <<Mapping Migrations>>.
