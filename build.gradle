@@ -17,7 +17,7 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-version "1.2.0"
+version "1.2.1"
 group "org.grails.plugins"
 
 apply plugin: 'maven-publish'
@@ -33,8 +33,8 @@ ext {
 	elasticsearchVersion = "2.3.3"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 repositories {
     mavenLocal()
