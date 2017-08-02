@@ -113,13 +113,22 @@ task downloadAttachmentsPlugin(type: Download) {
     onlyIfNewer true
 }
 
-task downloadAndUnzipAttachmentsPlugin(dependsOn: downloadAttachmentsPlugin, type: Copy){
-    from zipTree(downloadAttachmentsPlugin.dest)
-    into 'libs/'
+task downloadAndUnzipAttachmentsPlugin(dependsOn: downloadAttachmentsPlugin) {
+    doLast {
+        copy {
+            from zipTree(downloadAttachmentsPlugin.dest)
+            into 'libs/'
+        }
+        delete 'libs/elasticsearch/commons-codec-1.10.jar'
+    }
 }
 
 compileJava{
     dependsOn downloadAndUnzipAttachmentsPlugin
+}
+
+task cleanLibsDir(type: Delete) {
+    delete fileTree(dir: 'libs')
 }
 
 task wrapper(type: Wrapper) {
@@ -132,6 +141,7 @@ check.doLast {
 
 clean.doLast {
     cleanDataDir.execute()
+    cleanLibsDir.execute()
 }
 
 task cleanDataDir(type: Delete) {
