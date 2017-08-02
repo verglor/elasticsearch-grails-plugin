@@ -1,3 +1,5 @@
+import de.undercouch.gradle.tasks.download.Download
+
 buildscript {
     ext {
         grailsVersion = project.grailsVersion
@@ -17,6 +19,7 @@ buildscript {
 plugins {
     id "com.jfrog.bintray" version "1.2"
     id 'com.jfrog.artifactory' version '4.0.0'
+    id "de.undercouch.download" version "3.2.0"
 }
 
 version "1.2.1"
@@ -67,7 +70,6 @@ sourcesJar {
 }
 
 def elasticsearchVersion = '5.3.3'
-def elasticsearchAttachmentsVersion = '2.4.6'
 
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
@@ -100,8 +102,24 @@ dependencies {
     provided "org.grails:grails-plugin-domain-class"
 
     //compile "org.elasticsearch.plugin:mapper-attachments:${elasticsearchAttachmentsVersion}"
-    provided group: 'org.elasticsearch', name: 'elasticsearch-mapper-attachments', version: '3.1.2'
+    compile fileTree(dir: "libs/elasticsearch", include: '*.jar')
 
+}
+
+task downloadAttachmentsPlugin(type: Download) {
+    src "https://artifacts.elastic.co/downloads/elasticsearch-plugins/mapper-attachments/mapper-attachments-${elasticsearchVersion}.zip"
+    dest "libs/mapper-attachments-${elasticsearchVersion}.zip"
+    overwrite true
+    onlyIfNewer true
+}
+
+task downloadAndUnzipAttachmentsPlugin(dependsOn: downloadAttachmentsPlugin, type: Copy){
+    from zipTree(downloadAttachmentsPlugin.dest)
+    into 'libs/'
+}
+
+compileJava{
+    dependsOn downloadAndUnzipAttachmentsPlugin
 }
 
 task wrapper(type: Wrapper) {

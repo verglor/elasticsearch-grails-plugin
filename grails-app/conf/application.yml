@@ -87,8 +87,6 @@ environments:
             bulkIndexOnStartup: true
     test:
         elasticSearch:
-            cluster:
-              name: 'local.test.es.cluster'
             client:
                 mode: local
                 transport.sniff: false

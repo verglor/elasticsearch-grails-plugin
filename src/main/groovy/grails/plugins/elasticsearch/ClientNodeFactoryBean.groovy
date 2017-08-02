@@ -20,8 +20,8 @@ import org.elasticsearch.Version
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin
 import org.elasticsearch.node.Node
-import org.elasticsearch.plugin.mapper.attachments.MapperAttachmentsPlugin
 import org.elasticsearch.plugins.Plugin
 import org.elasticsearch.transport.client.PreBuiltTransportClient
 import org.slf4j.Logger
