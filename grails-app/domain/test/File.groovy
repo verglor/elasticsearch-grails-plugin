@@ -6,7 +6,7 @@ class File {
     String attachment // base64 encoded file contents
 
     static searchable = {
-        //attachment attachment: false
+        //attachment attachment: true
     }
 
     static constraints = {
