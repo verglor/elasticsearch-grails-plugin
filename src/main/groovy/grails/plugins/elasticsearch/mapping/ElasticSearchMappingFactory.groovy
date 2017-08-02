@@ -161,12 +161,12 @@ class ElasticSearchMappingFactory {
                 if (referencedPropertyType.isArray()) {
                     referencedPropertyType = referencedPropertyType.getComponentType()
                 }
-                String basicType = getTypeSimpleName(referencedPropertyType)
+                String basicType = getTypeSimpleName(referencedPropertyType, scpm)
                 if (SUPPORTED_FORMAT.contains(basicType)) {
                     propType = basicType
                 }
-            } else if (!SUPPORTED_FORMAT.contains(propType) && SUPPORTED_FORMAT.contains(getTypeSimpleName(referencedPropertyType))) {
-                propType = getTypeSimpleName(referencedPropertyType)
+            } else if (!SUPPORTED_FORMAT.contains(propType) && SUPPORTED_FORMAT.contains(getTypeSimpleName(referencedPropertyType, scpm))) {
+                propType = getTypeSimpleName(referencedPropertyType, scpm)
             }
 
             //Handle unsupported types
@@ -206,9 +206,12 @@ class ElasticSearchMappingFactory {
         propType
     }
 
-    private static String getTypeSimpleName(Class type) {
+    private static String getTypeSimpleName(Class type, SearchableClassPropertyMapping scpm) {
         String name = ClassUtils.getShortName(type).toLowerCase(Locale.ENGLISH)
-        return name == 'string' ? 'text' : name
+        if(name == 'string'){
+            name = scpm.analyzed ? 'text' : 'keyword'
+        }
+        return name
     }
 
     private static boolean idTypeIsMongoObjectId(String idType) {

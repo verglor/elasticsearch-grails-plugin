@@ -577,8 +577,7 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
 
         when: 'a geo distance search is sorted by distance'
 
-        def sortBuilder = SortBuilders.geoDistanceSort('location').
-                point(48.141, 11.57).
+        def sortBuilder = SortBuilders.geoDistanceSort('location', 48.141d, 11.57d).
                 unit(DistanceUnit.KILOMETERS).
                 order(SortOrder.ASC)
 
