@@ -343,7 +343,9 @@ class ElasticSearchService implements GrailsApplicationAware {
      */
     private SearchRequest buildCountRequest(query, Map params) {
         params['size'] = 0
-        return buildSearchRequest(query, params)
+        def request = buildSearchRequest(query, null, params)
+        request.source().size(0)
+        return request
     }
 
     /**
@@ -520,17 +522,8 @@ class ElasticSearchService implements GrailsApplicationAware {
      * @return Integer The number of hits for the query
      */
     Integer count(SearchRequest request, Map params) {
-        resolveIndicesAndTypes(request, params)
-        elasticSearchHelper.withElasticSearch { Client client ->
-            LOG.debug 'Executing count request.'
-            def response = client.count(request).actionGet()
-            LOG.debug 'Completed count request.'
-            def result = response.count ?: 0
-
-            LOG.debug "${result} hit(s) matched the specified query."
-
-            result
-        }
+        def result = search(request, params)
+        result.total
     }
     /**
      * Sets the indices & types properties on SearchRequest & CountRequest
