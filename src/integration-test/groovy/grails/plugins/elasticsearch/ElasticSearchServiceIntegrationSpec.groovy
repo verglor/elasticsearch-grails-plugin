@@ -599,7 +599,7 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
         def sortResults = result.sort.(searchResults[0].id).collect {(it as BigDecimal).setScale(4, RoundingMode.HALF_UP) }
 
         then: 'all geo points in the search radius are found'
-        sortResults == [2.5383]
+        sortResults == [2.5401]
     }
 
     void 'Component as an inner object'() {
