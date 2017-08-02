@@ -422,7 +422,7 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
 
         when:
         def result = elasticSearchService.search(
-                QueryBuilders.hasParentQuery('store', QueryBuilders.matchQuery('owner', 'Horst')),
+                QueryBuilders.hasParentQuery('store', QueryBuilders.matchQuery('owner', 'Horst'), false),
                 QueryBuilders.matchAllQuery(),
                 [indices: Department, types: Department]
         )

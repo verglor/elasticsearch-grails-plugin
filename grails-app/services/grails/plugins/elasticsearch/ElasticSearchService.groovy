@@ -438,7 +438,10 @@ class ElasticSearchService implements GrailsApplicationAware {
     }
 
 	SearchSourceBuilder setFilterInSource(SearchSourceBuilder source, Closure filter, Map params = [:]){
-		source.postFilter(new GXContentBuilder().buildAsBytes(filter))
+    def filterBytes = new GXContentBuilder().buildAsBytes(filter)
+    XContentParser parser = createParser(JsonXContent.jsonXContent, filterBytes)
+    def filterBuilder = parseInnerQueryBuilder(parser)
+		source.postFilter(filterBuilder)
 	}
 
 	SearchSourceBuilder setFilterInSource(SearchSourceBuilder source, QueryBuilder filter, Map params = [:]){
