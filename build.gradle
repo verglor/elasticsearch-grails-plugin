@@ -32,7 +32,7 @@ apply plugin: "org.grails.grails-gsp"
 ext {
     grailsVersion = project.grailsVersion
     gradleWrapperVersion = project.gradleWrapperVersion
-    elasticsearchVersion = "2.3.3"
+    elasticsearchVersion = "5.3.3"
 }
 
 sourceCompatibility = 1.7
@@ -66,7 +66,8 @@ sourcesJar {
     exclude "test/**/**"
 }
 
-def elasticsearchVersion = '2.3.3'
+def elasticsearchVersion = '5.3.3'
+def elasticsearchAttachmentsVersion = '2.4.6'
 
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
@@ -81,7 +82,12 @@ dependencies {
     compile "org.grails.plugins:cache"
     compile "org.hibernate:hibernate-ehcache"
 
+    compile "org.apache.logging.log4j:log4j-api:2.7"
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+
     compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
+    compile group: 'org.elasticsearch.client', name: 'transport', version: elasticsearchVersion
+
 
     testRuntime 'com.spatial4j:spatial4j:0.4.1'
     testCompile 'com.vividsolutions:jts:1.13'
@@ -93,7 +99,9 @@ dependencies {
     provided "org.grails:grails-plugin-services"
     provided "org.grails:grails-plugin-domain-class"
 
-    compile "org.elasticsearch.plugin:mapper-attachments:${elasticsearchVersion}"
+    //compile "org.elasticsearch.plugin:mapper-attachments:${elasticsearchAttachmentsVersion}"
+    provided group: 'org.elasticsearch', name: 'elasticsearch-mapper-attachments', version: '3.1.2'
+
 }
 
 task wrapper(type: Wrapper) {

@@ -30,7 +30,7 @@ import org.springframework.util.ClassUtils
 class ElasticSearchMappingFactory {
 
     private static final Set<String> SUPPORTED_FORMAT =
-            ['string', 'integer', 'long', 'float', 'double', 'boolean', 'null', 'date'] as Set<String>
+            ['text', 'integer', 'long', 'float', 'double', 'boolean', 'null', 'date', 'keyword'] as Set<String>
 
     private static Class JODA_TIME_BASE
 
@@ -97,12 +97,14 @@ class ElasticSearchMappingFactory {
                     if (idTypeIsMongoObjectId(idType)) {
                         idType = treatValueAsAString(idType)
                     } else if (idTypeIsUUID(idType)) {
-                        idType = 'string'
+                        idType = 'text'
                     }
 
+                    if(idType == 'text') idType = 'keyword'
+
                     props.put('id', defaultDescriptor(idType, 'not_analyzed', true))
-                    props.put('class', defaultDescriptor('string', 'no', true))
-                    props.put('ref', defaultDescriptor('string', 'no', true))
+                    props.put('class', defaultDescriptor('keyword', 'no', true))
+                    props.put('ref', defaultDescriptor('keyword', 'no', true))
                 }
             }
             propOptions.type = propType
@@ -112,10 +114,10 @@ class ElasticSearchMappingFactory {
                 propOptions.include_in_all = !scpm.shouldExcludeFromAll()
             }
             // todo only enable this through configuration...
-            if (propType == 'string' && scpm.isDynamic()) {
+            if (propType == 'text' && scpm.isDynamic()) {
                 propOptions.type = 'object'
                 propOptions.dynamic = true
-            } else if ((propType == 'string') && scpm.isAnalyzed()) {
+            } else if ((propType == 'text') && scpm.isAnalyzed()) {
                 propOptions.term_vector = 'with_positions_offsets'
             }
             if (scpm.isMultiField()) {
@@ -172,12 +174,12 @@ class ElasticSearchMappingFactory {
                 if (isDateType(referencedPropertyType)) {
                     propType = 'date'
                 } else if (referencedPropertyType.isEnum()) {
-                    propType = 'string'
+                    propType = 'text'
                 } else if (scpm.getConverter() != null) {
-                    // Use 'string' type for properties with custom converter.
+                    // Use 'text' type for properties with custom converter.
                     // Arrays are automatically resolved by ElasticSearch, so no worries.
                     def requestedConverter = scpm.getConverter()
-                    propType = (SUPPORTED_FORMAT.contains(requestedConverter)) ? requestedConverter : 'string'
+                    propType = (SUPPORTED_FORMAT.contains(requestedConverter)) ? requestedConverter : 'text'
                     // Handle primitive types, see https://github.com/mstein/elasticsearch-grails-plugin/issues/61
                 } else if (referencedPropertyType.isPrimitive()) {
                     if (javaPrimitivesToElastic.containsKey(referencedPropertyType.toString())) {
@@ -205,7 +207,8 @@ class ElasticSearchMappingFactory {
     }
 
     private static String getTypeSimpleName(Class type) {
-        ClassUtils.getShortName(type).toLowerCase(Locale.ENGLISH)
+        String name = ClassUtils.getShortName(type).toLowerCase(Locale.ENGLISH)
+        return name == 'string' ? 'text' : name
     }
 
     private static boolean idTypeIsMongoObjectId(String idType) {
@@ -218,11 +221,11 @@ class ElasticSearchMappingFactory {
 
     private static String treatValueAsAString(String idType) {
         if ((Holders.grailsApplication.config.elasticSearch as ConfigObject).datastoreImpl =~ /mongo/) {
-            idType = 'string'
+            idType = 'text'
         } else {
             def pluginManager = Holders.applicationContext.getBean(GrailsPluginManager.BEAN_NAME)
             if (((GrailsPluginManager) pluginManager).hasGrailsPlugin('mongodb')) {
-                idType = 'string'
+                idType = 'text'
             }
         }
         idType

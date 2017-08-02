@@ -87,9 +87,11 @@ environments:
             bulkIndexOnStartup: true
     test:
         elasticSearch:
+            cluster:
+              name: 'local.test.es.cluster'
             client:
                 mode: local
-                transport.sniff: true
+                transport.sniff: false
             datastoreImpl: hibernateDatastore
             index:
                 store.type: simplefs
