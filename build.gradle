@@ -69,7 +69,7 @@ sourcesJar {
     exclude "test/**/**"
 }
 
-def elasticsearchVersion = '5.3.3'
+def elasticsearchVersion = '5.4.1'
 
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter-logging'
