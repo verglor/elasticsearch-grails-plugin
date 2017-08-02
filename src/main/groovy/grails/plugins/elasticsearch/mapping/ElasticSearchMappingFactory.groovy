@@ -136,6 +136,9 @@ class ElasticSearchMappingFactory {
             if (propType == 'object' && scpm.component && !scpm.innerComponent) {
                 propOptions.type = 'nested'
             }
+            if (propType == 'text' && scpm.fieldDataEnabled){
+                propOptions.fielddata = true
+            }
             elasticTypeMappingProperties.put(scpm.getPropertyName(), propOptions)
         }
         elasticTypeMappingProperties
