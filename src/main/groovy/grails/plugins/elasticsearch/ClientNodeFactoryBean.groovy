@@ -75,20 +75,21 @@ class ClientNodeFactoryBean implements FactoryBean {
         // Configure the client based on the client mode
         switch (clientMode) {
             case 'transport':
-                def transportSettings = Settings.builder()
+                def transportSettingsBuilder = Settings.builder()
 
                 def transportSettingsFile = elasticSearchContextHolder.config.bootstrap.transportSettings.file
                 if (transportSettingsFile) {
                     Resource resource = new PathMatchingResourcePatternResolver().getResource(transportSettingsFile)
-                    transportSettings.loadFromStream(transportSettingsFile, resource.inputStream)
+                    transportSettingsBuilder.loadFromStream(transportSettingsFile, resource.inputStream)
                 }
                 // Use the "sniff" feature of transport client ?
                 if (elasticSearchContextHolder.config.client.transport.sniff) {
-                    transportSettings.put("client.transport.sniff", false)
+                    transportSettingsBuilder.put("client.transport.sniff", false)
                 }
                 if (elasticSearchContextHolder.config.cluster.name) {
-                    transportSettings.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
+                    transportSettingsBuilder.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
+                def transportSettings = transportSettingsBuilder.build()
                 transportClient = new PreBuiltTransportClient(transportSettings, Collections.emptyList());
 
                 boolean ip4Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: true
