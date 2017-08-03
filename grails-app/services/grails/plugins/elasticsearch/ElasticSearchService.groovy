@@ -359,6 +359,7 @@ class ElasticSearchService implements GrailsApplicationAware {
     private SearchRequest buildSearchRequest(query, filter, Map params) {
         SearchSourceBuilder source = new SearchSourceBuilder()
 
+        LOG.debug("Build search request with params: ${params}")
         source.from(params.from ? params.from as int : 0)
                 .size(params.size ? params.size as int : 60)
                 .explain(params.explain ?: true).minScore(params.min_score ?: 0)
@@ -398,7 +399,11 @@ class ElasticSearchService implements GrailsApplicationAware {
         source.explain(false)
 
         SearchRequest request = new SearchRequest()
-        request.searchType SearchType.DFS_QUERY_THEN_FETCH
+        SearchType searchType =
+                                (params.searchType ?:
+                                elasticSearchContextHolder.config.defaultSearchType ?:
+                                'query_then_fetch').toUpperCase()
+        request.searchType searchType
         request.source source
 
         return request
@@ -461,8 +466,10 @@ class ElasticSearchService implements GrailsApplicationAware {
         resolveIndicesAndTypes(request, params)
         elasticSearchHelper.withElasticSearch { Client client ->
             LOG.debug 'Executing search request.'
+            LOG.debug(request.inspect())
             def response = client.search(request).actionGet()
             LOG.debug 'Completed search request.'
+            LOG.debug(response.inspect())
             def searchHits = response.getHits()
             def result = [:]
             result.total = searchHits.totalHits()
