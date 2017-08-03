@@ -111,7 +111,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                         try {
                             for (InetAddress address : InetAddress.getAllByName(it.host)) {
                                 if ((ip6Enabled && address instanceof Inet6Address) || (ip4Enabled && address instanceof Inet4Address)) {
-                                    LOG.info("Adding host: ${address}")
+                                    LOG.info("Adding host: ${address}:${it.port}")
                                     transportClient.addTransportAddress(new InetSocketTransportAddress(address, it.port));
                                 }
                             }
