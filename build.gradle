@@ -45,7 +45,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://repo.grails.org/grails/core" }
-    maven { url "http://dl.bintray.com/erichmx/grails-plugins" }
 }
 
 dependencyManagement {
