@@ -21,6 +21,8 @@ import grails.plugins.GrailsPluginManager
 import grails.util.GrailsNameUtils
 import grails.util.Holders
 import groovy.transform.CompileStatic
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.springframework.util.ClassUtils
 
 /**
@@ -28,6 +30,7 @@ import org.springframework.util.ClassUtils
  */
 @CompileStatic
 class ElasticSearchMappingFactory {
+    private static Log log = LogFactory.getLog(ElasticSearchMappingFactory)
 
     private static final Set<String> SUPPORTED_FORMAT =
             ['text', 'integer', 'long', 'float', 'double', 'boolean', 'null', 'date', 'keyword'] as Set<String>
@@ -78,8 +81,15 @@ class ElasticSearchMappingFactory {
                     // Proceed with nested mapping.
                     // todo limit depth to avoid endless recursion?
                     //noinspection unchecked
+                    def elasticMapping = getElasticMapping(scpm.getComponentPropertyMapping())
+                    def typeName = GrailsNameUtils.getPropertyName(scpm.getGrailsProperty().getReferencedPropertyType())
+                    def componentMapping = elasticMapping[typeName] as Map<String, Object>
+                    if(componentMapping.containsKey('_all')){
+                        log.warn("Ignoring _all from component ${scpm.propertyName} in ${scm.elasticTypeName}")
+                        componentMapping.remove('_all')
+                    }
                     propOptions.putAll((Map<String, Object>)
-                            (getElasticMapping(scpm.getComponentPropertyMapping()).values().iterator().next()))
+                            (elasticMapping.values().iterator().next()))
                 }
 
                 // Once it is an object, we need to add id & class mappings, otherwise
