@@ -84,7 +84,7 @@ class ElasticSearchMappingFactory {
                     def elasticMapping = getElasticMapping(scpm.getComponentPropertyMapping())
                     def typeName = GrailsNameUtils.getPropertyName(scpm.getGrailsProperty().getReferencedPropertyType())
                     def componentMapping = elasticMapping[typeName] as Map<String, Object>
-                    if(componentMapping?.containsKey('_all')){
+                    if(componentMapping.containsKey('_all')){
                         log.warn("Ignoring _all from component ${scpm.propertyName} in ${scm.elasticTypeName}")
                         componentMapping.remove('_all')
                     }
