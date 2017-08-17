@@ -123,14 +123,13 @@ class ElasticSearchMappingFactory {
             if (scpm.isMultiField()) {
                 Map<String, Object> field = new LinkedHashMap<String, Object>(propOptions)
                 Map untouched = [:]
-                untouched.put('type', propOptions.get('type'))
-                untouched.put('index', 'not_analyzed')
+                untouched.put('type', propOptions.get('type') == 'text' ? 'keyword' : propOptions.get('type'))
 
                 Map fields = [untouched: untouched]
                 fields.put("${scpm.getPropertyName()}" as String, field)
 
                 propOptions = [:]
-                propOptions.type = 'multi_field'
+                propOptions.type = propType
                 propOptions.fields = fields
             }
             if (propType == 'object' && scpm.component && !scpm.innerComponent) {

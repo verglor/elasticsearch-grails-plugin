@@ -621,6 +621,56 @@ class ElasticSearchServiceIntegrationSpec extends Specification {
         result.captain.lastName == 'Reynolds'
     }
 
+    void 'Multi_filed creates untouched field'() {
+        given:
+        def mal = new Person(firstName: 'J. T.', lastName: 'Esteban').save(flush: true)
+        def spaceship = new Spaceship(name: 'USS Grissom', captain: mal).save(flush: true)
+        elasticSearchService.index(spaceship)
+        elasticSearchAdminService.refresh()
+
+        when:
+        def search = elasticSearchService.search([indices: Spaceship, types: Spaceship], {
+            bool {
+                must {
+                    term("name.untouched": 'USS Grissom')
+                }
+            }
+        })
+
+        then:
+        search.total == 1
+
+        def result = search.searchResults.first()
+        result.name == 'USS Grissom'
+        result.captain.firstName == 'J. T.'
+        result.captain.lastName == 'Esteban'
+    }
+
+    void 'Fields creates creates child field'() {
+        given:
+        def mal = new Person(firstName: 'Jason', lastName: 'Lambert').save(flush: true)
+        def spaceship = new Spaceship(name: 'Intrepid', captain: mal).save(flush: true)
+        elasticSearchService.index(spaceship)
+        elasticSearchAdminService.refresh()
+
+        when:
+        def search = elasticSearchService.search([indices: Spaceship, types: Spaceship], {
+            bool {
+                must {
+                    term("captain.firstName.raw": 'Jason')
+                }
+            }
+        })
+
+        then:
+        search.total == 1
+
+        def result = search.searchResults.first()
+        result.name == 'Intrepid'
+        result.captain.firstName == 'Jason'
+        result.captain.lastName == 'Lambert'
+    }
+
     void 'dynamicly mapped JSON strings should be searchable'() {
         given: 'A Spaceship with some cool canons'
         def spaceship = new Spaceship(name: 'Spaceball One', captain: new Person(firstName: 'Dark', lastName: 'Helmet').save())
