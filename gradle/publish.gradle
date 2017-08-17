@@ -15,6 +15,7 @@ grailsPublish {
         name = 'Apache-2.0'
     }
     title = "Elasticserach"
+    //rep = "grails-plugins"
     desc = "An Elasticsearch plugin for Grails"
     developers = [noam: 'Noam Y. Tenne', macrcos: 'Marcos Carceles', puneet: 'Puneet Behl', james: 'James Kleeh']
 }
