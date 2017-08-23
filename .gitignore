@@ -5,6 +5,8 @@
 .gradle
 build/
 
+libs
+
 # Log files
 *.log
 
@@ -30,3 +32,5 @@ data/
 
 #Elasticserch plugin binaries
 src/integration-test/resources/elasticsearch/plugins
+
+bin
