@@ -425,7 +425,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Elasticsearch Plugin - Reference Documentation</h1>
 <div class="details">
 <span id="author" class="author">Noam Y. Tenne</span><br>
-<span id="revnumber">version 1.2.1</span>
+<span id="revnumber">version 1.4.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -546,6 +546,42 @@ reference for its syntax and behaviour.</p>
 <h4 id="grails-3-x-version">1.2.1. Grails 3.x version</h4>
 <div class="ulist">
 <ul>
+<li>
+<p>August 17, 2017</p>
+<div class="ulist">
+<ul>
+<li>
+<p>1.4.1</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Upgraded to Elasticsearch 5.4.1</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Changed data types 'string' to 'text' and 'keyword' with sensible defaults</p>
+</li>
+<li>
+<p>BREAKING CHANGE: if you want to sort or aggregate by text properties your need to add fielddata: true since it is disabled by default in ES 5.x</p>
+</li>
+<li>
+<p>BREAKING CHANGE: default search type changed to QUERY_THEN_FETCH. See the tip at the end of <a href="https://www.elastic.co/guide/en/elasticsearch/guide/current/relevance-is-broken.html">here</a></p>
+</li>
+<li>
+<p>Added initial support for <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-fields.html">fields</a></p>
+</li>
+<li>
+<p>Ignore _all configuration for component objects</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
 <li>
 <p>June 3, 2016</p>
 <div class="ulist">
@@ -1194,6 +1230,11 @@ If necessary a 4th level point release number will be used for successive change
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Elasticsearch</strong></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.4.1</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.1.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>5.x (tested with 5.4.1)</strong></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.2.0</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.1.x</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>2.3.x</strong></p></td>
@@ -1224,7 +1265,7 @@ If necessary a 4th level point release number will be used for successive change
 <td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 2.4.x</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.4.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.5.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2.4.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 5.0.x</p></td>
 </tr>
@@ -1234,7 +1275,7 @@ If necessary a 4th level point release number will be used for successive change
 <td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 2.4.x</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1.4.x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3.1.x</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">(hypothetical) 5.0.x</p></td>
 </tr>
@@ -1254,7 +1295,7 @@ If necessary a 4th level point release number will be used for successive change
 <p><em>Existing versions in</em> <strong>bold</strong></p>
 </div>
 <div class="paragraph">
-<p>Current version is <strong>1.2.1</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
+<p>Current version is <strong>1.4.1</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
 </div>
 </div>
 <div class="sect2">
@@ -2307,6 +2348,11 @@ The syntax is simple:</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">How or if the property is made into searchable element. One of <code>"no"</code>, <code>"not_analyzed"</code> or <code>"analyzed"</code>.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fielddata</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables the use of text fields in sorting and aggregation. Be careful as fielddata can consume a lot of heap space, especially when loading high cardinality text fields. Default <code>false</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#searchableReference">reference</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">To use only on domain (or collection of domains), make the property a searchable reference.</p></td>
@@ -2319,7 +2365,12 @@ The syntax is simple:</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">multi_field</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A boolean value. Maps the value of the field twice; Once with it being analyzed, and once with it being not_analyzed under untouched. Default set to <code>false</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A boolean value. Maps the value of the field twice; Once with it being analyzed, and once with it being not_analyzed under the name untouched. Default set to <code>false</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fields</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A map describing the extra fields</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maps the value of the field more than once; it is useful when you want to index a field with different analyzers. See the <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-fields.html">ElasticSearch documentation</a>. Default set to <code>null</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#geoPoint">geoPoint</a></p></td>
@@ -3668,8 +3719,8 @@ class Department {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.2.1<br>
-Last updated 2017-01-27 16:41:58 IST
+Version 1.4.1<br>
+Last updated 2017-03-11 19:22:06 +05:30
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
