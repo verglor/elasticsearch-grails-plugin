@@ -44,7 +44,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     def license = 'APACHE'
 
-    def organization = [name: '10ne.org', url: 'http://www.10ne.org/']
+    def organization = [name: 'TO THE NEW', url: 'http://www.tothenew.com']
 
     def developers = [
             [name: 'Noam Y. Tenne', email: 'noam@10ne.org'],
@@ -57,8 +57,8 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     def scm = [url: 'https://github.com/noamt/elasticsearch-grails-plugin']
 
-    def author = 'Noam Y. Tenne'
-    def authorEmail = 'noam@10ne.org'
+    def author = 'Puneet Behl'
+    def authorEmail = 'puneet.behl007@gmail.com'
     def title = 'ElasticSearch Grails Plugin'
     def description = """The revived Elasticsearch plugin for Grails."""
     def documentation = 'http://noamt.github.io/elasticsearch-grails-plugin'
