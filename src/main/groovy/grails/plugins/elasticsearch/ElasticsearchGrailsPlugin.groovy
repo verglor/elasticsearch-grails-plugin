@@ -35,7 +35,7 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
-    def grailsVersion = '3.1.1 > *'
+    def grailsVersion = '3.3.1 > *'
 
     def loadAfter = ['services', 'mongodb']
 
@@ -51,9 +51,9 @@ class ElasticsearchGrailsPlugin extends Plugin {
 
     def developers = [
             [name: 'Noam Y. Tenne', email: 'noam@10ne.org'],
-                      [name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com'],
-                      [name: 'Puneet Behl', email: 'puneet.behl007@gmail.com'],
-            [name: 'James Kleeh', email: '	james.kleeh@gmail.com']
+			[name: 'Marcos Carceles', email: 'marcos.carceles@gmail.com'],
+			[name: 'Puneet Behl', email: 'puneet.behl007@gmail.com'],
+            [name: 'James Kleeh', email: 'james.kleeh@gmail.com']
     ]
 
     def issueManagement = [system: 'github', url: 'https://github.com/noamt/elasticsearch-grails-plugin/issues']
