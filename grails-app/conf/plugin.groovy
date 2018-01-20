@@ -68,7 +68,7 @@ elasticSearch {
      */
     migration.disableAliasChange = false
 
-    index.numberOfReplicas = 0
+    index.settings.numberOfReplicas = 0
 
     /**
      * Whether to index and search all non excluded transient properties. All explicitly included transients in @only@ will be indexed regardless.
