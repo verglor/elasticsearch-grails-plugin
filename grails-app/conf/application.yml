@@ -93,18 +93,19 @@ environments:
             datastoreImpl: hibernateDatastore
             index:
                 store.type: simplefs
-                analysis:
-                    filter:
-                        replace_synonyms:
-                            type: synonym
-                            synonyms: ['abc => xyz']
-                    analyzer:
-                        test_analyzer:
-                            tokenizer: standard
-                            filter: ['lowercase']
-                        repl_analyzer:
-                            tokenizer: standard
-                            filter: ['lowercase', 'replace_synonyms']
+                settings:
+                    analysis:
+                        filter:
+                            replace_synonyms:
+                                type: synonym
+                                synonyms: ['abc => xyz']
+                        analyzer:
+                            test_analyzer:
+                                tokenizer: standard
+                                filter: ['lowercase']
+                            repl_analyzer:
+                                tokenizer: standard
+                                filter: ['lowercase', 'replace_synonyms']
     production:
         elasticSearch:
             client:
