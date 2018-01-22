@@ -18,3 +18,5 @@ include::admin.adoc[]
 include::lowLevelAPI.adoc[]
 
 include::example.adoc[]
+
+include::faq.adoc[]
