@@ -1,16 +1,14 @@
 package grails.plugins.elasticsearch.mapping
 
-import groovy.transform.CompileStatic
-
 import grails.core.GrailsDomainClass
 import grails.core.GrailsDomainClassProperty
 import grails.util.GrailsClassUtils
 import grails.util.GrailsNameUtils
+import groovy.transform.CompileStatic
 import org.grails.core.util.ClassPropertyFetcher
 import org.grails.datastore.mapping.model.PersistentEntity
 
 import static java.util.Collections.emptyList
-
 
 @CompileStatic
 class DomainEntity {

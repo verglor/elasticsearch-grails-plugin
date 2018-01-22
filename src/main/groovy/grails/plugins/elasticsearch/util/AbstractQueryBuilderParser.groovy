@@ -1,7 +1,6 @@
 package grails.plugins.elasticsearch.util
 
 import groovy.transform.CompileStatic
-
 import org.elasticsearch.common.ParsingException
 import org.elasticsearch.common.xcontent.NamedXContentRegistry
 import org.elasticsearch.common.xcontent.XContentLocation

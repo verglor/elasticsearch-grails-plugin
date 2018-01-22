@@ -16,17 +16,15 @@
 package grails.plugins.elasticsearch.util
 
 import grails.core.GrailsApplication
-import grails.plugins.elasticsearch.mapping.DomainEntity
-import grails.plugins.elasticsearch.mapping.DomainReflectionService
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import grails.plugins.elasticsearch.ElasticSearchService
-import grails.plugins.elasticsearch.mapping.SearchableClassMapping
-
-import org.springframework.context.ApplicationContext
-
-import org.apache.commons.logging.LogFactory
 import grails.plugins.elasticsearch.exception.IndexException
+import grails.plugins.elasticsearch.mapping.DomainEntity
+import grails.plugins.elasticsearch.mapping.DomainReflectionService
+import grails.plugins.elasticsearch.mapping.SearchableClassMapping
+import org.apache.commons.logging.LogFactory
 import org.elasticsearch.index.query.QueryBuilder
+import org.springframework.context.ApplicationContext
 
 class DomainDynamicMethodsUtils {
 

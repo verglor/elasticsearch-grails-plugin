@@ -2,7 +2,6 @@ package grails.plugins.elasticsearch
 
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
-
 import org.elasticsearch.client.Client
 
 class ElasticSearchHelper {

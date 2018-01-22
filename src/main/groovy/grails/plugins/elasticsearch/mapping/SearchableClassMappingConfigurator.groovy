@@ -16,15 +16,14 @@
 
 package grails.plugins.elasticsearch.mapping
 
-import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
-import groovy.transform.CompileStatic
-
-import org.elasticsearch.cluster.health.ClusterHealthStatus
 import grails.core.GrailsApplication
-import org.elasticsearch.indices.InvalidIndexTemplateException
-import org.elasticsearch.transport.RemoteTransportException
 import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
+import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
+import groovy.transform.CompileStatic
+import org.elasticsearch.cluster.health.ClusterHealthStatus
+import org.elasticsearch.indices.InvalidIndexTemplateException
+import org.elasticsearch.transport.RemoteTransportException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

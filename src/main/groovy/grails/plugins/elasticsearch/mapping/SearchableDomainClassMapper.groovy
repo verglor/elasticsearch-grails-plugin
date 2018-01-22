@@ -16,16 +16,13 @@
 
 package grails.plugins.elasticsearch.mapping
 
-import groovy.transform.CompileStatic
-import java.lang.reflect.Modifier
-
 import grails.core.GrailsApplication
-
-import org.springframework.util.Assert
-
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.springframework.util.Assert
 
+import java.lang.reflect.Modifier
 
 @CompileStatic
 class SearchableDomainClassMapper extends GroovyObjectSupport {
