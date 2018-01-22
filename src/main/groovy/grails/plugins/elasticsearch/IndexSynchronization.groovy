@@ -1,8 +1,7 @@
 package grails.plugins.elasticsearch
 
-import groovy.transform.CompileStatic
-
 import grails.plugins.elasticsearch.index.IndexRequestQueue
+import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.transaction.support.TransactionSynchronizationAdapter

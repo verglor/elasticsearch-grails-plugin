@@ -3,16 +3,34 @@ grails:
     profile: web-plugin
     codegen:
         defaultPackage: grails.plugins.elasticsearch
-    databinding.dateFormats: ["yyyy-MM-dd'T'HH:mm:ss.SSSZ"]
+    spring:
+        transactionManagement:
+            proxies: false
+    gorm:
+        reactor:
+            # Whether to translate GORM events into Reactor events
+            # Disabled by default for performance reasons
+            events: false
+    databinding:
+        dateFormats: ["yyyy-MM-dd'T'HH:mm:ss.SSSZ"]
 info:
     app:
         name: '@info.app.name@'
         version: '@info.app.version@'
         grailsVersion: '@info.app.grailsVersion@'
 spring:
+    main:
+        banner-mode: "off"
     groovy:
         template:
             check-template-location: false
+
+# Spring Actuator Endpoints are Disabled by Default
+endpoints:
+    enabled: false
+    jmx:
+        enabled: true
+
 ---
 grails:
     mime:
@@ -93,18 +111,19 @@ environments:
             datastoreImpl: hibernateDatastore
             index:
                 store.type: simplefs
-                analysis:
-                    filter:
-                        replace_synonyms:
-                            type: synonym
-                            synonyms: ['abc => xyz']
-                    analyzer:
-                        test_analyzer:
-                            tokenizer: standard
-                            filter: ['lowercase']
-                        repl_analyzer:
-                            tokenizer: standard
-                            filter: ['lowercase', 'replace_synonyms']
+                settings:
+                    analysis:
+                        filter:
+                            replace_synonyms:
+                                type: synonym
+                                synonyms: ['abc => xyz']
+                        analyzer:
+                            test_analyzer:
+                                tokenizer: standard
+                                filter: ['lowercase']
+                            repl_analyzer:
+                                tokenizer: standard
+                                filter: ['lowercase', 'replace_synonyms']
     production:
         elasticSearch:
             client:

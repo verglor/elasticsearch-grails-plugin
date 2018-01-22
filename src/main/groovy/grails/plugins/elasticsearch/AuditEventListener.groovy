@@ -15,10 +15,9 @@
  */
 package grails.plugins.elasticsearch
 
+import grails.plugins.elasticsearch.index.IndexRequestQueue
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-
-import grails.plugins.elasticsearch.index.IndexRequestQueue
 import org.grails.datastore.mapping.core.Datastore
 import org.grails.datastore.mapping.engine.event.*
 import org.slf4j.Logger

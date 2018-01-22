@@ -20,6 +20,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin
+import org.elasticsearch.node.InternalSettingsPreparer
 import org.elasticsearch.node.Node
 import org.elasticsearch.plugins.Plugin
 import org.elasticsearch.transport.client.PreBuiltTransportClient
@@ -28,11 +29,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.FactoryBean
 import org.springframework.core.io.Resource
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
-import org.elasticsearch.node.InternalSettingsPreparer
+
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-
 
 class ClientNodeFactoryBean implements FactoryBean {
 

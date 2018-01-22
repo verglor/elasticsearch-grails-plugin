@@ -16,15 +16,14 @@
 
 package grails.plugins.elasticsearch.mapping
 
-import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
-import groovy.transform.CompileStatic
-
-import org.elasticsearch.cluster.health.ClusterHealthStatus
 import grails.core.GrailsApplication
-import org.elasticsearch.indices.InvalidIndexTemplateException
-import org.elasticsearch.transport.RemoteTransportException
 import grails.plugins.elasticsearch.ElasticSearchAdminService
 import grails.plugins.elasticsearch.ElasticSearchContextHolder
+import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
+import groovy.transform.CompileStatic
+import org.elasticsearch.cluster.health.ClusterHealthStatus
+import org.elasticsearch.indices.InvalidIndexTemplateException
+import org.elasticsearch.transport.RemoteTransportException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -187,21 +186,21 @@ class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
     }
 
     private Map<String, Object> buildIndexSettings() {
-        Map<String, Object> indexSettings = new HashMap<String, Object>()
-        indexSettings.put("number_of_replicas", numberOfReplicas())
+        Map<String, Object> settings = new HashMap<String, Object>()
+        settings.put("number_of_replicas", numberOfReplicas())
         // Look for default index settings.
         if (esConfig != null) {
-            Map<String, Object> indexDefaults = esConfig.get("index") as Map<String, Object>
+            Map<String, Object> indexDefaults = indexSettings as Map<String, Object>
             LOG.debug("Retrieved index settings")
             if (indexDefaults != null) {
                 for (Map.Entry<String, Object> entry : indexDefaults.entrySet()) {
                     String key = entry.getKey();
                     if(key == 'numberOfReplicas') key = 'number_of_replicas'
-                    indexSettings.put("index." + key, entry.getValue())
+                    settings.put("index." + key, entry.getValue())
                 }
             }
         }
-        indexSettings
+        settings
     }
 
     private Map<SearchableClassMapping, Map> buildElasticMappings(Collection<SearchableClassMapping> mappings) {
@@ -215,7 +214,7 @@ class SearchableClassMappingConfigurator implements ElasticSearchConfigAware {
     }
 
     private int numberOfReplicas() {
-        def defaultNumber = (esConfig.index as ConfigObject).numberOfReplicas
+        def defaultNumber = indexSettings.numberOfReplicas
         if (!defaultNumber) {
             return 0
         }

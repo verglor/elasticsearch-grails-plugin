@@ -301,6 +301,11 @@ Default to `true`.
 ==== `elasticSearch.index.name`
 A string indicating which ElasticSearch index should be used.  If not present, will default to the package name of the domain in question.
 
+[NOTE]
+====
+From Elasticsearch 5.0 on only selected settings like for instance index.codec can be set on the node level. All other settings must be set on each individual index. To set default values on every index, index templates should be used instead. So, unset this value if you are using Elasticsearch v5.0 or above.
+====
+
 ==== `elasticSearch.index.compound_format`
 
 Should the compound file format be used (boolean setting).
@@ -331,7 +336,7 @@ More details on the possible values on the http://www.elasticsearch.org/guide/re
 
 |===
 
-==== `elasticSearch.index.numberOfReplicas`
+==== `elasticSearch.index.settings.numberOfReplicas`
 
 Sets the number of replicas created for each shard of the index. If not present, will default to zero.
 
@@ -449,7 +454,7 @@ environments {
 }
 ----
 
-==== Grails 3.x
+==== Grails 3.3.x
 
 Below is the default configuration loaded by the plugin (any of your settings in the application.yml script overwrite those).
 
@@ -484,18 +489,19 @@ environments:
             datastoreImpl: hibernateDatastore
             index:
                 store.type: memory
-                analysis:
-                    filter:
-                        replace_synonyms:
-                            type: synonym
-                            synonyms: ['abc => xyz']
-                    analyzer:
-                        test_analyzer:
-                            tokenizer: standard
-                            filter: ['lowercase']
-                        repl_analyzer:
-                            tokenizer: standard
-                            filter: ['lowercase', 'replace_synonyms']
+                settings:
+                    analysis:
+                        filter:
+                            replace_synonyms:
+                                type: synonym
+                                synonyms: ['abc => xyz']
+                        analyzer:
+                            test_analyzer:
+                                tokenizer: standard
+                                filter: ['lowercase']
+                            repl_analyzer:
+                                tokenizer: standard
+                                filter: ['lowercase', 'replace_synonyms']
 
     production:
         elasticSearch:

@@ -1,9 +1,7 @@
 package grails.plugins.elasticsearch.mapping
 
-import groovy.transform.CompileStatic
-
 import grails.core.GrailsDomainClassProperty
-
+import groovy.transform.CompileStatic
 
 @CompileStatic
 class DomainProperty {

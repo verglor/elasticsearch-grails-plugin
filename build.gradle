@@ -4,6 +4,8 @@ buildscript {
     ext {
         grailsVersion = project.grailsVersion
         gormVersion = project.gormVersion
+        elasticsearchVersion = project.elasticsearchVersion
+        elasticsearchAttachmentsVersion = project.elasticsearchAttachmentsVersion
     }
     repositories {
         mavenLocal()
@@ -23,7 +25,7 @@ plugins {
     id "de.undercouch.download" version "3.2.0"
 }
 
-version "2.4.0.RC1"
+version "2.4.0.BUILD-SNAPSHOT"
 group "org.grails.plugins"
 
 apply plugin: 'eclipse'
@@ -35,7 +37,8 @@ apply plugin: 'maven-publish'
 
 ext {
     gradleWrapperVersion = project.gradleWrapperVersion
-    elasticsearchVersion = '5.4.1'
+    elasticsearchVersion = project.elasticsearchVersion
+    elasticsearchAttachmentsVersion = project.elasticsearchAttachmentsVersion
 }
 
 sourceCompatibility = 1.7
@@ -100,7 +103,7 @@ dependencies {
 
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-plugin-testing"
-    testCompile "org.grails:grails-test-mixins:3.3.0"
+    testCompile "org.grails:grails-web-testing-support"
 
     testCompile 'com.vividsolutions:jts:1.13'
     testCompile 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -150,6 +153,13 @@ clean.doLast {
 task cleanDataDir(type: Delete) {
     delete fileTree(dir: 'data')
 }
+
+bootRun {
+    jvmArgs('-Dspring.output.ansi.enabled=always')
+    addResources = true
+}
+// enable if you wish to package this plugin as a standalone application
+bootRepackage.enabled = false
 
 apply from: "gradle/documentation.gradle"
 
