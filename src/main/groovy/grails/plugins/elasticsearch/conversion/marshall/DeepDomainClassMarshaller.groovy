@@ -1,11 +1,7 @@
 package grails.plugins.elasticsearch.conversion.marshall
 
-import grails.core.GrailsDomainClass
-import grails.core.GrailsDomainClassProperty
-import org.grails.core.artefact.DomainClassArtefactHandler
 import grails.plugins.elasticsearch.mapping.DomainEntity
 import grails.plugins.elasticsearch.mapping.DomainProperty
-
 
 class DeepDomainClassMarshaller extends DefaultMarshaller {
     protected doMarshall(instance) {

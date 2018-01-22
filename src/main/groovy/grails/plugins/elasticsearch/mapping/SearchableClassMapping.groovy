@@ -17,9 +17,9 @@
 package grails.plugins.elasticsearch.mapping
 
 import grails.core.GrailsApplication
+import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import grails.plugins.elasticsearch.util.ElasticSearchConfigAware
 import grails.plugins.elasticsearch.util.IndexNamingUtils
-import grails.plugins.elasticsearch.ElasticSearchContextHolder
 import groovy.transform.CompileStatic
 
 @CompileStatic
