@@ -69,7 +69,7 @@ task docs(dependsOn: [asciidoc]) {
             }
         }
 
-        File ghpages = new File(buildDir, 'docs/manual/index.html')
+        File ghpages = new File(buildDir, 'docs/index.html')
         if (ghpages.exists()) {
             ghpages.delete()
         }
