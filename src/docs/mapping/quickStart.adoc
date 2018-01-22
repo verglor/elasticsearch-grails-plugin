@@ -12,6 +12,17 @@ dependencies {
 }
 ----
 
+* Overriding Spring Boot elasticsearch version
+
+Spring Boot 1.3.x supports Elasticsearch 1.5.2 OOTB (https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml#L76) and will install dependencies for this version, if not explicitly overriden. To do so add the following to your `build.gradle`:
+
+[source, groovy]
+----
+def elasticsearchVersion = '2.3.3'
+ext['elasticsearch.version'] = elasticsearchVersion
+----
+
+
 * Updated `application.yml` with default configurations:
 ----
 elasticSearch:
