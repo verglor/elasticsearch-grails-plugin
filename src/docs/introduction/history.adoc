@@ -2,6 +2,10 @@
 
 ==== Grails 3.x version
 
+* December 12, 2017
+** 2.4.0.RC1
+*** Support Grails 3.3.x
+
 * August 17, 2017
 ** 1.4.1
 *** Upgraded to Elasticsearch 5.4.1
