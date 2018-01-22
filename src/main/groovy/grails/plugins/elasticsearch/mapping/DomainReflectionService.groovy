@@ -7,7 +7,7 @@ import grails.core.GrailsDomainClass
 import org.grails.core.artefact.DomainClassArtefactHandler
 import org.grails.datastore.mapping.model.MappingContext
 import org.grails.datastore.mapping.model.PersistentEntity
-
+import org.hibernate.proxy.HibernateProxy
 import org.springframework.beans.factory.annotation.Autowired
 
 
@@ -24,6 +24,9 @@ class DomainReflectionService {
     private final Map<Class<?>, DomainEntity> abstractEntityCache = [:]
 
     boolean isDomainEntity(Class<?> clazz) {
+        if(clazz in HibernateProxy) {
+            clazz = clazz.superclass
+        }
         DomainClassArtefactHandler.isDomainClass(clazz)
     }
 
