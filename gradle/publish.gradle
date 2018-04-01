@@ -6,7 +6,7 @@ ext {
 }
 
 githubPages {
-    repoUri = 'https://github.com/gpc/joda-time.git'
+    repoUri = 'https://github.com/puneetbehl/elasticsearch-grails-plugin.git'
 
     credentials {
         username = project.hasProperty('githubApiKey') ? project.githubApiKey : ''
