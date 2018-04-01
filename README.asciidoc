@@ -1,4 +1,4 @@
-== Elasticsearch Grails plugin
+== Elasticsearch Grails plugin image:https://travis-ci.org/puneetbehl/elasticsearch-grails-plugin.svg?branch=master["Build Status", link="https://travis-ci.org/puneetbehl/elasticsearch-grails-plugin"]
 
 An Elasticsearch plugin for Grails; This project is a fork based on the great work done by the guys at https://github.com/mstein/elasticsearch-grails-plugin.
 
@@ -6,14 +6,13 @@ An Elasticsearch plugin for Grails; This project is a fork based on the great wo
 
 The original Elasticsearch plugin relies on *Hibernate-specific* GORM components, thus rendering it unusable if you back your Grails application by any other database.
 
+=== Documentation
+
+The plugin documentation can be found at https://puneetbehl.github.io/elasticsearch-grails-plugin/index.html
+
+For latest stable version of plugin documentation, https://puneetbehl.github.io/elasticsearch-grails-plugin/latest/index.html[Click Here]
+
 === How can I obtain the plugin?
-
-image:https://travis-ci.org/puneetbehl/elasticsearch-grails-plugin.svg?branch=master["Build Status", link="https://travis-ci.org/puneetbehl/elasticsearch-grails-plugin"]
-
-[NOTE]
-====
-The latest verion of plugin documentation can be found at http://puneetbehl.github.io/elasticsearch-grails-plugin/docs/index.html
-====
 
 Just like any other Grails plugin, through the Grails Plugin center.
 Edit your project's +build.gradle+ file, by adding the plugin's dependency declaration:
