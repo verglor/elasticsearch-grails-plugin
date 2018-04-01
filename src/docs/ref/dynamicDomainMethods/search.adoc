@@ -56,7 +56,7 @@ def search(String query, Map params)
 
 ##### Returned value
 
-Return a `Map` containing:
+Return an object of `ElasticSearchResult` containing:
 
 * a `total` entry, representing the total number of hits found
 * a `searchResults` entry, containing the hits
