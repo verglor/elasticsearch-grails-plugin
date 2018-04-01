@@ -10,7 +10,7 @@ if (bintrayProperties.exists()) {
 }
 
 grailsPublish {
-    githubSlug = 'noamt/elasticsearch-grails-plugin'
+    githubSlug = 'puneetbehl/elasticsearch-grails-plugin'
     license {
         name = 'Apache-2.0'
     }
@@ -33,7 +33,7 @@ if (githubProperties.exists()) {
     }
 
     githubPages {
-        repoUri = 'https://github.com/noamt/elasticsearch-grails-plugin.git'
+        repoUri = 'https://github.com/puneetbehl/elasticsearch-grails-plugin.git'
 
         credentials {
             username = project.hasProperty('githubApiKey') ? project.githubApiKey : ''
