@@ -425,7 +425,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Elasticsearch Plugin - Reference Documentation</h1>
 <div class="details">
 <span id="author" class="author">Puneet Behl</span><br>
-<span id="revnumber">version 2.4.0</span>
+<span id="revnumber">version 1.4.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -442,11 +442,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#configuration">2. Configuration</a>
 <ul class="sectlevel2">
 <li><a href="#overriding-spring-boot-elasticsearch-version">2.1. Overriding Spring Boot elasticsearch version</a></li>
-<li><a href="#default-configuration-script">2.2. Default configuration script</a></li>
-<li><a href="#client-mode">2.3. Client mode</a></li>
-<li><a href="#mapping-migration-properties">2.4. Mapping Migration properties</a></li>
-<li><a href="#dynamic-method-injection">2.5. Dynamic Method Injection</a></li>
-<li><a href="#others-properties">2.6. Others properties</a></li>
+<li><a href="#client-mode">2.2. Client mode</a></li>
+<li><a href="#mapping-migration-properties">2.3. Mapping Migration properties</a></li>
+<li><a href="#dynamic-method-injection">2.4. Dynamic Method Injection</a></li>
+<li><a href="#others-properties">2.5. Others properties</a></li>
+<li><a href="#default-configuration-script">2.6. Default configuration script</a></li>
 </ul>
 </li>
 <li><a href="#mapping">3. Mapping</a>
@@ -492,11 +492,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#twitter">8.1. Twitter</a></li>
 <li><a href="#geoDistanceSearch">8.2. Geo Distance Search</a></li>
 <li><a href="#parentChildExample">8.3. Parent/Child mapping</a></li>
-</ul>
-</li>
-<li><a href="#faq">9. Frequently Asked Questions</a>
-<ul class="sectlevel2">
-<li><a href="#conflictingModules">9.1. Conflicting module versions</a></li>
 </ul>
 </li>
 </ul>
@@ -551,23 +546,6 @@ reference for its syntax and behaviour.</p>
 <h4 id="grails-3-x-version">1.2.1. Grails 3.x version</h4>
 <div class="ulist">
 <ul>
-<li>
-<p>December 12, 2017</p>
-<div class="ulist">
-<ul>
-<li>
-<p>2.4.0.RC1</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Support Grails 3.3.x</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
 <li>
 <p>August 17, 2017</p>
 <div class="ulist">
@@ -1252,11 +1230,6 @@ If necessary a 4th level point release number will be used for successive change
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Elasticsearch</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>2.4.0</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.3.x</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>5.x</strong></p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.4.1</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.1.x</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>5.x (tested with 5.4.1)</strong></p></td>
@@ -1268,7 +1241,7 @@ If necessary a 4th level point release number will be used for successive change
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.0.0.2</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.0.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>3.1.x</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>1.x</strong></p></td>
 </tr>
 <tr>
@@ -1322,7 +1295,7 @@ If necessary a 4th level point release number will be used for successive change
 <p><em>Existing versions in</em> <strong>bold</strong></p>
 </div>
 <div class="paragraph">
-<p>Current version is <strong>2.4.0</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
+<p>Current version is <strong>1.4.1</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
 </div>
 </div>
 <div class="sect2">
@@ -1352,7 +1325,560 @@ ext['elasticsearch.version'] = elasticsearchVersion</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="default-configuration-script">2.2. Default configuration script</h3>
+<h3 id="client-mode">2.2. Client mode</h3>
+<div class="paragraph">
+<p>You can set the plugin in 3 different modes, detailed on the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/">official ElasticSearch doc</a>.
+The mode is defined with the following config key:</p>
+</div>
+<div class="listingblock">
+<div class="title">applicaiton.groovy or Config.groovy</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">elasticSearch.client.mode = '&lt;mode&gt;'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">elasticSearch:
+	client:
+		mode: &lt;mode&gt;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Possible values for client node</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">node</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own node and join the ElasticSearch cluster as a client node (<code>node.client = true</code>). This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dataNode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own node and join the ElasticSearch cluster as a node that can hold data. This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">local</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own local (to the JVM) node. Does not require any running ElasticSearch instance. Useful for development or testing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">transport</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create a transport client that will connect to a remote ElasticSearch instance without joining the cluster.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>"Transport" mode needs you to provide the host address and port. You can define one or multiple hosts with the following config key:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.groovy or Config.groovy</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">elasticSearch.client.hosts = [
+       [host:'192.168.0.3', port:9300],
+       [host:'228.168.0.4', port:9300]
+]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">elasticSearch:
+	client:
+		hosts:
+    	- {host: 192.168.0.3, port: 9300}
+		- {host: 228.168.0.4, port: 9300}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If no host is defined, <code>localhost:9300</code> will be used by the transport client.</p>
+</div>
+<div class="sect3">
+<h4 id="using-node-or-datanode-during-development">2.2.1. Using node or dataNode during development</h4>
+<div class="paragraph">
+<p>If you configure your dev environment to use <code>node</code> or <code>dataNode</code> you might see the following exception:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'elasticSearchClient': FactoryBean threw exception on object creation; nested exception is java.lang.IllegalStateException: path.home is not configured</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to make this work you need to define <code>es.path.home</code> in VM options.</p>
+</div>
+<div class="listingblock">
+<div class="title">Grails 2.x</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">grails run-app -Des.path.home=&lt;PATH_TO_ELASTICSEARCH_HOME_DIR&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Grails 3.x (build.gradle)</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">bootRun {
+    jvmArgs = ['-Des.path.home=&lt;PATH_TO_ELASTICSEARCH_HOME_DIR&gt;']
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mapping-migration-properties">2.3. Mapping Migration properties</h3>
+<div class="paragraph">
+<p>Define the application&#8217;s behaviour when a conflict is found while installing Elasticsearch mappings on startup. For a detailed explanation, see <a href="#mappingMigrations">Mapping Migrations</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-migration-strategy-code">2.3.1. <code>elasticSearch.migration.strategy</code></h4>
+<div class="paragraph">
+<p>Defines the behaviour to follow if an error occurs on startup when the application is installing new mappings on ElasticSearch due to conflicting mappings.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. Possible Values for migration strategy</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'none'</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No changes on the indices or mappings will happen, the merge problem will be logged and a MappingException will be thrown.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'delete'</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The conflicting mapping will be deleted (along with all indexed content of that type) and replaced with a new mapping. Deleted content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'alias'</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Applies <a href="http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/">Elasticsearch recommended approach for migrating conflicting mappings</a>. A new numbered index will be created (<code>&lt;indexName&gt;_vX</code>) where new mappings will installed for all the types included on the original index. An Elasticsearch alias called <code>&lt;indexName&gt;</code> will point to the new index. As content won&#8217;t be available on the new index, content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option. It is recommended to set <code>elasticSearch.aliasReplacesIndex</code> to deal with potential index/alias conflicts.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The default is <code>'alias'</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-migration-aliasreplacesindex-code">2.3.2. <code>elasticSearch.migration.aliasReplacesIndex</code></h4>
+<div class="paragraph">
+<p>Deals with a special conflict case using the <code>'alias'</code> strategy. When the <code>'alias'</code> migration strategy is chosen and there&#8217;s a mapping conflict on an index, defines whether to replace the index with a versioned index (<code>&lt;indexName&gt;_vX</code>) and an alias (<code>&lt;indexName&gt;</code>). This is required when applying the alias strategy on top of existing indices for the first time as indices cannot be renamed (from <code>&lt;indexName&gt;</code> to <code>&lt;indexName&gt;_vX</code>) and an alias cannot exist with the same name as an index.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. Possible Values for aliasReplacesIndex</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The index and it&#8217;s content will be deleted and a versioned index and an alias will be created. Deleted content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Falls back to the <code>'none'</code> strategy. Event will be logged and a MappingException will be thrown.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The default is <code>true</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-migration-disablealiaschange-code">2.3.3. <code>elasticSearch.migration.disableAliasChange</code></h4>
+<div class="paragraph">
+<p>In some cases the developer may prefer not to upgrade the alias to the new version of the index until some other tasks are performed. This allows them to disable automatically pointing the alias to a new version of the index when this is created. Aliases can be changed later on manually or programatically using <code>elasticSearchAdminService</code></p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. Possible Values for disableAliasChange</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Standard behaviour</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prevents the aliases to be changed to point to a new index</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The default is <code>false</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dynamic-method-injection">2.4. Dynamic Method Injection</h3>
+<div class="sect3">
+<h4 id="code-elasticsearch-searchmethodname-code">2.4.1. <code>elasticSearch.searchMethodName</code></h4>
+<div class="paragraph">
+<p>Change the name of search method in domain class. By default it&#8217;s <code>search</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">MyDomain.search("${params.query}")</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In order to change the method name to <code>esSearch</code> just update the <code>elasticSearch.searchMethodName='esSearch'</code> in application.groovy</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-counthitsmethodname-code">2.4.2. <code>elasticSearch.countHitsMethodName</code></h4>
+<div class="paragraph">
+<p>Change the name of countHits method in domain class. By default it&#8217;s <code>countHits</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">MyDomain.countHits("${params.query}")</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In order to change the method name to <code>esCountHits</code> just update the <code>elasticSearch.countHitsMethodName='esCountHits'</code> in application.groovy</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-disabledynamicmethodsinjection-code">2.4.3. <code>elasticSearch.disableDynamicMethodsInjection</code></h4>
+<div class="paragraph">
+<p>To complete disabled injection of dynamic methods set <code>elasticSearch.disableDynamicMethodsInjection = true</code> in <code>applicaiton.groovy</code></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="others-properties">2.5. Others properties</h3>
+<div class="sect3">
+<h4 id="code-elasticsearch-datastoreimpl-code">2.5.1. <code>elasticSearch.datastoreImpl</code></h4>
+<div class="paragraph">
+<p>Only required when enabling the auto-index feature.
+This property specifies which GORM datastore implementation should be watched for storage events.
+The value should be the name of the datastore bean as it is configured in the Spring context; some possible values:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 5. Possible Values for datastoreImpl</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mongoDatastore</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the MongoDB datastore bean.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hibernateDatastore</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the Hibernate datastore bean.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-bootstrap-config-file-code">2.5.2. <code>elasticSearch.bootstrap.config.file</code></h4>
+<div class="paragraph">
+<p>When using then plugin to construct a local node, the default Elasticsearch configuration is used by default.
+If you use a modified Elasticsearch configuration, you can use this property to specify the location of the file (as an application resource).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-bootstrap-transportsettings-file-code">2.5.3. <code>elasticSearch.bootstrap.transportSettings.file</code></h4>
+<div class="paragraph">
+<p>When choosing transport mode this configuration will be used to set up the TransportClient settings (used by some cloud providers).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-client-transport-sniff-code">2.5.4. <code>elasticSearch.client.transport.sniff</code></h4>
+<div class="paragraph">
+<p>Only usable in with a transport client.
+Allows to sniff the rest of the cluster, and add those into its list of machines to use.
+In this case, the ip addresses used will be the ones that the other nodes were started with (the “publish” address)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-cluster-name-code">2.5.5. <code>elasticSearch.cluster.name</code></h4>
+<div class="paragraph">
+<p>The name of the cluster for the client to join.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-date-formats-code">2.5.6. <code>elasticSearch.date.formats</code></h4>
+<div class="paragraph">
+<p>List of date formats used by the JSON unmarshaller to parse any date field properly.
+Note : future version of the plugin may change how formats are manipulated.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-defaultexcludedproperties-code">2.5.7. <code>elasticSearch.defaultExcludedProperties</code></h4>
+<div class="paragraph">
+<p>List of domain class properties to automatically ignore (will not be indexed) if their name match one of those.
+This will apply to both the default-mapped domain class, with the static <code>searchable</code> property set to "true", and when using closure mapping.
+To override this setting on a specific class, it can be added to the <code>only</code> property of the <code>searchable</code> closure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-disableautoindex-code">2.5.8. <code>elasticSearch.disableAutoIndex</code></h4>
+<div class="paragraph">
+<p>A boolean determining if the plugin should reflect any database save/update/delete automatically on the indices.
+Default to <code>false</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-bulkindexonstartup-code">2.5.9. <code>elasticSearch.bulkIndexOnStartup</code></h4>
+<div class="paragraph">
+<p>Determines whether the application should launch a bulk index operation upon startup.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 6. Possible Values for bulkIndexOnStartup</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No indexing will happen on startup.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All content will be indexed on startup.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'deleted'</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This value is related to the mapping migration strategy chosen. If any migration is required and any content is deleted due to it, on startup only indices and mappings lost will be indexed. More on <a href="#mappingMigrations">Mapping Migrations</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Default to <code>true</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-index-name-code">2.5.10. <code>elasticSearch.index.name</code></h4>
+<div class="paragraph">
+<p>A string indicating which ElasticSearch index should be used.  If not present, will default to the package name of the domain in question.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-index-compound_format-code">2.5.11. <code>elasticSearch.index.compound_format</code></h4>
+<div class="paragraph">
+<p>Should the compound file format be used (boolean setting).
+Set to <code>false</code> by default (really applicable for file system based index storage).
+More details on this setting on the <a href="http://www.elasticsearch.org/guide/reference/index-modules/">ElasticSearch Documentation</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-index-store-type-code">2.5.12. <code>elasticSearch.index.store.type</code></h4>
+<div class="paragraph">
+<p>Determine how the indices will be stored.
+More details on the possible values on the <a href="http://www.elasticsearch.org/guide/reference/index-modules/store.html">ElasticSearch Documentation</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 7. Possible value for index store type</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">memory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the index in memory. Useful for testing. <strong>Please note</strong> that it&#8217;s not support in ES 2.0 and later versions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mmapfs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the shard index on the file system (maps to Lucene MMapDirectory) using mmap.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">niofs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the shard index on the file system (maps to Lucene NIOFSDirectory) and allows for multiple threads to read from the same file concurrently.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">simplefs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores using a plain forward implementation of file system storage (maps to Lucene SimpleFsDirectory) using random access file.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-index-numberofreplicas-code">2.5.13. <code>elasticSearch.index.numberOfReplicas</code></h4>
+<div class="paragraph">
+<p>Sets the number of replicas created for each shard of the index. If not present, will default to zero.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-gateway-type-code">2.5.14. <code>elasticSearch.gateway.type</code></h4>
+<div class="paragraph">
+<p>Determine the gateway type to be used.
+More details on the possible values are in the <a href="http://www.elasticsearch.org/guide/reference/modules/gateway/">ElasticSearch Documentation</a>.
+Using a setting of "none" (possibly in combination with index.store.type set to "memory") can be useful for tests.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-maxbulkrequest-code">2.5.15. <code>elasticSearch.maxBulkRequest</code></h4>
+<div class="paragraph">
+<p>Max number of requests to process at once.
+Reduce this value if you have memory issue when indexing a big amount of data at once.
+If this setting is not specified, 500 will be use by default.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-path-data-code">2.5.16. <code>elasticSearch.path.data</code></h4>
+<div class="paragraph">
+<p>The location of the data files of each index / shard allocated on the node.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-path-plugins-code">2.5.17. <code>elasticSearch.path.plugins</code></h4>
+<div class="paragraph">
+<p>The location of plugin files such as native scripts. Each plugin will be contained in a subdirectory.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-searchableproperty-name-code">2.5.18. <code>elasticSearch.searchableProperty.name</code></h4>
+<div class="paragraph">
+<p>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code-elasticsearch-includetransients-code">2.5.19. <code>elasticSearch.includeTransients</code></h4>
+<div class="paragraph">
+<p>Whether to index and search all non excluded transient properties. All explicitly included transients in <code>only</code> will be indexed regardless.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Default is <code>false</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-configuration-script">2.6. Default configuration script</h3>
+<div class="sect3">
+<h4 id="grails-2-x">2.6.1. Grails 2.x</h4>
 <div class="paragraph">
 <p>Below is the default configuration loaded by the plugin (any of your settings in the Config.groovy script overwrite those).</p>
 </div>
@@ -1431,8 +1957,12 @@ environments {
 }</code></pre>
 </div>
 </div>
+</div>
 <div class="sect3">
-<h4 id="grails-3-3-x-sample-yaml-configuration">2.2.1. Grails 3.3.x Sample YAML configuration</h4>
+<h4 id="grails-3-x">2.6.2. Grails 3.x</h4>
+<div class="paragraph">
+<p>Below is the default configuration loaded by the plugin (any of your settings in the application.yml script overwrite those).</p>
+</div>
 <div class="listingblock">
 <div class="title">application.yml</div>
 <div class="content">
@@ -1464,590 +1994,24 @@ environments:
             datastoreImpl: hibernateDatastore
             index:
                 store.type: memory
-                settings:
-                    analysis:
-                        filter:
-                            replace_synonyms:
-                                type: synonym
-                                synonyms: ['abc =&gt; xyz']
-                        analyzer:
-                            test_analyzer:
-                                tokenizer: standard
-                                filter: ['lowercase']
-                            repl_analyzer:
-                                tokenizer: standard
-                                filter: ['lowercase', 'replace_synonyms']
+                analysis:
+                    filter:
+                        replace_synonyms:
+                            type: synonym
+                            synonyms: ['abc =&gt; xyz']
+                    analyzer:
+                        test_analyzer:
+                            tokenizer: standard
+                            filter: ['lowercase']
+                        repl_analyzer:
+                            tokenizer: standard
+                            filter: ['lowercase', 'replace_synonyms']
 
     production:
         elasticSearch:
             client:
                 mode: node</code></pre>
 </div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="client-mode">2.3. Client mode</h3>
-<div class="paragraph">
-<p>You can set the plugin in 3 different modes, detailed on the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/java-api/current/">official ElasticSearch doc</a>.
-The mode is defined with the following config key:</p>
-</div>
-<div class="listingblock">
-<div class="title">applicaiton.groovy or Config.groovy</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">elasticSearch.client.mode = '&lt;mode&gt;'</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">application.yml</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">elasticSearch:
-	client:
-		mode: &lt;mode&gt;</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Possible values for client node</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">node</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own node and join the ElasticSearch cluster as a client node (<code>node.client = true</code>). This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">dataNode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own node and join the ElasticSearch cluster as a node that can hold data. This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">local</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own local (to the JVM) node. Does not require any running ElasticSearch instance. Useful for development or testing.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">transport</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create a transport client that will connect to a remote ElasticSearch instance without joining the cluster.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>"Transport" mode needs you to provide the host address and port. You can define one or multiple hosts with the following config key:</p>
-</div>
-<div class="listingblock">
-<div class="title">application.groovy or Config.groovy</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">elasticSearch.client.hosts = [
-       [host:'192.168.0.3', port:9300],
-       [host:'228.168.0.4', port:9300]
-]</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">application.yml</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">elasticSearch:
-	client:
-		hosts:
-    	- {host: 192.168.0.3, port: 9300}
-		- {host: 228.168.0.4, port: 9300}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If no host is defined, <code>localhost:9300</code> will be used by the transport client.</p>
-</div>
-<div class="sect3">
-<h4 id="using-node-or-datanode-during-development">2.3.1. Using node or dataNode during development</h4>
-<div class="paragraph">
-<p>If you configure your dev environment to use <code>node</code> or <code>dataNode</code> you might see the following exception:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">'elasticSearchClient': FactoryBean threw exception on object creation; nested exception is java.lang.IllegalStateException: path.home is not configured</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In order to make this work you need to define <code>es.path.home</code> in VM options.</p>
-</div>
-<div class="listingblock">
-<div class="title">Grails 2.x</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">grails run-app -Des.path.home=&lt;PATH_TO_ELASTICSEARCH_HOME_DIR&gt;</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Grails 3.x (build.gradle)</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">bootRun {
-    jvmArgs = ['-Des.path.home=&lt;PATH_TO_ELASTICSEARCH_HOME_DIR&gt;']
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="mapping-migration-properties">2.4. Mapping Migration properties</h3>
-<div class="paragraph">
-<p>Define the application&#8217;s behaviour when a conflict is found while installing Elasticsearch mappings on startup. For a detailed explanation, see <a href="#mappingMigrations">Mapping Migrations</a>.</p>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-migration-strategy-code">2.4.1. <code>elasticSearch.migration.strategy</code></h4>
-<div class="paragraph">
-<p>Defines the behaviour to follow if an error occurs on startup when the application is installing new mappings on ElasticSearch due to conflicting mappings.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 2. Possible Values for migration strategy</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'none'</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No changes on the indices or mappings will happen, the merge problem will be logged and a MappingException will be thrown.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'delete'</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The conflicting mapping will be deleted (along with all indexed content of that type) and replaced with a new mapping. Deleted content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'alias'</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Applies <a href="http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/">Elasticsearch recommended approach for migrating conflicting mappings</a>. A new numbered index will be created (<code>&lt;indexName&gt;_vX</code>) where new mappings will installed for all the types included on the original index. An Elasticsearch alias called <code>&lt;indexName&gt;</code> will point to the new index. As content won&#8217;t be available on the new index, content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option. It is recommended to set <code>elasticSearch.aliasReplacesIndex</code> to deal with potential index/alias conflicts.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The default is <code>'alias'</code>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-migration-aliasreplacesindex-code">2.4.2. <code>elasticSearch.migration.aliasReplacesIndex</code></h4>
-<div class="paragraph">
-<p>Deals with a special conflict case using the <code>'alias'</code> strategy. When the <code>'alias'</code> migration strategy is chosen and there&#8217;s a mapping conflict on an index, defines whether to replace the index with a versioned index (<code>&lt;indexName&gt;_vX</code>) and an alias (<code>&lt;indexName&gt;</code>). This is required when applying the alias strategy on top of existing indices for the first time as indices cannot be renamed (from <code>&lt;indexName&gt;</code> to <code>&lt;indexName&gt;_vX</code>) and an alias cannot exist with the same name as an index.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 3. Possible Values for aliasReplacesIndex</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The index and it&#8217;s content will be deleted and a versioned index and an alias will be created. Deleted content can be automatically reindexed on startup by using this in combination the <code>elasticSearch.bulkIndexOnStartup</code> config option</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Falls back to the <code>'none'</code> strategy. Event will be logged and a MappingException will be thrown.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The default is <code>true</code>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-migration-disablealiaschange-code">2.4.3. <code>elasticSearch.migration.disableAliasChange</code></h4>
-<div class="paragraph">
-<p>In some cases the developer may prefer not to upgrade the alias to the new version of the index until some other tasks are performed. This allows them to disable automatically pointing the alias to a new version of the index when this is created. Aliases can be changed later on manually or programatically using <code>elasticSearchAdminService</code></p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 4. Possible Values for disableAliasChange</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Standard behaviour</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Prevents the aliases to be changed to point to a new index</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The default is <code>false</code>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="dynamic-method-injection">2.5. Dynamic Method Injection</h3>
-<div class="sect3">
-<h4 id="code-elasticsearch-searchmethodname-code">2.5.1. <code>elasticSearch.searchMethodName</code></h4>
-<div class="paragraph">
-<p>Change the name of search method in domain class. By default it&#8217;s <code>search</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">MyDomain.search("${params.query}")</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In order to change the method name to <code>esSearch</code> just update the <code>elasticSearch.searchMethodName='esSearch'</code> in application.groovy</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-counthitsmethodname-code">2.5.2. <code>elasticSearch.countHitsMethodName</code></h4>
-<div class="paragraph">
-<p>Change the name of countHits method in domain class. By default it&#8217;s <code>countHits</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">MyDomain.countHits("${params.query}")</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In order to change the method name to <code>esCountHits</code> just update the <code>elasticSearch.countHitsMethodName='esCountHits'</code> in application.groovy</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-disabledynamicmethodsinjection-code">2.5.3. <code>elasticSearch.disableDynamicMethodsInjection</code></h4>
-<div class="paragraph">
-<p>To complete disabled injection of dynamic methods set <code>elasticSearch.disableDynamicMethodsInjection = true</code> in <code>applicaiton.groovy</code></p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="others-properties">2.6. Others properties</h3>
-<div class="sect3">
-<h4 id="code-elasticsearch-datastoreimpl-code">2.6.1. <code>elasticSearch.datastoreImpl</code></h4>
-<div class="paragraph">
-<p>Only required when enabling the auto-index feature.
-This property specifies which GORM datastore implementation should be watched for storage events.
-The value should be the name of the datastore bean as it is configured in the Spring context; some possible values:</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 5. Possible Values for datastoreImpl</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mongoDatastore</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the MongoDB datastore bean.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">hibernateDatastore</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the Hibernate datastore bean.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-bootstrap-config-file-code">2.6.2. <code>elasticSearch.bootstrap.config.file</code></h4>
-<div class="paragraph">
-<p>When using then plugin to construct a local node, the default Elasticsearch configuration is used by default.
-If you use a modified Elasticsearch configuration, you can use this property to specify the location of the file (as an application resource).</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-bootstrap-transportsettings-file-code">2.6.3. <code>elasticSearch.bootstrap.transportSettings.file</code></h4>
-<div class="paragraph">
-<p>When choosing transport mode this configuration will be used to set up the TransportClient settings (used by some cloud providers).</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-client-transport-sniff-code">2.6.4. <code>elasticSearch.client.transport.sniff</code></h4>
-<div class="paragraph">
-<p>Only usable in with a transport client.
-Allows to sniff the rest of the cluster, and add those into its list of machines to use.
-In this case, the ip addresses used will be the ones that the other nodes were started with (the “publish” address)</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-cluster-name-code">2.6.5. <code>elasticSearch.cluster.name</code></h4>
-<div class="paragraph">
-<p>The name of the cluster for the client to join.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-date-formats-code">2.6.6. <code>elasticSearch.date.formats</code></h4>
-<div class="paragraph">
-<p>List of date formats used by the JSON unmarshaller to parse any date field properly.
-Note : future version of the plugin may change how formats are manipulated.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-defaultexcludedproperties-code">2.6.7. <code>elasticSearch.defaultExcludedProperties</code></h4>
-<div class="paragraph">
-<p>List of domain class properties to automatically ignore (will not be indexed) if their name match one of those.
-This will apply to both the default-mapped domain class, with the static <code>searchable</code> property set to "true", and when using closure mapping.
-To override this setting on a specific class, it can be added to the <code>only</code> property of the <code>searchable</code> closure.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-disableautoindex-code">2.6.8. <code>elasticSearch.disableAutoIndex</code></h4>
-<div class="paragraph">
-<p>A boolean determining if the plugin should reflect any database save/update/delete automatically on the indices.
-Default to <code>false</code>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-bulkindexonstartup-code">2.6.9. <code>elasticSearch.bulkIndexOnStartup</code></h4>
-<div class="paragraph">
-<p>Determines whether the application should launch a bulk index operation upon startup.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 6. Possible Values for bulkIndexOnStartup</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No indexing will happen on startup.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">All content will be indexed on startup.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>'deleted'</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This value is related to the mapping migration strategy chosen. If any migration is required and any content is deleted due to it, on startup only indices and mappings lost will be indexed. More on <a href="#mappingMigrations">Mapping Migrations</a>.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Default to <code>true</code>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-index-name-code">2.6.10. <code>elasticSearch.index.name</code></h4>
-<div class="paragraph">
-<p>A string indicating which ElasticSearch index should be used.  If not present, will default to the package name of the domain in question.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>From Elasticsearch 5.0 on only selected settings like for instance index.codec can be set on the node level. All other settings must be set on each individual index. To set default values on every index, index templates should be used instead. So, unset this value if you are using Elasticsearch v5.0 or above.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-index-compound_format-code">2.6.11. <code>elasticSearch.index.compound_format</code></h4>
-<div class="paragraph">
-<p>Should the compound file format be used (boolean setting).
-Set to <code>false</code> by default (really applicable for file system based index storage).
-More details on this setting on the <a href="http://www.elasticsearch.org/guide/reference/index-modules/">ElasticSearch Documentation</a>.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-index-store-type-code">2.6.12. <code>elasticSearch.index.store.type</code></h4>
-<div class="paragraph">
-<p>Determine how the indices will be stored.
-More details on the possible values on the <a href="http://www.elasticsearch.org/guide/reference/index-modules/store.html">ElasticSearch Documentation</a>.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 7. Possible value for index store type</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">memory</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the index in memory. Useful for testing. <strong>Please note</strong> that it&#8217;s not support in ES 2.0 and later versions.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mmapfs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the shard index on the file system (maps to Lucene MMapDirectory) using mmap.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">niofs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Stores the shard index on the file system (maps to Lucene NIOFSDirectory) and allows for multiple threads to read from the same file concurrently.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">simplefs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Stores using a plain forward implementation of file system storage (maps to Lucene SimpleFsDirectory) using random access file.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-index-settings-numberofreplicas-code">2.6.13. <code>elasticSearch.index.settings.numberOfReplicas</code></h4>
-<div class="paragraph">
-<p>Sets the number of replicas created for each shard of the index. If not present, will default to zero.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-gateway-type-code">2.6.14. <code>elasticSearch.gateway.type</code></h4>
-<div class="paragraph">
-<p>Determine the gateway type to be used.
-More details on the possible values are in the <a href="http://www.elasticsearch.org/guide/reference/modules/gateway/">ElasticSearch Documentation</a>.
-Using a setting of "none" (possibly in combination with index.store.type set to "memory") can be useful for tests.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-maxbulkrequest-code">2.6.15. <code>elasticSearch.maxBulkRequest</code></h4>
-<div class="paragraph">
-<p>Max number of requests to process at once.
-Reduce this value if you have memory issue when indexing a big amount of data at once.
-If this setting is not specified, 500 will be use by default.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-path-data-code">2.6.16. <code>elasticSearch.path.data</code></h4>
-<div class="paragraph">
-<p>The location of the data files of each index / shard allocated on the node.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-path-plugins-code">2.6.17. <code>elasticSearch.path.plugins</code></h4>
-<div class="paragraph">
-<p>The location of plugin files such as native scripts. Each plugin will be contained in a subdirectory.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-searchableproperty-name-code">2.6.18. <code>elasticSearch.searchableProperty.name</code></h4>
-<div class="paragraph">
-<p>The name of the ElasticSearch mapping configuration property that annotates domain classes. The default is 'searchable'.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code-elasticsearch-includetransients-code">2.6.19. <code>elasticSearch.includeTransients</code></h4>
-<div class="paragraph">
-<p>Whether to index and search all non excluded transient properties. All explicitly included transients in <code>only</code> will be indexed regardless.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Default is <code>false</code>.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -2061,106 +2025,6 @@ If this setting is not specified, 500 will be use by default.</p>
 </div>
 <div class="sect2">
 <h3 id="quick-start">3.1. Quick Start</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Install Elasticsearch using instructions from <a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.4/gs-installation.html">here</a>.</p>
-</li>
-<li>
-<p>Just like any other Grails plugin, through the Grails Plugin center and Edit your project&#8217;s build.gradle file, by adding the plugin&#8217;s dependency declaration:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>dependencies {
-    ...
-    compile "org.grails.plugins:elasticsearch:2.4.0"
-    ...
-}</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Overriding Spring Boot elasticsearch version</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Spring Boot 1.3.x supports Elasticsearch 1.5.2 OOTB (<a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml#L76" class="bare">https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml#L76</a>) and will install dependencies for this version, if not explicitly overriden. To do so add the following to your <code>build.gradle</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def elasticsearchVersion = '2.3.3'
-ext['elasticsearch.version'] = elasticsearchVersion</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Updated <code>application.yml</code> with default configurations:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>elasticSearch:
-    datastoreImpl: hibernateDatastore
-    client:
-        mode: transport
-        hosts:
-          - {host: localhost, port: 9300}
-    cluster.name: &lt;ENTER CLUSTER NAME HERE&gt;</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In order debug Elasticsearch plugin, add <code>logger("grails.plugins.elasticsearch", DEBUG, ['STDOUT'], false)</code> in `logback.groovy file as following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>import grails.util.BuildSettings
-import grails.util.Environment
-import org.springframework.boot.logging.logback.ColorConverter
-import org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter
-
-import java.nio.charset.Charset
-
-conversionRule 'clr', ColorConverter
-conversionRule 'wex', WhitespaceThrowableProxyConverter
-
-// See http://logback.qos.ch/manual/groovy.html for details on configuration
-appender('STDOUT', ConsoleAppender) {
-    encoder(PatternLayoutEncoder) {
-        charset = Charset.forName('UTF-8')
-
-        pattern =
-                '%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} ' + // Date
-                        '%clr(%5p) ' + // Log level
-                        '%clr(---){faint} %clr([%15.15t]){faint} ' + // Thread
-                        '%clr(%-40.40logger{39}){cyan} %clr(:){faint} ' + // Logger
-                        '%m%n%wex' // Message
-    }
-}
-
-def targetDir = BuildSettings.TARGET_DIR
-if (Environment.isDevelopmentMode() &amp;&amp; targetDir != null) {
-    appender("FULL_STACKTRACE", FileAppender) {
-        file = "${targetDir}/stacktrace.log"
-        append = true
-        encoder(PatternLayoutEncoder) {
-            pattern = "%level %logger - %msg%n"
-        }
-    }
-    logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
-    logger("grails.plugins.elasticsearch", DEBUG, ['STDOUT'], false)
-    root(ERROR, ['STDOUT', 'FULL_STACKTRACE'])
-}
-else {
-    root(ERROR, ['STDOUT'])
-}</pre>
-</div>
-</div>
 <div class="sect3">
 <h4 id="default-mapping">3.1.1. Default mapping</h4>
 <div class="paragraph">
@@ -3385,8 +3249,41 @@ def results2 = Tweet.search("${params.query}", [highlight: highlightSettings2])<
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">assert [1:[23, 42], 2: [24, 40]] == result.sort</code></pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="geoDistanceSoring">5.7.1. Geo Distance Sorting</h4>
 <div class="paragraph">
-<p>Unresolved directive in searching/sorting.adoc - include::sorting/geoDistanceSorting.adoc[]</p>
+<p>To sort for geo distances, a SortBuilder must be passed to <code>search()</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">def sortBuilder = SortBuilders.geoDistanceSort("location")
+    .point(48.141, 11.57)
+    .unit(DistanceUnit.KILOMETERS)
+    .order(SortOrder.ASC)
+
+def result = elasticSearchService.search(
+    [indices: Building, types: Building, sort: sortBuilder],
+    null as Closure,
+    {
+        geo_distance(
+            'distance': '5km',
+            'location': [lat: 48.141, lon: 11.57]
+        )
+    })</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The calculated distances are not part of the search results themselves but are part of <code>result.sort</code>.
+<code>sort</code> contains all search values calculated by the ElasticSearch server as a list mapped to the id of the respective domain objects</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">assert [1:[2.34567], 2: [2.4402342]] == result.sort</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -3819,80 +3716,11 @@ class Department {
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="faq">9. Frequently Asked Questions</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="conflictingModules">9.1. Conflicting module versions</h3>
-<div class="paragraph">
-<p>Normally this issues happen where different versions of same modules are download from different plugins or dependencies in <code>build.gradle</code></p>
-</div>
-<div class="paragraph">
-<p>It seems like there are multiple versions of groovy in the classpath. Looks similar to <a href="http://stackoverflow.com/questions/31099214/tomcat-conflicting-module-versions-module-groovy-all-is-loaded-in-version-2-3" class="bare">http://stackoverflow.com/questions/31099214/tomcat-conflicting-module-versions-module-groovy-all-is-loaded-in-version-2-3</a></p>
-</div>
-<div class="sect3">
-<h4 id="exception">9.1.1. Exception</h4>
-<div class="listingblock">
-<div class="content">
-<pre> log4j:ERROR Error initializing log4j: null
- java.lang.ExceptionInInitializerError
-    at org.codehaus.groovy.runtime.InvokerHelper.&lt;clinit&gt;(InvokerHelper.java:61)
-    at groovy.lang.GroovyObjectSupport.&lt;init&gt;(GroovyObjectSupport.java:32)
-    at org.codehaus.groovy.grails.commons.AbstractGrailsApplication.&lt;init&gt;(
-             AbstractGrailsApplication.java:45)
-    at org.codehaus.groovy.grails.commons.DefaultGrailsApplication.&lt;init&gt;
-            (DefaultGrailsApplication.java:95)
-    at org.codehaus.groovy.grails.commons.DefaultGrailsApplication.&lt;init&gt;
-            (DefaultGrailsApplication.java:91)
-    at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-    at sun.reflect.NativeConstructorAccessorImpl.newInstance(
-            NativeConstructorAccessorImpl.java:62)
-    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(
-        DelegatingConstructorAccessorImpl.java:45)
-    at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
-    at java.lang.Class.newInstance(Class.java:442)
-
-
-    at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:314)
-    at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-    at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
-    at java.lang.Thread.run(Thread.java:745)
- **Caused by: groovy.lang.GroovyRuntimeException: Conflicting module versions. Module [groovy-all is  loaded in version 2.3.11 and you are trying to load version 2.4.4**</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="workaround">9.1.2. Workaround</h4>
-<div class="listingblock">
-<div class="content">
-<pre>grails.project.dependency.resolution = {
-    plugins {
-        compile ":elasticsearch:0.0.4.5", { exclude "groovy-all" } // elasticsearch 1.6.0
-    }
-}</pre>
-</div>
-</div>
-<div id="INFO" class="exampleblock">
-<div class="content">
-<div class="ulist">
-<ul>
-<li>
-<p>Above problem was reported with plugin version 0.0.4.5 and Grails 2.5.5.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.4.0<br>
-Last updated 2018-01-23 09:43:34 +00:00
+Version 1.4.1<br>
+Last updated 2017-08-24 20:51:37 +05:30
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
