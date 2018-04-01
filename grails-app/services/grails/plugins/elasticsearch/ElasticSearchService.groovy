@@ -33,6 +33,8 @@ import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryStringQueryBuilder
 import org.elasticsearch.search.SearchHit
 import org.elasticsearch.search.SearchModule
+import org.elasticsearch.search.aggregations.Aggregation
+import org.elasticsearch.search.aggregations.Aggregations
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortBuilder
@@ -63,9 +65,10 @@ class ElasticSearchService implements GrailsApplicationAware {
      *
      * @param params Search parameters
      * @param closure Query closure
-     * @return search results
+     * @param filter The search filter, whether a Closure or a QueryBuilder
+     * @return A ElasticSearchResult containing the search results
      */
-    def search(Map params, Closure query, filter = null) {
+    ElasticSearchResult search(Map params, Closure query, filter = null) {
         SearchRequest request = buildSearchRequest(query, filter, params)
         search(request, params)
     }
@@ -74,28 +77,45 @@ class ElasticSearchService implements GrailsApplicationAware {
      * Alias for the search(Map params, Closure query) signature.
      *
      * @param query Query closure
+     * @param filter The search filter, whether a Closure or a QueryBuilder
      * @param params Search parameters
-     * @return search results
+     * @return A ElasticSearchResult containing the search results
      */
-    def search(Closure query, filter = null, Map params = [:]) {
+    ElasticSearchResult search(Closure query, filter = null, Map params = [:]) {
         search(params, query, filter)
     }
 
-    def search(Closure query, Map params) {
+    /**
+     *
+     * @param query Query closure
+     * @param params Search parameters
+     * @return A ElasticSearchResult containing the search results
+     */
+    ElasticSearchResult search(Closure query, Map params) {
         search(params, query)
     }
 
 	/**
 	 * Alias for the search(Map params, QueryBuilder query, Closure filter) signature
 	 *
+     * @param params Search parameters
 	 * @param query QueryBuilder query
-	 * @return
+     * @param filter The search filter, whether a Closure or a QueryBuilder
+	 * @return A ElasticSearchResult containing the search results
 	 */
-    def search(QueryBuilder query, filter = null, Map params = [:]) {
+    ElasticSearchResult search(QueryBuilder query, filter = null, Map params = [:]) {
         search(params, query, filter)
     }
 
-    def search(Map params, QueryBuilder query, filter = null) {
+    /**
+     * Alias for the search(Map params, QueryBuilder query, Closure filter) signature
+     *
+     * @param params Search parameters
+     * @param query QueryBuilder query
+     * @param filter The search filter, whether a Closure or a QueryBuilder
+     * @return A ElasticSearchResult containing the search results
+     */
+    ElasticSearchResult search(Map params, QueryBuilder query, filter = null) {
         SearchRequest request = buildSearchRequest(query, filter, params)
         search(request, params)
     }
@@ -105,14 +125,22 @@ class ElasticSearchService implements GrailsApplicationAware {
      *
      * @param query The search query. Will be parsed by the Lucene Query Parser.
      * @param params Search parameters
-     * @return A Map containing the search results
+     * @return A ElasticSearchResult containing the search results
      */
-    def search(String query, Map params = [:]) {
+    ElasticSearchResult search(String query, Map params = [:]) {
         SearchRequest request = buildSearchRequest(query, null, params)
         search(request, params)
     }
 
-	def search(String query, filter, Map params = [:]){
+    /**
+     * Global search with a text query.
+     *
+     * @param query The search query. Will be parsed by the Lucene Query Parser.
+     * @param params Search parameters
+     * @param filter The search filter, whether a Closure or a QueryBuilder
+     * @return A ElasticSearchResult containing the search results
+     */
+    ElasticSearchResult search(String query, filter, Map params = [:]){
 		SearchRequest request = buildSearchRequest(query, filter, params)
 		search(request, params)
 	}
@@ -456,7 +484,7 @@ class ElasticSearchService implements GrailsApplicationAware {
             LOG.debug 'Completed search request.'
             LOG.debug(response.inspect())
             def searchHits = response.getHits()
-            def result = [:]
+            ElasticSearchResult result = new ElasticSearchResult()
             result.total = searchHits.getTotalHits()
 
             LOG.debug "Search returned ${result.total ?: 0} result(s)."
@@ -467,11 +495,9 @@ class ElasticSearchService implements GrailsApplicationAware {
             // Extract highlight information.
             // Right now simply give away raw results...
             if (params.highlight) {
-                def highlightResults = []
                 for (SearchHit hit : searchHits) {
-                    highlightResults << hit.highlightFields
+                    result.highlight << hit.highlightFields
                 }
-                result.highlight = highlightResults
             }
 
             LOG.debug 'Adding score information to results.'
@@ -479,22 +505,18 @@ class ElasticSearchService implements GrailsApplicationAware {
             //Extract score information
             //Records a map from hits of (hit.id, hit.score) returned in 'scores'
             if (params.score) {
-                def scoreResults = [:]
                 for (SearchHit hit : searchHits) {
-                    scoreResults[(hit.id)] = hit.score
+                    result.scores[(hit.id)] = hit.score
                 }
-                result.scores = scoreResults
             }
 
             if (params.sort) {
-                def sortValues = [:]
                 searchHits.each { SearchHit hit ->
-                    sortValues[hit.id] = hit.sortValues
+                    result.sort[hit.id] = hit.sortValues
                 }
-                result.sort = sortValues
             }
 
-            def aggregations = response.getAggregations()
+            Aggregations aggregations = response.getAggregations()
             if (aggregations) {
                 def aggregationsAsMap = aggregations.asMap()
                 if (aggregationsAsMap) {

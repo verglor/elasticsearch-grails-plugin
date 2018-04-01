@@ -49,23 +49,23 @@ trait ElasticSearchSpec {
         object.save(flush: flush, failOnError: true)
     }
 
-    Map search(Class<?> clazz, String query) {
+    ElasticSearchResult search(Class<?> clazz, String query) {
         elasticSearchService.search(query, [indices: clazz, types: clazz])
     }
 
-    Map search(Class<?> clazz, Closure query) {
+    ElasticSearchResult search(Class<?> clazz, Closure query) {
         elasticSearchService.search(query, [indices: clazz, types: clazz])
     }
 
-    Map search(String query, Map params = [:]) {
+    ElasticSearchResult search(String query, Map params = [:]) {
         elasticSearchService.search(query, params)
     }
 
-    Map search(SearchRequest request, Map params) {
+    ElasticSearchResult search(SearchRequest request, Map params) {
         elasticSearchService.search(request, params)
     }
 
-    Map search(Class<?> clazz, QueryBuilder queryBuilder) {
+    ElasticSearchResult search(Class<?> clazz, QueryBuilder queryBuilder) {
         elasticSearchService.search([indices: clazz, types: clazz], queryBuilder)
     }
 
