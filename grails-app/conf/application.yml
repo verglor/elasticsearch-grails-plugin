@@ -87,7 +87,7 @@ elasticSearch:
     date:
         formats: ["yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
     client.hosts:
-        - {host: 192.169.99.100, port: 9300}
+        - {host: localhost, port: 9300}
     defaultExcludedProperties: ['password']
     disableAutoIndex: false
     index:
@@ -106,9 +106,8 @@ environments:
     test:
         elasticSearch:
             client:
-                mode: transport
+                mode: local
                 transport.sniff: false
-            cluster.name: elasticsearch
             datastoreImpl: hibernateDatastore
             index:
                 store.type: simplefs
