@@ -232,6 +232,26 @@ bootRun {
 }
 ----
 
+==== Disable Mapper Attachment plugin
+
+The Mapper Attachment plugin is Deprecated since version 5.0.0 and will be replaced by https://www.elastic.co/guide/en/elasticsearch/plugins/5.0/ingest-attachment.html[ingest-attachment] plugin.
+
+So, if you are using ES plugin with mode: `local` and do not want to use Mapper Attachment plugin then you can disable the plugin by using following configuration:
+
+[source, yaml]
+.application.yml
+----
+elasticSearch:
+    plugin:
+        mapperAttachment:
+            enabled: false
+----
+
+[NOTE]
+====
+Please note that by default the plugin is enabled.
+====
+
 
 === Mapping Migration properties
 
