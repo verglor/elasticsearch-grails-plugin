@@ -234,7 +234,7 @@ class FamilyGuy {
 }
 ----
 
-==== Using Elasticsearch in mode "local" and Mapper Attachment plugin
+==== The Mapper Attachment plugin
 
 The Elasticsearch plugin does not ship with Mapper Attachment plugin, so if you are using mode `local` and config `elasticSearch.plugin.mapperAttachment.enabled: true` then you need to add the following dependency in build.gradle
 
@@ -256,7 +256,7 @@ In order to use the latest version, you need to:
 * Now, include the downloaded lib into project dependencies as:
 
 [source, groovy]
-.buid.gradle
+.build.gradle
 ----
 compile fileTree(dir: "libs/elasticsearch", include: '*.jar')
 ----
