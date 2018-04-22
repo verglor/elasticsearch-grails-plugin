@@ -19,7 +19,6 @@ package grails.plugins.elasticsearch
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin
 import org.elasticsearch.node.InternalSettingsPreparer
 import org.elasticsearch.node.Node
 import org.elasticsearch.plugins.Plugin
@@ -202,8 +201,13 @@ class ClientNodeFactoryBean implements FactoryBean {
             }
         }
 
+        if(elasticSearchContextHolder.config.plugin.mapperAttachment.enabled) {
+            node = new PluginEnabledNode(settings, org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin)
+        } else {
+            node = new Node(settings.build())
+        }
         // Avoiding this:
-        node = new PluginEnabledNode(settings, MapperAttachmentsPlugin)
+//        node = new PluginEnabledNode(settings, MapperAttachmentsPlugin)
         node.start()
         def client = node.client()
         // Wait for the cluster to become alive.

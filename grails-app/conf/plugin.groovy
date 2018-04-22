@@ -89,6 +89,8 @@ elasticSearch {
      * countHits method name in domain class, defaults to search
      */
     countHitsMethodName = "countHits"
+
+    plugin.mapperAttachment.enabled = true
 }
 
 environments {
