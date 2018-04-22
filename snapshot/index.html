@@ -456,7 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#limit-properties-with-only-except">3.3. Limit properties with only/except</a></li>
 <li><a href="#including-transients">3.4. Including transients</a></li>
 <li><a href="#transients-and-collections">3.5. Transients and collections</a></li>
-<li><a href="#using-elasticsearch-in-mode-local-and-mapper-attachment-plugin">3.6. Using Elasticsearch in mode "local" and Mapper Attachment plugin</a></li>
+<li><a href="#the-mapper-attachment-plugin">3.6. The Mapper Attachment plugin</a></li>
 </ul>
 </li>
 <li><a href="#mapping">4. Mapping</a>
@@ -2391,7 +2391,7 @@ class Multiplication {
 </div>
 </div>
 <div class="sect3">
-<h4 id="using-elasticsearch-in-mode-local-and-mapper-attachment-plugin">3.6. Using Elasticsearch in mode "local" and Mapper Attachment plugin</h4>
+<h4 id="the-mapper-attachment-plugin">3.6. The Mapper Attachment plugin</h4>
 <div class="paragraph">
 <p>The Elasticsearch plugin does not ship with Mapper Attachment plugin, so if you are using mode <code>local</code> and config <code>elasticSearch.plugin.mapperAttachment.enabled: true</code> then you need to add the following dependency in build.gradle</p>
 </div>
@@ -2429,7 +2429,7 @@ class Multiplication {
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">buid.gradle</div>
+<div class="title">build.gradle</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">compile fileTree(dir: "libs/elasticsearch", include: '*.jar')</code></pre>
 </div>
@@ -3983,7 +3983,7 @@ class Department {
 <div id="footer">
 <div id="footer-text">
 Version 2.4.1.BUILD-SNAPSHOT<br>
-Last updated 2018-04-22 22:19:17 +00:00
+Last updated 2018-04-22 22:26:40 +00:00
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
