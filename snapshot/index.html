@@ -1426,8 +1426,8 @@ ext['elasticsearch.version'] = elasticsearchVersion</code></pre>
 environments {
   development {
     /**
-     * Possible values : "local", "node", "dataNode", "transport"
-     * If set to null, "node" mode is used by default.
+     * Possible values : "local", "dataNode", "transport"
+     *
      */
     elasticSearch.client.mode = 'local'
   }
@@ -1438,7 +1438,7 @@ environments {
       }
   }
   production {
-    elasticSearch.client.mode = 'node'
+    elasticSearch.client.mode = 'transport'
   }
 }</code></pre>
 </div>
@@ -1493,7 +1493,7 @@ environments:
     production:
         elasticSearch:
             client:
-                mode: node</code></pre>
+                mode: transport</code></pre>
 </div>
 </div>
 </div>
@@ -1532,7 +1532,7 @@ The mode is defined with the following config key:</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">node</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">node (Removed in version 2.4.1 of the plugin)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own node and join the ElasticSearch cluster as a client node (<code>node.client = true</code>). This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)</p></td>
 </tr>
 <tr>
@@ -1576,6 +1576,13 @@ The mode is defined with the following config key:</p>
 </div>
 <div class="sect3">
 <h4 id="using-node-or-datanode-during-development">2.3.1. Using node or dataNode during development</h4>
+<div id="INFO" class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>The node.client setting has been removed. A node with such a setting set will not start up. Instead, each node role needs to be set separately using the existing node.master, node.data and node.ingest supported static settings.</p>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>If you configure your dev environment to use <code>node</code> or <code>dataNode</code> you might see the following exception:</p>
 </div>
@@ -3983,7 +3990,7 @@ class Department {
 <div id="footer">
 <div id="footer-text">
 Version 2.4.1.BUILD-SNAPSHOT<br>
-Last updated 2018-04-22 22:26:40 +00:00
+Last updated 2018-05-05 15:44:29 +00:00
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
