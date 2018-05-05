@@ -44,7 +44,7 @@ class ClientNodeFactoryBean implements FactoryBean {
 
     Object getObject() {
         // Retrieve client mode, default is "node"
-        String clientMode = elasticSearchContextHolder.config.client.mode ?: 'node'
+        String clientMode = elasticSearchContextHolder.config.client.mode ?: 'transport'
         if (!(clientMode in SUPPORTED_MODES)) {
             throw new IllegalArgumentException("Invalid client mode, expected values were ${SUPPORTED_MODES}.")
         }
@@ -182,9 +182,6 @@ class ClientNodeFactoryBean implements FactoryBean {
                 }
 
                 settings.put("node.data", true)
-                break
-
-            default:
                 break
         }
         if (transportClient) {

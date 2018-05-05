@@ -96,8 +96,8 @@ elasticSearch {
 environments {
     development {
         /**
-         * Possible values : "local", "node", "transport"
-         * If set to null, "node" mode is used by default.
+         * Possible values : "local", "dataNode", "transport"
+         * If set to null, "transport" mode is used by default.
          */
         elasticSearch.client.mode = 'local'
     }
