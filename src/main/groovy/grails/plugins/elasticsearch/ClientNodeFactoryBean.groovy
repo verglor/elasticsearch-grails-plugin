@@ -181,13 +181,10 @@ class ClientNodeFactoryBean implements FactoryBean {
                     settings.put("discovery.zen.ping.unicast.hosts", elasticSearchContextHolder.config.discovery.zen.ping.unicast.hosts)
                 }
 
-                settings.put("node.client", false)
                 settings.put("node.data", true)
                 break
 
-            case 'node':
             default:
-                settings.put("node.client", true)
                 break
         }
         if (transportClient) {

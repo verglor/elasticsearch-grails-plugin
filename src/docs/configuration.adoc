@@ -75,8 +75,8 @@ elasticSearch {
 environments {
   development {
     /**
-     * Possible values : "local", "node", "dataNode", "transport"
-     * If set to null, "node" mode is used by default.
+     * Possible values : "local", "dataNode", "transport"
+     *
      */
     elasticSearch.client.mode = 'local'
   }
@@ -87,7 +87,7 @@ environments {
       }
   }
   production {
-    elasticSearch.client.mode = 'node'
+    elasticSearch.client.mode = 'transport'
   }
 }
 ----
@@ -142,7 +142,7 @@ environments:
     production:
         elasticSearch:
             client:
-                mode: node
+                mode: transport
 ----
 
 === Client mode
@@ -169,7 +169,7 @@ elasticSearch:
 |===
 |Value |Description
 
-|node
+|node (Removed in version 2.4.1 of the plugin)
 |The plugin create its own node and join the ElasticSearch cluster as a client node (`node.client = true`). This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)
 
 |dataNode
@@ -208,6 +208,11 @@ elasticSearch:
 If no host is defined, `localhost:9300` will be used by the transport client.
 
 ==== Using node or dataNode during development
+
+[[INFO]]
+====
+The node.client setting has been removed. A node with such a setting set will not start up. Instead, each node role needs to be set separately using the existing node.master, node.data and node.ingest supported static settings.
+====
 
 If you configure your dev environment to use `node` or `dataNode` you might see the following exception:
 
