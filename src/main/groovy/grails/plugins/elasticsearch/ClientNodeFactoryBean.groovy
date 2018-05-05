@@ -35,7 +35,7 @@ import java.nio.file.Paths
 
 class ClientNodeFactoryBean implements FactoryBean {
 
-    static final SUPPORTED_MODES = ['local', 'transport', 'node', 'dataNode']
+    static final SUPPORTED_MODES = ['local', 'transport', 'dataNode']
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
