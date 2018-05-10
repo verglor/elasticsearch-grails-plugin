@@ -19,7 +19,6 @@ package grails.plugins.elasticsearch
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin
 import org.elasticsearch.node.InternalSettingsPreparer
 import org.elasticsearch.node.Node
 import org.elasticsearch.plugins.Plugin
@@ -36,7 +35,7 @@ import java.nio.file.Paths
 
 class ClientNodeFactoryBean implements FactoryBean {
 
-    static final SUPPORTED_MODES = ['local', 'transport', 'node', 'dataNode']
+    static final SUPPORTED_MODES = ['local', 'transport', 'dataNode']
 
     private static final Logger LOG = LoggerFactory.getLogger(this)
 
@@ -45,7 +44,7 @@ class ClientNodeFactoryBean implements FactoryBean {
 
     Object getObject() {
         // Retrieve client mode, default is "node"
-        String clientMode = elasticSearchContextHolder.config.client.mode ?: 'node'
+        String clientMode = elasticSearchContextHolder.config.client.mode ?: 'transport'
         if (!(clientMode in SUPPORTED_MODES)) {
             throw new IllegalArgumentException("Invalid client mode, expected values were ${SUPPORTED_MODES}.")
         }
@@ -182,13 +181,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                     settings.put("discovery.zen.ping.unicast.hosts", elasticSearchContextHolder.config.discovery.zen.ping.unicast.hosts)
                 }
 
-                settings.put("node.client", false)
                 settings.put("node.data", true)
-                break
-
-            case 'node':
-            default:
-                settings.put("node.client", true)
                 break
         }
         if (transportClient) {
@@ -202,8 +195,13 @@ class ClientNodeFactoryBean implements FactoryBean {
             }
         }
 
+        if(elasticSearchContextHolder.config.plugin.mapperAttachment.enabled) {
+            node = new PluginEnabledNode(settings, org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin)
+        } else {
+            node = new Node(settings.build())
+        }
         // Avoiding this:
-        node = new PluginEnabledNode(settings, MapperAttachmentsPlugin)
+//        node = new PluginEnabledNode(settings, MapperAttachmentsPlugin)
         node.start()
         def client = node.client()
         // Wait for the cluster to become alive.

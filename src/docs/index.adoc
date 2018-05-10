@@ -7,6 +7,8 @@ include::introduction.adoc[]
 
 include::configuration.adoc[]
 
+include::quickStart.adoc[]
+
 include::mapping.adoc[]
 
 include::indexing.adoc[]

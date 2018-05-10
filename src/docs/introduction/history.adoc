@@ -2,9 +2,16 @@
 
 ==== Grails 3.x version
 
+* May 10, 2018
+** 2.4.1
+*** `search` method now returns `ElasticsearchResult` instead of `Map`.
+*** Added configuration `elasticSearch.plugin.mapperAttachment.enabled` to disable Mapper Attachment plugin.
+
+
 * December 12, 2017
 ** 2.4.0.RC1
 *** Support Grails 3.3.x
+*** The mapper-attachments plugin has been changed to `provided`.
 
 * August 17, 2017
 ** 1.4.1
