@@ -425,7 +425,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Elasticsearch Plugin - Reference Documentation</h1>
 <div class="details">
 <span id="author" class="author">Puneet Behl</span><br>
-<span id="revnumber">version 2.4.0</span>
+<span id="revnumber">version 2.4.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -449,54 +449,63 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#others-properties">2.6. Others properties</a></li>
 </ul>
 </li>
-<li><a href="#mapping">3. Mapping</a>
-<ul class="sectlevel2">
-<li><a href="#quick-start">3.1. Quick Start</a></li>
-<li><a href="#class-mapping">3.2. Class Mapping</a></li>
-<li><a href="#properties-mapping">3.3. Properties Mapping</a></li>
-<li><a href="#parentChild">3.4. Parent Child</a></li>
-<li><a href="#geoPoint">3.5. Geo Point</a></li>
-<li><a href="#alias">3.6. Alias</a></li>
-<li><a href="#dynamic">3.7. Dynamic</a></li>
-<li><a href="#searchableComponentReference">3.8. Searchable Component Reference</a></li>
-<li><a href="#mappingMigrations">3.9. Mapping Migrations</a></li>
+<li><a href="#quickStart">3. Quick Start</a>
+<ul class="sectlevel3">
+<li><a href="#default-mapping">3.1. Default mapping</a></li>
+<li><a href="#custom-mapping">3.2. Custom mapping</a></li>
+<li><a href="#limit-properties-with-only-except">3.3. Limit properties with only/except</a></li>
+<li><a href="#including-transients">3.4. Including transients</a></li>
+<li><a href="#transients-and-collections">3.5. Transients and collections</a></li>
+<li><a href="#the-mapper-attachment-plugin">3.6. The Mapper Attachment plugin</a></li>
 </ul>
 </li>
-<li><a href="#indexing">4. Indexing</a>
+<li><a href="#mapping">4. Mapping</a>
 <ul class="sectlevel2">
-<li><a href="#index-examples">4.1. Index examples</a></li>
-<li><a href="#unindex-examples">4.2. Unindex examples</a></li>
+<li><a href="#class-mapping">4.1. Class Mapping</a></li>
+<li><a href="#properties-mapping">4.2. Properties Mapping</a></li>
+<li><a href="#parentChild">4.3. Parent Child</a></li>
+<li><a href="#geoPoint">4.4. Geo Point</a></li>
+<li><a href="#alias">4.5. Alias</a></li>
+<li><a href="#dynamic">4.6. Dynamic</a></li>
+<li><a href="#searchableComponentReference">4.7. Searchable Component Reference</a></li>
+<li><a href="#mappingMigrations">4.8. Mapping Migrations</a></li>
 </ul>
 </li>
-<li><a href="#searching">5. Searching</a>
+<li><a href="#indexing">5. Indexing</a>
 <ul class="sectlevel2">
-<li><a href="#queryStrings">5.1. Query Strings</a></li>
-<li><a href="#queryClosure">5.2. Query Closure</a></li>
-<li><a href="#queryBuilder">5.3. Query Builder</a></li>
-<li><a href="#filterClosure">5.4. Filter Closure</a></li>
-<li><a href="#filterBuilder">5.5. Filter Builder</a></li>
-<li><a href="#highlighting">5.6. Highlighting</a></li>
-<li><a href="#sorting">5.7. Sorting</a></li>
-<li><a href="#pagination">5.8. Pagination</a></li>
+<li><a href="#index-examples">5.1. Index examples</a></li>
+<li><a href="#unindex-examples">5.2. Unindex examples</a></li>
 </ul>
 </li>
-<li><a href="#admin">6. Admin</a>
+<li><a href="#searching">6. Searching</a>
 <ul class="sectlevel2">
-<li><a href="#refresh">6.1. Refresh</a></li>
-<li><a href="#deleteIndex">6.2. Delete Index</a></li>
+<li><a href="#queryStrings">6.1. Query Strings</a></li>
+<li><a href="#queryClosure">6.2. Query Closure</a></li>
+<li><a href="#queryBuilder">6.3. Query Builder</a></li>
+<li><a href="#filterClosure">6.4. Filter Closure</a></li>
+<li><a href="#filterBuilder">6.5. Filter Builder</a></li>
+<li><a href="#highlighting">6.6. Highlighting</a></li>
+<li><a href="#sorting">6.7. Sorting</a></li>
+<li><a href="#pagination">6.8. Pagination</a></li>
 </ul>
 </li>
-<li><a href="#lowLevelAPI">7. Low Level API</a></li>
-<li><a href="#example">8. Example</a>
+<li><a href="#admin">7. Admin</a>
 <ul class="sectlevel2">
-<li><a href="#twitter">8.1. Twitter</a></li>
-<li><a href="#geoDistanceSearch">8.2. Geo Distance Search</a></li>
-<li><a href="#parentChildExample">8.3. Parent/Child mapping</a></li>
+<li><a href="#refresh">7.1. Refresh</a></li>
+<li><a href="#deleteIndex">7.2. Delete Index</a></li>
 </ul>
 </li>
-<li><a href="#faq">9. Frequently Asked Questions</a>
+<li><a href="#lowLevelAPI">8. Low Level API</a></li>
+<li><a href="#example">9. Example</a>
 <ul class="sectlevel2">
-<li><a href="#conflictingModules">9.1. Conflicting module versions</a></li>
+<li><a href="#twitter">9.1. Twitter</a></li>
+<li><a href="#geoDistanceSearch">9.2. Geo Distance Search</a></li>
+<li><a href="#parentChildExample">9.3. Parent/Child mapping</a></li>
+</ul>
+</li>
+<li><a href="#faq">10. Frequently Asked Questions</a>
+<ul class="sectlevel2">
+<li><a href="#conflictingModules">10.1. Conflicting module versions</a></li>
 </ul>
 </li>
 </ul>
@@ -561,6 +570,9 @@ reference for its syntax and behaviour.</p>
 <ul>
 <li>
 <p>Support Grails 3.3.x</p>
+</li>
+<li>
+<p>The mapper-attachments plugin has been changed to <code>provided</code>.</p>
 </li>
 </ul>
 </div>
@@ -1214,7 +1226,7 @@ reference for its syntax and behaviour.</p>
 <p>Graeme Rocher started the first draft which this plugin is based on.</p>
 </div>
 <div class="paragraph">
-<p>Get the full and updated list of contributors on the <a href="https://github.com/noamt/elasticsearch-grails-plugin/graphs/contributors">github</a> repository.</p>
+<p>Get the full and updated list of contributors on the <a href="https://github.com/puneetbehl/elasticsearch-grails-plugin/graphs/contributors">github</a> repository.</p>
 </div>
 </div>
 </div>
@@ -1322,7 +1334,7 @@ If necessary a 4th level point release number will be used for successive change
 <p><em>Existing versions in</em> <strong>bold</strong></p>
 </div>
 <div class="paragraph">
-<p>Current version is <strong>2.4.0</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
+<p>Current version is <strong>2.4.1</strong> (for Grails 2.x the latest version is <strong>0.1.0</strong>)</p>
 </div>
 </div>
 <div class="sect2">
@@ -1414,8 +1426,8 @@ ext['elasticsearch.version'] = elasticsearchVersion</code></pre>
 environments {
   development {
     /**
-     * Possible values : "local", "node", "dataNode", "transport"
-     * If set to null, "node" mode is used by default.
+     * Possible values : "local", "dataNode", "transport"
+     *
      */
     elasticSearch.client.mode = 'local'
   }
@@ -1426,7 +1438,7 @@ environments {
       }
   }
   production {
-    elasticSearch.client.mode = 'node'
+    elasticSearch.client.mode = 'transport'
   }
 }</code></pre>
 </div>
@@ -1481,7 +1493,7 @@ environments:
     production:
         elasticSearch:
             client:
-                mode: node</code></pre>
+                mode: transport</code></pre>
 </div>
 </div>
 </div>
@@ -1520,7 +1532,7 @@ The mode is defined with the following config key:</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">node</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">node (Removed in version 2.4.1 of the plugin)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The plugin create its own node and join the ElasticSearch cluster as a client node (<code>node.client = true</code>). This setting requires that you have an ElasticSearch instance running and available on your network (use the discovery feature)</p></td>
 </tr>
 <tr>
@@ -1564,6 +1576,13 @@ The mode is defined with the following config key:</p>
 </div>
 <div class="sect3">
 <h4 id="using-node-or-datanode-during-development">2.3.1. Using node or dataNode during development</h4>
+<div id="INFO" class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>The node.client setting has been removed. A node with such a setting set will not start up. Instead, each node role needs to be set separately using the existing node.master, node.data and node.ingest supported static settings.</p>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>If you configure your dev environment to use <code>node</code> or <code>dataNode</code> you might see the following exception:</p>
 </div>
@@ -1588,6 +1607,38 @@ The mode is defined with the following config key:</p>
     jvmArgs = ['-Des.path.home=&lt;PATH_TO_ELASTICSEARCH_HOME_DIR&gt;']
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="disable-mapper-attachment-plugin">2.3.2. Disable Mapper Attachment plugin</h4>
+<div class="paragraph">
+<p>The Mapper Attachment plugin is Deprecated since version 5.0.0 and will be replaced by <a href="https://www.elastic.co/guide/en/elasticsearch/plugins/5.0/ingest-attachment.html">ingest-attachment</a> plugin.</p>
+</div>
+<div class="paragraph">
+<p>So, if you are using ES plugin with mode: <code>local</code> and do not want to use Mapper Attachment plugin then you can disable the plugin by using following configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">elasticSearch:
+    plugin:
+        mapperAttachment:
+            enabled: false</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Please note that by default the plugin is enabled.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2054,13 +2105,8 @@ If this setting is not specified, 500 will be use by default.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="mapping">3. Mapping</h2>
+<h2 id="quickStart">3. Quick Start</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>From version 0.0.4.0 in addition to the indices generated by the plugin based on the domain objects package names or configuration, two new aliases are created for every index: <code>&lt;indexName&gt;_read</code> and <code>&lt;indexName&gt;_write</code>. These two aliases are used by the plugin to index and query from Elasticsearch and are needed to centralise the choice of index to use during mapping migrations when the <code>'alias'</code> strategy is used and there are multiple instances of the application.</p>
-</div>
-<div class="sect2">
-<h3 id="quick-start">3.1. Quick Start</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2162,7 +2208,7 @@ else {
 </div>
 </div>
 <div class="sect3">
-<h4 id="default-mapping">3.1.1. Default mapping</h4>
+<h4 id="default-mapping">3.1. Default mapping</h4>
 <div class="paragraph">
 <p>To declare a domain class to be searchable, the simplest way is to define the following static property in the code:</p>
 </div>
@@ -2176,7 +2222,7 @@ else {
 </div>
 </div>
 <div class="sect3">
-<h4 id="custom-mapping">3.1.2. Custom mapping</h4>
+<h4 id="custom-mapping">3.2. Custom mapping</h4>
 <div class="paragraph">
 <p>You can customize how each properties are mapped to the index using a closure. The syntax is similar to GORM&#8217;s mapping DSL.</p>
 </div>
@@ -2192,7 +2238,7 @@ else {
 </div>
 </div>
 <div class="sect3">
-<h4 id="limit-properties-with-only-except">3.1.3. Limit properties with only/except</h4>
+<h4 id="limit-properties-with-only-except">3.3. Limit properties with only/except</h4>
 <div class="paragraph">
 <p><code>only</code> and <code>except</code> are used to limit the properties that are made searchable.
 You may not define both except &amp; only settings at the same time.</p>
@@ -2257,7 +2303,7 @@ from ElasticSearch, some fields that are not supposed to be null, may still be n
 </div>
 </div>
 <div class="sect3">
-<h4 id="including-transients">3.1.4. Including transients</h4>
+<h4 id="including-transients">3.4. Including transients</h4>
 <div class="paragraph">
 <p>How the plugin manages transient properties is controlled by the <code>elasticSearch.includeTransients</code> configuration property. If this is set to <code>false</code> only transient properties explicitly included in <code>only</code> will be mapped and searchable, if set to <code>true</code>, all domain class properties will be mapped, including <code>transients</code>.</p>
 </div>
@@ -2319,7 +2365,7 @@ class Multiplication {
 </div>
 </div>
 <div class="sect3">
-<h4 id="transients-and-collections">3.1.5. Transients and collections</h4>
+<h4 id="transients-and-collections">3.5. Transients and collections</h4>
 <div class="paragraph">
 <p>When transient properties are collections the only way the plugin can define the correct ElasticSearch mapping during boot is if the element types are explicitly defined on the grails domain object. For instances of <code>Collection</code> this can be achieved by defining its type on the <code>hasMany</code> property (otherwise the ElasticSearch type will be defined as <code>object</code>). This is not required for arrays.</p>
 </div>
@@ -2351,11 +2397,63 @@ class Multiplication {
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="the-mapper-attachment-plugin">3.6. The Mapper Attachment plugin</h4>
+<div class="paragraph">
+<p>The Elasticsearch plugin does not ship with Mapper Attachment plugin, so if you are using mode <code>local</code> and config <code>elasticSearch.plugin.mapperAttachment.enabled: true</code> then you need to add the following dependency in build.gradle</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">compile "org.elasticsearch.plugin:mapper-attachments:2.4.6"</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The latest version of Mapper Attachments plugin is not available in Maven</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In order to use the latest version, you need to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Download this plugin for offline install from <a href="https://artifacts.elastic.co/downloads/elasticsearch-plugins/mapper-attachments/mapper-attachments-5.6.9.zip" class="bare">https://artifacts.elastic.co/downloads/elasticsearch-plugins/mapper-attachments/mapper-attachments-5.6.9.zip</a> into <code>/libs/elasticsearch</code> folder.</p>
+</li>
+<li>
+<p>Now, include the downloaded lib into project dependencies as:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">compile fileTree(dir: "libs/elasticsearch", include: '*.jar')</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mapping">4. Mapping</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>From version 0.0.4.0 in addition to the indices generated by the plugin based on the domain objects package names or configuration, two new aliases are created for every index: <code>&lt;indexName&gt;_read</code> and <code>&lt;indexName&gt;_write</code>. These two aliases are used by the plugin to index and query from Elasticsearch and are needed to centralise the choice of index to use during mapping migrations when the <code>'alias'</code> strategy is used and there are multiple instances of the application.</p>
 </div>
 <div class="sect2">
-<h3 id="class-mapping">3.2. Class Mapping</h3>
+<h3 id="class-mapping">4.1. Class Mapping</h3>
 <div class="sect3">
-<h4 id="root">3.2.1. root</h4>
+<h4 id="root">4.1.1. root</h4>
 <div class="paragraph">
 <p>Determine if the domain class will have its own index or not. Take a boolean as parameter, and is set to <code>true</code> by default.</p>
 </div>
@@ -2406,7 +2504,7 @@ For example, considered the following domain:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="all">3.2.2. all</h4>
+<h4 id="all">4.1.2. all</h4>
 <div class="paragraph">
 <p>Set default analyzer for all domain class fields.</p>
 </div>
@@ -2430,7 +2528,7 @@ For example, considered the following domain:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="properties-mapping">3.3. Properties Mapping</h3>
+<h3 id="properties-mapping">4.2. Properties Mapping</h3>
 <div class="paragraph">
 <p>You can customize the mapping for each domain properties using the closure mapping.
 The syntax is simple:</p>
@@ -2443,7 +2541,7 @@ The syntax is simple:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="available-options">3.3.1. Available options</h4>
+<h4 id="available-options">4.2.1. Available options</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2528,7 +2626,7 @@ The syntax is simple:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="parentChild">3.4. Parent Child</h3>
+<h3 id="parentChild">4.3. Parent Child</h3>
 <div class="paragraph">
 <p>To map a parent/child relationship, the child element must either contain the parent element as a component or reference it as a referenced document.
 This component must be mapped as a parent in the child element.</p>
@@ -2561,7 +2659,7 @@ class ReferencingChild {
 </div>
 </div>
 <div class="sect2">
-<h3 id="geoPoint">3.5. Geo Point</h3>
+<h3 id="geoPoint">4.4. Geo Point</h3>
 <div class="paragraph">
 <p>A geographic location can be mapped to a geo_point. The field for the longitude has to be named <code>lon</code> and the field for the latitude has to be named <code>lat</code></p>
 </div>
@@ -2593,7 +2691,7 @@ class Building {
 </div>
 </div>
 <div class="sect2">
-<h3 id="alias">3.6. Alias</h3>
+<h3 id="alias">4.5. Alias</h3>
 <div class="paragraph">
 <p>A field can be aliased.  This is useful in situations where another service may expect certain tags.</p>
 </div>
@@ -2618,7 +2716,7 @@ report records by date.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="dynamic">3.7. Dynamic</h3>
+<h3 id="dynamic">4.6. Dynamic</h3>
 <div class="paragraph">
 <p>Elasticsearch can map field contents as dynamic objects.</p>
 </div>
@@ -2665,14 +2763,14 @@ The result is that a search for <code>jsonData.foo=bar</code> would result in a 
 </div>
 </div>
 <div class="sect2">
-<h3 id="searchableComponentReference">3.8. Searchable Component Reference</h3>
+<h3 id="searchableComponentReference">4.7. Searchable Component Reference</h3>
 <div class="paragraph">
 <p>The plugin support a similar searchable-component &amp; searchable-reference behaviour from Compass
 when you are dealing with domain association.
 See below to find out about the difference between both mapping modes.</p>
 </div>
 <div class="sect3">
-<h4 id="searchableReference">3.8.1. Searchable Reference</h4>
+<h4 id="searchableReference">4.7.1. Searchable Reference</h4>
 <div class="paragraph">
 <p>The searchable-reference mapping mode is the default mode used for association, and requires the
 searchable class of the association to be root-mapped in order to have its own index.
@@ -2731,7 +2829,7 @@ class OtherDomain {
 </div>
 </div>
 <div class="sect3">
-<h4 id="searchableComponent">3.8.2. Searchable Component</h4>
+<h4 id="searchableComponent">4.7.2. Searchable Component</h4>
 <div class="paragraph">
 <p>The searchable-component mapping mode must be explicitly set, and does not require the
 searchable class of the association to be root-mapped.</p>
@@ -2801,7 +2899,7 @@ class OtherDomain {
 </div>
 </div>
 <div class="sect2">
-<h3 id="mappingMigrations">3.9. Mapping Migrations</h3>
+<h3 id="mappingMigrations">4.8. Mapping Migrations</h3>
 <div class="paragraph">
 <p>During the application startup the application will attempt to create the needed indices on Elasticsearch and create the type mappings defined by the user. If these indices and mappings already existed on the Elasticsearch cluster (ie. an older version of the application was running against it) and the new mapping definitions differ with the existing ones there&#8217;s the potential for a Mapping conflict. This section describes how to configure the application to deal with this scenario.</p>
 </div>
@@ -2809,7 +2907,7 @@ class OtherDomain {
 <p>It is important to highlight that not all type mapping changes will result on a conflict. Ie. adding a new field to a mapping does not result in a conflict whilst changing a property from component:'inner' to nested or vice-versa, will. These strategies will only be needed and applied when a <strong>conflicting</strong> mapping is found.</p>
 </div>
 <div class="sect3">
-<h4 id="migration-strategies">3.9.1. Migration Strategies</h4>
+<h4 id="migration-strategies">4.8.1. Migration Strategies</h4>
 <div class="paragraph">
 <p>The migration strategy is defined by the <code>elasticSearch.migration.strategy</code> configuration property and it accepts three values:</p>
 </div>
@@ -2837,7 +2935,7 @@ class OtherDomain {
 </div>
 </div>
 <div class="sect3">
-<h4 id="migration-strategy-none">3.9.2. Migration Strategy 'none'</h4>
+<h4 id="migration-strategy-none">4.8.2. Migration Strategy 'none'</h4>
 <div class="paragraph">
 <p>This option keeps the original behaviour the plugin used before the Migration Strategies were implemented. When a Mapping Merge conflict id identified the event will be logged and an Exception will be logged.
 It will be responsibility for the application administrator to manually fix the problem.</p>
@@ -2847,7 +2945,7 @@ It will be responsibility for the application administrator to manually fix the 
 </div>
 </div>
 <div class="sect3">
-<h4 id="migration-strategy-deleteindex">3.9.3. Migration Strategy 'deleteIndex'</h4>
+<h4 id="migration-strategy-deleteindex">4.8.3. Migration Strategy 'deleteIndex'</h4>
 <div class="paragraph">
 <p>When choosing this option, when a conflict occurs installing  mapping, the application will delete the existing index for the type, <strong>alongside with all content indexed on that index (including content from other mappings)</strong> and it will recreate the index and all its mappings. There are a couple of important details on this information:</p>
 </div>
@@ -2869,7 +2967,7 @@ It will be responsibility for the application administrator to manually fix the 
 </div>
 </div>
 <div class="sect3">
-<h4 id="migration-strategy-alias">3.9.4. Migration Strategy 'alias'</h4>
+<h4 id="migration-strategy-alias">4.8.4. Migration Strategy 'alias'</h4>
 <div class="paragraph">
 <p>This is the migration strategy <a href="http://www.elasticsearch.org/blog/changing-mapping-with-zero-downtime/">recommended by Elasticsearch</a>.</p>
 </div>
@@ -2984,7 +3082,7 @@ On Boostrap (bulkIndexOnStartup)
 </div>
 </div>
 <div class="sect3">
-<h4 id="dealing-with-deleted-content">3.9.5. Dealing with deleted content</h4>
+<h4 id="dealing-with-deleted-content">4.8.5. Dealing with deleted content</h4>
 <div class="paragraph">
 <p>Using the <code>'delete'</code> or <code>'alias'</code> strategy may lead to deleting content stored on Elasticsearch. This content can be automatically reindexed using the <code>elasticSearch.bulkIndexOnStartup</code>. The duration of this process will depend on the amount of content to index.</p>
 </div>
@@ -2996,7 +3094,7 @@ On Boostrap (bulkIndexOnStartup)
 </div>
 </div>
 <div class="sect1">
-<h2 id="indexing">4. Indexing</h2>
+<h2 id="indexing">5. Indexing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>With its default configuration (with the <code>disableAutoIndex</code> configuration key set to <code>false</code>), the plugin is indexing
@@ -3010,7 +3108,7 @@ You normally shouldn&#8217;t have to worry about indexing, but sometimes you may
 <p>The plugin is providing a few injected methods in the domain or in the <code>ElasticSearchService</code> to allow that.</p>
 </div>
 <div class="sect2">
-<h3 id="index-examples">4.1. Index examples</h3>
+<h3 id="index-examples">5.1. Index examples</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">// Index all searchable instances
@@ -3035,7 +3133,7 @@ elasticSearchService.index([MyDomain, MyOtherDomain])</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="unindex-examples">4.2. Unindex examples</h3>
+<h3 id="unindex-examples">5.2. Unindex examples</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">// Unindex all searchable instances
@@ -3062,7 +3160,7 @@ elasticSearchService.unindex([MyDomain, MyOtherDomain])</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="searching">5. Searching</h2>
+<h2 id="searching">6. Searching</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The plugin provides 2 ways to send search requests.</p>
@@ -3147,7 +3245,7 @@ println "Found ${res} result(s)"</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="queryStrings">5.1. Query Strings</h3>
+<h3 id="queryStrings">6.1. Query Strings</h3>
 <div class="paragraph">
 <p>The search method injected in the domain or the <code>ElasticSearchService</code> has multiple signatures available.
 You can pass it a simple <code>String</code> to compute your search request. That string will be parsed by the <strong>Lucene query parser</strong> so feel free to use its syntax to do more specific search query.</p>
@@ -3166,7 +3264,7 @@ def resultsTweets = Tweet.search("message:${params.query}")</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="queryClosure">5.2. Query Closure</h3>
+<h3 id="queryClosure">6.2. Query Closure</h3>
 <div class="paragraph">
 <p>You can use the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/groovy-api/current/search.html">Groovy Query DSL</a> to build your search query as a <code>Closure</code>.</p>
 </div>
@@ -3195,7 +3293,7 @@ and the <a href="http://www.elasticsearch.org/guide/en/elasticsearch/client/java
 </div>
 </div>
 <div class="sect2">
-<h3 id="queryBuilder">5.3. Query Builder</h3>
+<h3 id="queryBuilder">6.3. Query Builder</h3>
 <div class="paragraph">
 <p>A <code>QueryBuilder</code> can be passed to the search method.</p>
 </div>
@@ -3210,7 +3308,7 @@ def result = elasticSearchService.search(query)</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="filterClosure">5.4. Filter Closure</h3>
+<h3 id="filterClosure">6.4. Filter Closure</h3>
 <div class="paragraph">
 <p>A filter closure can be passed as a second argument after the search closure to the search method.</p>
 </div>
@@ -3232,7 +3330,7 @@ def result = elasticSearchService.search(query)</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="filterBuilder">5.5. Filter Builder</h3>
+<h3 id="filterBuilder">6.5. Filter Builder</h3>
 <div class="paragraph">
 <p>A <code>FilterBuilder</code> filter can be passed as a second argument after the search parameter to the search method.</p>
 </div>
@@ -3250,7 +3348,7 @@ def result = elasticSearchService.search(
 </div>
 </div>
 <div class="sect2">
-<h3 id="highlighting">5.6. Highlighting</h3>
+<h3 id="highlighting">6.6. Highlighting</h3>
 <div class="paragraph">
 <p>The search method support highlighting: automatic wrapping of the matching terms in the search results with
 HTML/XML/Whatever tags.</p>
@@ -3279,7 +3377,7 @@ def results = Tweet.search("${params.query}", [highlight: highlightSettings])</c
 </div>
 </div>
 <div class="sect3">
-<h4 id="highlightResults">5.6.1. Highlight results</h4>
+<h4 id="highlightResults">6.6.1. Highlight results</h4>
 <div class="paragraph">
 <p>If a search result is found, the <code>search</code> method will add a <code>highlight</code> entry in the map result.</p>
 </div>
@@ -3302,7 +3400,7 @@ results?.searchResults?.eachWithIndex { hit, index -&gt;
 </div>
 </div>
 <div class="sect3">
-<h4 id="highlightedFields">5.6.2. Highlighted fields</h4>
+<h4 id="highlightedFields">6.6.2. Highlighted fields</h4>
 <div class="paragraph">
 <p>To determine which fields are to be processed by ElasticSearch, use the <code>field</code> setting.</p>
 </div>
@@ -3345,7 +3443,7 @@ def results2 = Tweet.search("${params.query}", [highlight: highlightSettings2])<
 </div>
 </div>
 <div class="sect3">
-<h4 id="highlightingTags">5.6.3. Highlighting tags</h4>
+<h4 id="highlightingTags">6.6.3. Highlighting tags</h4>
 <div class="paragraph">
 <p>By default, ElasticSearch will use emphasis tag &#8220;&lt;em&gt;&#8230;&#8203;&lt;/em&gt;&#8221; to wrap the matching text.</p>
 </div>
@@ -3364,7 +3462,7 @@ def results2 = Tweet.search("${params.query}", [highlight: highlightSettings2])<
 </div>
 </div>
 <div class="sect2">
-<h3 id="sorting">5.7. Sorting</h3>
+<h3 id="sorting">6.7. Sorting</h3>
 <div class="paragraph">
 <p>To sort the search results, either a field name or a SortBuilder must be passed.</p>
 </div>
@@ -3390,7 +3488,7 @@ def results2 = Tweet.search("${params.query}", [highlight: highlightSettings2])<
 </div>
 </div>
 <div class="sect2">
-<h3 id="pagination">5.8. Pagination</h3>
+<h3 id="pagination">6.8. Pagination</h3>
 <div class="paragraph">
 <p>To return paginated results one can pass <code>from</code> and <code>size</code> to search method query params.</p>
 </div>
@@ -3410,13 +3508,13 @@ elasticSearchService.search('xyz', [ indices: Post, types: Post, from: 0, size: 
 </div>
 </div>
 <div class="sect1">
-<h2 id="admin">6. Admin</h2>
+<h2 id="admin">7. Admin</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The plugin implements a few convenience methods for a few admin-oriented actions.</p>
 </div>
 <div class="sect2">
-<h3 id="refresh">6.1. Refresh</h3>
+<h3 id="refresh">7.1. Refresh</h3>
 <div class="paragraph">
 <p>Explicitly refresh one or more index, making all operations performed since the last refresh available for search.
 It will also flush the current IndexRequestQueue if there are pending index or delete requests from the application side.</p>
@@ -3444,7 +3542,7 @@ elasticSearchAdminService.refresh() // Ensure that the 3 previous index
 </div>
 </div>
 <div class="sect2">
-<h3 id="deleteIndex">6.2. Delete Index</h3>
+<h3 id="deleteIndex">7.2. Delete Index</h3>
 <div class="paragraph">
 <p>Delete an index, all its mapping and its content from the ElasticSearch instance. Be careful when using this command because it cannot be undone.</p>
 </div>
@@ -3474,7 +3572,7 @@ elasticSearchAdminService.refresh() // Ensure that the 3 previous index
 </div>
 </div>
 <div class="sect1">
-<h2 id="lowLevelAPI">7. Low Level API</h2>
+<h2 id="lowLevelAPI">8. Low Level API</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If you need to use the Elastic Search client directly, you can use the <code>elasticSearchHelper</code> bean that is injected in any services/controllers to get the current instance.</p>
@@ -3509,12 +3607,12 @@ elasticSearchAdminService.refresh() // Ensure that the 3 previous index
 </div>
 </div>
 <div class="sect1">
-<h2 id="example">8. Example</h2>
+<h2 id="example">9. Example</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="twitter">8.1. Twitter</h3>
+<h3 id="twitter">9.1. Twitter</h3>
 <div class="sect3">
-<h4 id="theDomains">8.1.1. The Domains</h4>
+<h4 id="theDomains">9.1.1. The Domains</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">class Tweet {
@@ -3584,7 +3682,7 @@ elasticSearchAdminService.refresh() // Ensure that the 3 previous index
 </div>
 </div>
 <div class="sect3">
-<h4 id="theController">8.1.2. The Controller</h4>
+<h4 id="theController">9.1.2. The Controller</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -3684,12 +3782,12 @@ and corresponding <code>User</code> indexed documents will be updated since we h
 </div>
 </div>
 <div class="sect2">
-<h3 id="geoDistanceSearch">8.2. Geo Distance Search</h3>
+<h3 id="geoDistanceSearch">9.2. Geo Distance Search</h3>
 <div class="paragraph">
 <p>A search for buildings with a geo_distance filter, ordered by distance.</p>
 </div>
 <div class="sect3">
-<h4 id="geoDistanceDomains">8.2.1. Domains</h4>
+<h4 id="geoDistanceDomains">9.2.1. Domains</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">class GeoPoint {
@@ -3724,7 +3822,7 @@ and corresponding <code>User</code> indexed documents will be updated since we h
 </div>
 </div>
 <div class="sect3">
-<h4 id="geoDistanceService">8.2.2. Service Methods</h4>
+<h4 id="geoDistanceService">9.2.2. Service Methods</h4>
 <div class="paragraph">
 <p>Searching for all buildings sorted by distance with 5km radius around geo location (lat=41.141, lon=11.57)</p>
 </div>
@@ -3767,7 +3865,7 @@ and corresponding <code>User</code> indexed documents will be updated since we h
 </div>
 </div>
 <div class="sect2">
-<h3 id="parentChildExample">8.3. Parent/Child mapping</h3>
+<h3 id="parentChildExample">9.3. Parent/Child mapping</h3>
 <div class="paragraph">
 <p>A store with many departments</p>
 </div>
@@ -3820,10 +3918,10 @@ class Department {
 </div>
 </div>
 <div class="sect1">
-<h2 id="faq">9. Frequently Asked Questions</h2>
+<h2 id="faq">10. Frequently Asked Questions</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="conflictingModules">9.1. Conflicting module versions</h3>
+<h3 id="conflictingModules">10.1. Conflicting module versions</h3>
 <div class="paragraph">
 <p>Normally this issues happen where different versions of same modules are download from different plugins or dependencies in <code>build.gradle</code></p>
 </div>
@@ -3831,7 +3929,7 @@ class Department {
 <p>It seems like there are multiple versions of groovy in the classpath. Looks similar to <a href="http://stackoverflow.com/questions/31099214/tomcat-conflicting-module-versions-module-groovy-all-is-loaded-in-version-2-3" class="bare">http://stackoverflow.com/questions/31099214/tomcat-conflicting-module-versions-module-groovy-all-is-loaded-in-version-2-3</a></p>
 </div>
 <div class="sect3">
-<h4 id="exception">9.1.1. Exception</h4>
+<h4 id="exception">10.1.1. Exception</h4>
 <div class="listingblock">
 <div class="content">
 <pre> log4j:ERROR Error initializing log4j: null
@@ -3863,7 +3961,7 @@ class Department {
 </div>
 </div>
 <div class="sect3">
-<h4 id="workaround">9.1.2. Workaround</h4>
+<h4 id="workaround">10.1.2. Workaround</h4>
 <div class="listingblock">
 <div class="content">
 <pre>grails.project.dependency.resolution = {
@@ -3891,8 +3989,8 @@ class Department {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 2.4.0<br>
-Last updated 2018-01-23 09:43:34 +00:00
+Version 2.4.1<br>
+Last updated 2018-05-10 01:21:48 +00:00
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
