@@ -2181,11 +2181,11 @@ ext['elasticsearch.version'] = elasticsearchVersion</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In order debug Elasticsearch plugin, add <code>logger("grails.plugins.elasticsearch", DEBUG, ['STDOUT'], false)</code> in `logback.groovy file as following:</p>
+<p>In order debug Elasticsearch plugin, add <code>logger("grails.plugins.elasticsearch", DEBUG, ['STDOUT'], false)</code> in <code>logback.groovy</code> file as following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>import grails.util.BuildSettings
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">import grails.util.BuildSettings
 import grails.util.Environment
 import org.springframework.boot.logging.logback.ColorConverter
 import org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter
@@ -2224,7 +2224,7 @@ if (Environment.isDevelopmentMode() &amp;&amp; targetDir != null) {
 }
 else {
     root(ERROR, ['STDOUT'])
-}</pre>
+}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -4010,7 +4010,7 @@ class Department {
 <div id="footer">
 <div id="footer-text">
 Version 2.5.0.BUILD-SNAPSHOT<br>
-Last updated 2018-05-14 02:18:18 +00:00
+Last updated 2018-05-15 06:41:52 +00:00
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
