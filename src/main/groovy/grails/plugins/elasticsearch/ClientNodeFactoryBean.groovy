@@ -88,18 +88,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                     transportSettingsBuilder.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
                 }
                 def transportSettings = transportSettingsBuilder.build()
-                transportClient = new PreBuiltTransportClient(transportSettings, Collections.emptyList());
-
-                boolean ip4Enabled = elasticSearchContextHolder.config.shield.ip4Enabled ?: true
-                boolean ip6Enabled = elasticSearchContextHolder.config.shield.ip6Enabled ?: false
-
-                try {
-                    def shield = Class.forName("org.elasticsearch.shield.ShieldPlugin")
-                    transportClient = new PreBuiltTransportClient(transportSettings, Collections.singletonList(shield));
-                    LOG.info("Shield Enabled")
-                } catch (ClassNotFoundException e) {
-                    transportClient = new PreBuiltTransportClient(transportSettings, Collections.emptyList());
-                }
+                transportClient = new PreBuiltTransportClient(transportSettings, Collections.emptyList())
 
                 // Configure transport addresses
                 if (!elasticSearchContextHolder.config.client.hosts) {
