@@ -7,14 +7,11 @@ import org.grails.core.artefact.DomainClassArtefactHandler
 import org.grails.datastore.mapping.model.MappingContext
 import org.grails.datastore.mapping.model.PersistentEntity
 
-import org.springframework.beans.factory.annotation.Autowired
-
 @CompileStatic
 class DomainReflectionService {
 
     GrailsApplication grailsApplication
 
-    @Autowired
     MappingContext mappingContext
 
     private final Map<Class<?>, DomainEntity> entityCache = [:]
