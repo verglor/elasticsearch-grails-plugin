@@ -107,7 +107,7 @@ class ClientNodeFactoryBean implements FactoryBean {
                 String connectionString = elasticSearchContextHolder.config.client.connectionString
                 if (!hosts && !connectionString) {
                     LOG.debug("None of the configurations 'client.connectionString' or 'client.hosts' are defined, so connecting to default: 'localhost:9300'")
-                    transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress('localhost', 9300)))
+                    transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress('localhost', DEFAULT_PORT)))
                 } else if (connectionString) {
                     new ConnectionString(connectionString).connections.each { Map connection->
                         try {
