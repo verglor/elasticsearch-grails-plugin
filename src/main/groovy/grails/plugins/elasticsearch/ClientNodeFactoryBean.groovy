@@ -83,10 +83,13 @@ class ClientNodeFactoryBean implements FactoryBean {
                 }
                 // Use the "sniff" feature of transport client ?
                 if (elasticSearchContextHolder.config.client.transport.sniff) {
+                    LOG.debug("Setting client.transport.sniff to false")
                     transportSettingsBuilder.put("client.transport.sniff", false)
                 }
-                if (elasticSearchContextHolder.config.cluster.name) {
-                    transportSettingsBuilder.put('cluster.name', elasticSearchContextHolder.config.cluster.name.toString())
+                String clusterName = elasticSearchContextHolder.config.cluster.name
+                if (clusterName) {
+                    LOG.debug("Setting cluster.name to: $clusterName")
+                    transportSettingsBuilder.put('cluster.name', clusterName)
                 }
                 def transportSettings = transportSettingsBuilder.build()
                 transportClient = new PreBuiltTransportClient(transportSettings, Collections.emptyList());
@@ -106,9 +109,10 @@ class ClientNodeFactoryBean implements FactoryBean {
                 def hosts = elasticSearchContextHolder.config.client.hosts
                 String connectionString = elasticSearchContextHolder.config.client.connectionString
                 if (!hosts && !connectionString) {
-                    LOG.debug("None of the configurations 'client.connectionString' or 'client.hosts' are defined, so connecting to default: 'localhost:9300'")
+                    LOG.debug("None of the configurations 'elasticSearch.client.connectionString' or 'elasticSearch.client.hosts' are defined, so connecting to default: 'localhost:9300'")
                     transportClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress('localhost', DEFAULT_PORT)))
                 } else if (connectionString) {
+                    LOG.debug("Config Property elasticSearch.client.connectionString is configured to: $connectionString")
                     new ConnectionString(connectionString).connections.each { Map connection->
                         try {
                             for (InetAddress address : InetAddress.getAllByName((String) connection.host)) {
@@ -118,10 +122,11 @@ class ClientNodeFactoryBean implements FactoryBean {
                                 }
                             }
                         } catch (UnknownHostException e) {
-                            LOG.error("Unable to get the host", e.getMessage());
+                            LOG.error("Unable to get the host", e);
                         }
                     }
                 } else if (hosts) {
+                    LOG.debug("Config Property elasticSearch.client.hosts is configured to: $hosts")
                     hosts.each {
                         String host
                         int port = DEFAULT_PORT
@@ -221,6 +226,7 @@ class ClientNodeFactoryBean implements FactoryBean {
         }
 
         if(elasticSearchContextHolder.config.plugin.mapperAttachment.enabled) {
+            LOG.debug("MapperAttachmentPlugin enabled")
             node = new PluginEnabledNode(settings, org.elasticsearch.mapper.attachments.MapperAttachmentsPlugin)
         } else {
             node = new Node(settings.build())
