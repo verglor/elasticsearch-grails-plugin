@@ -1,5 +1,6 @@
 package grails.plugins.elasticsearch
 
+import org.hibernate.proxy.HibernateProxy
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -72,6 +73,31 @@ class ElasticSearchServiceIntegrationSpec extends Specification implements Elast
         * */
         // elasticSearchService.index()
         // refreshIndices()
+    }
+
+    void "test indexing hibernate proxy"() {
+        Person abby = new Person(firstName: 'Abby', lastName: 'Reynolds').save(flush: true)
+        Spaceship spaceship = new Spaceship(name: 'Arc', captain: abby).save(flush: true)
+        clearSession()
+
+        when:
+        spaceship = Spaceship.load(spaceship.id)
+
+        then: "spaceship is proxy"
+        spaceship.getClass() in HibernateProxy
+
+        when: "index a proxy instance"
+        elasticSearchService.index(spaceship)
+        refreshIndices()
+        ElasticSearchResult search = search(Spaceship, 'arc')
+
+        then:
+        search.total == 1
+
+        def result = search.searchResults.first()
+        result.name == 'Arc'
+        result.captain.firstName == 'Abby'
+        result.captain.lastName == 'Reynolds'
     }
 
     void 'Index and un-index a domain object'() {
