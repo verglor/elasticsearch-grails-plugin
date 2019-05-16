@@ -1,37 +1,29 @@
 package grails.plugins.elasticsearch
 
-import org.hibernate.proxy.HibernateProxy
-import spock.lang.Specification
-import spock.lang.Unroll
-
-import java.math.RoundingMode
-
 import grails.converters.JSON
 import grails.gorm.transactions.Rollback
 import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
-import org.grails.web.json.JSONObject
-
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.common.unit.DistanceUnit
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.join.query.JoinQueryBuilders
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.sort.FieldSortBuilder
 import org.elasticsearch.search.sort.SortBuilders
 import org.elasticsearch.search.sort.SortOrder
-import test.Building
-import test.Department
-import test.GeoPoint
-import test.Person
-import test.Product
-import test.Spaceship
-import test.Store
+import org.grails.web.json.JSONObject
+import org.hibernate.proxy.HibernateProxy
+import spock.lang.Specification
+import spock.lang.Unroll
+import test.*
 import test.custom.id.Toy
 
+import java.math.RoundingMode
 
 @Integration
 @Rollback
@@ -315,7 +307,7 @@ class ElasticSearchServiceIntegrationSpec extends Specification implements Elast
         given:
         setupData()
         refreshIndices()
-        
+
         when: 'search with asterisk at last position'
         Map params2 = [indices: Product, types: Product]
         def result2 = elasticSearchService.search(
@@ -372,7 +364,7 @@ class ElasticSearchServiceIntegrationSpec extends Specification implements Elast
 
         when:
         def result = elasticSearchService.search(
-                QueryBuilders.hasParentQuery('store', QueryBuilders.matchQuery('owner', 'Horst'), false),
+                JoinQueryBuilders.hasParentQuery('store', QueryBuilders.matchQuery('owner', 'Horst'), false),
                 QueryBuilders.matchAllQuery(),
                 [indices: Department, types: Department])
 
