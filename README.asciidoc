@@ -33,10 +33,12 @@ dependencies {
 
 === Versioning
 
+In order to simply the versioning, with v2.5.0 the Elasticsearch Grails plugin is using Semantic Versioning 2.0.0. To understand what that means, please see the specification [documentation](https://semver.org/).
+
 |===
 |Plugin Version | Grails Version | Elasticsearch Version
 
-|2.5.0.BUILD-SNAPSHOT
+|2.5.0
 |3.3.x
 |5.5.3
 
