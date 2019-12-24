@@ -3,8 +3,8 @@ package grails.plugins.elasticsearch
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
-import grails.transaction.NotTransactional
-import grails.transaction.Rollback
+import grails.gorm.transactions.NotTransactional
+import grails.gorm.transactions.Rollback
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
