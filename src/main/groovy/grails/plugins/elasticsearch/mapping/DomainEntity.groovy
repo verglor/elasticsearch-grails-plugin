@@ -193,7 +193,7 @@ class DomainEntity {
                 configurationMap.putAll(superRelationshipMap)
             }
         }
-        return configurationMap;
+        return configurationMap
     }
 
     private static <T> T getStaticPropertyValue(Class<?> clazz, String propertyName, Class<T> propertyClass) {
